@@ -5,40 +5,12 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>JS-XLSX Live Demo</title>
-        <style>
-            #drop{
-                border:2px dashed #bbb;
-                -moz-border-radius:5px;
-                -webkit-border-radius:5px;
-                border-radius:5px;
-                padding:25px;
-                text-align:center;
-                font:20pt bold,"Vollkorn";color:#bbb
-            }
-            #b64data{
-                width:100%;
-            }
-        </style>
     </head>
     <body>
-        <b>JS-XLSX Live Demo</b><br />
-        Output Format:
-        <select name="format" onchange="setfmt()">
-            <option value="csv" selected> CSV</option>
-            <option value="json"> JSON</option>
-            <option value="form"> FORMULAE</option>
-        </select><br />
-
-        <div id="drop">Drop a spreadsheet file here to see sheet data</div>
-        <p><input type="file" name="xlfile" id="xlf" /> ... or click here to select a file</p>
-        <textarea id="b64data">... or paste a base64-encoding here</textarea>
-        <input type="button" id="dotext" value="Click here to process the base64 text" onclick="b64it();"/><br />
-        Advanced Demo Options: <br />
-        Use Web Workers: (when available) <input type="checkbox" name="useworker" checked><br />
-        Use Transferrables: (when available) <input type="checkbox" name="xferable" checked><br />
-        Use readAsBinaryString: (when available) <input type="checkbox" name="userabs" checked><br />
-        <input type="button" id="test1" name="buttonparse" value="test jsonparse" onclick="parsejson();"/><br />
+        <input type="file" name="xlfile" id="xlf" /><br />
+        <input type="button" id="test1" name="buttonparse" value="Update database" onclick="parsejson();"/><br />
         <pre id="out" name="jsontext"></pre>
+        <pre id="updated" name="jsontext"></pre>
         <br />
         <!-- uncomment the next line here and in xlsxworker.js for encoding support -->
         <script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-app.js"></script>
@@ -56,8 +28,7 @@
             };
             firebase.initializeApp(config);
         </script>
-        <script>
-            < script src = "dist/cpexcel.js" ></script>
+        <script src="dist/cpexcel.js"></script>
         <script src="shim.js"></script>
         <script src="jszip.js"></script>
         <script src="xlsx.js"></script>
@@ -74,52 +45,54 @@
                 norABS: './xlsxworker1.js',
                 noxfer: './xlsxworker.js'
             };
-
             var rABS = typeof FileReader !== "undefined" && typeof FileReader.prototype !== "undefined" && typeof FileReader.prototype.readAsBinaryString !== "undefined";
-            if (!rABS) {
-                document.getElementsByName("userabs")[0].disabled = true;
-                document.getElementsByName("userabs")[0].checked = false;
-            }
-
             var use_worker = typeof Worker !== 'undefined';
-            if (!use_worker) {
-                document.getElementsByName("useworker")[0].disabled = true;
-                document.getElementsByName("useworker")[0].checked = false;
-            }
-
             var transferable = use_worker;
-            if (!transferable) {
-                document.getElementsByName("xferable")[0].disabled = true;
-                document.getElementsByName("xferable")[0].checked = false;
-            }
-
             var wtf_mode = false;
 
             function parsejson() {
                 setdatabasedata();
             }
 
-            function setdatabasedata(){
+            function setdatabasedata() {
+                var updatedrecords = 0;
                 var obj;
-            firebase.database().ref('/User').once("value", function (snapshot) {
-                snapshot.forEach(function (childSnapshot) {
-                    var mail = childSnapshot.val().Mail;
-                    for (i in jsondata.Blad1) {
-                        obj = jsondata.Blad1[i];
-                        if (mail === obj.mail) {
-                            uid = childSnapshot.key;
-                            firebase.database().ref('User/' + uid).set({
-                                Mail: obj.mail,
-                                Course: obj.Lesgroep.charAt(1),
-                                Name: obj.roepnaam,
-                                Role: "Student",
-                                Semester: obj.Lesgroep.charAt(2),
-                                Status: "Attending"
-                            });
+                firebase.database().ref('/User').once("value", function (snapshot) {
+                    snapshot.forEach(function (childSnapshot) {
+                        var mail = childSnapshot.val().Mail;
+                        for (i in jsondata.Blad1) {
+                            obj = jsondata.Blad1[i];
+                            var groupid = -1;
+                            try {
+                                if (obj.GroupID == null) {
+                                } else {
+                                    groupid = obj.GroupID;
+                                }
+                            } catch (err) {
+                            }
+                            if (mail === obj.mail) {
+                                uid = childSnapshot.key;
+                                firebase.database().ref('User/' + uid).set({
+                                    Mail: obj.mail,
+                                    Course: obj.Lesgroep.charAt(1),
+                                    Name: obj.roepnaam,
+                                    Lastname: obj.achternaam,
+                                    GroupID: groupid,
+                                    Role: "Student",
+                                    Semester: obj.Lesgroep.charAt(2),
+                                    Status: "Attending"
+                                });
+                                updatedrecords++;
+                            }
                         }
-                    }
+                    });
+                    var updatetext = "number of records updated: " + updatedrecords;
+                    if (updated.innerText === undefined)
+                        updated.textContent = updatetext;
+                    else
+                        updated.innerText = updatetext;
                 });
-            });
+
             }
             function fixdata(data) {
                 var o = "", l = 0, w = 10240;
@@ -187,20 +160,10 @@
             }
 
             function xw(data, cb) {
-                transferable = document.getElementsByName("xferable")[0].checked;
                 if (transferable)
                     xw_xfer(data, cb);
                 else
                     xw_noxfer(data, cb);
-            }
-
-            function get_radio_value(radioName) {
-                var radios = document.getElementsByName(radioName);
-                for (var i = 0; i < radios.length; i++) {
-                    if (radios[i].checked || radios.length === 1) {
-                        return radios[i].value;
-                    }
-                }
             }
 
             function to_json(workbook) {
@@ -214,55 +177,13 @@
                 return result;
             }
 
-            function to_csv(workbook) {
-                var result = [];
-                workbook.SheetNames.forEach(function (sheetName) {
-                    var csv = X.utils.sheet_to_csv(workbook.Sheets[sheetName]);
-                    if (csv.length > 0) {
-                        result.push("SHEET: " + sheetName);
-                        result.push("");
-                        result.push(csv);
-                    }
-                });
-                return result.join("\n");
-            }
-
-            function to_formulae(workbook) {
-                var result = [];
-                workbook.SheetNames.forEach(function (sheetName) {
-                    var formulae = X.utils.get_formulae(workbook.Sheets[sheetName]);
-                    if (formulae.length > 0) {
-                        result.push("SHEET: " + sheetName);
-                        result.push("");
-                        result.push(formulae.join("\n"));
-                    }
-                });
-                return result.join("\n");
-            }
-
-            var tarea = document.getElementById('b64data');
-            function b64it() {
-                if (typeof console !== 'undefined')
-                    console.log("onload", new Date());
-                var wb = X.read(tarea.value, {type: 'base64', WTF: wtf_mode});
-                process_wb(wb);
-            }
-
             var global_wb;
             function process_wb(wb) {
                 global_wb = wb;
                 var output = "";
-                switch (get_radio_value("format")) {
-                    case "json":
-                        jsondata = to_json(wb);
-                        output = JSON.stringify(jsondata, 2, 2);
-                        break;
-                    case "form":
-                        output = to_formulae(wb);
-                        break;
-                    default:
-                        output = to_csv(wb);
-                }
+                jsondata = to_json(wb);
+                output = JSON.stringify(jsondata, 2, 2);
+                output = "Succesfully loaded the excel file";
                 if (out.innerText === undefined)
                     out.textContent = output;
                 else
@@ -275,58 +196,10 @@
                     process_wb(global_wb);
             }
 
-            var drop = document.getElementById('drop');
-            function handleDrop(e) {
-                e.stopPropagation();
-                e.preventDefault();
-                rABS = document.getElementsByName("userabs")[0].checked;
-                use_worker = document.getElementsByName("useworker")[0].checked;
-                var files = e.dataTransfer.files;
-                var f = files[0];
-                {
-                    var reader = new FileReader();
-                    var name = f.name;
-                    reader.onload = function (e) {
-                        if (typeof console !== 'undefined')
-                            console.log("onload", new Date(), rABS, use_worker);
-                        var data = e.target.result;
-                        if (use_worker) {
-                            xw(data, process_wb);
-                        } else {
-                            var wb;
-                            if (rABS) {
-                                wb = X.read(data, {type: 'binary'});
-                            } else {
-                                var arr = fixdata(data);
-                                wb = X.read(btoa(arr), {type: 'base64'});
-                            }
-                            process_wb(wb);
-                        }
-                    };
-                    if (rABS)
-                        reader.readAsBinaryString(f);
-                    else
-                        reader.readAsArrayBuffer(f);
-                }
-            }
-
-            function handleDragover(e) {
-                e.stopPropagation();
-                e.preventDefault();
-                e.dataTransfer.dropEffect = 'copy';
-            }
-
-            if (drop.addEventListener) {
-                drop.addEventListener('dragenter', handleDragover, false);
-                drop.addEventListener('dragover', handleDragover, false);
-                drop.addEventListener('drop', handleDrop, false);
-            }
-
-
             var xlf = document.getElementById('xlf');
             function handleFile(e) {
-                rABS = document.getElementsByName("userabs")[0].checked;
-                use_worker = document.getElementsByName("useworker")[0].checked;
+                rABS = true;
+                use_worker = true;
                 var files = e.target.files;
                 var f = files[0];
                 {
@@ -355,7 +228,6 @@
                         reader.readAsArrayBuffer(f);
                 }
             }
-
             if (xlf.addEventListener)
                 xlf.addEventListener('change', handleFile, false);
         </script>
