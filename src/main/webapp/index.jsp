@@ -80,7 +80,7 @@
                                     GroupID: groupid,
                                     Role: "Student",
                                     Semester: obj.Lesgroep.charAt(2),
-                                    Status: "Attending"
+                                    Status: "Inactive"
                                 });
                                 updatedrecords++;
                             }
