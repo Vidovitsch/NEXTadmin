@@ -43,6 +43,7 @@ public class adminController {
     public ModelAndView createWorkshop(@ModelAttribute("SpringWeb") ScheduleableItemModel scheduleableItemModel,
             ModelMap model)
     {
+        System.out.println("got in the method");
         Event newWorkshop = new Workshop(scheduleableItemModel.getEventName());
         newWorkshop = addEventFieldValues(scheduleableItemModel, newWorkshop);
         ((Workshop)newWorkshop).setPresenter(scheduleableItemModel.getPresenter());
