@@ -21,14 +21,14 @@
     <body>
         <div class="wrapper">
             <div class="information-list">
-                <select name="cbSearchType">
+                <%--<select name="cbSearchType">
                     <c:forEach items="${types}" var="id">
                         <option value="${id}">${id}</option>
                     </c:forEach>
                 </select>
                 <table>
                     
-                </table>
+                </table>--%>
             </div>
             <div class="create-modify-event">
                 <div class="createType">
