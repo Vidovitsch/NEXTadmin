@@ -1,19 +1,19 @@
+<%@page import="java.util.GregorianCalendar"%>
+<%@page import="java.util.Calendar"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
-
+<%! int fontSize;%> 
+<%! int maxfontSize = 3;%> 
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <html>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Welcome to Spring Web MVC project</title>
+        <spring:url value="/css/index.css" var="mainCSS" />
+        <link href="${mainCSS}" rel="stylesheet" />
     </head>
-
     <body>
-        <p>Hello! This is the default welcome page for a Spring Web MVC project.</p>
-        <p><i>To display a different welcome page for this project, modify</i>
-            <tt>index.jsp</tt> <i>, or create your own welcome page then change
-                the redirection in</i> <tt>redirect.jsp</tt> <i>to point to the new
-                welcome page and also update the welcome-file setting in</i>
-            <tt>web.xml</tt>.</p>
+        <div class="wrapper">
+            <div class="headline">Index page of the Next weeks admin application</div>
+            <a href="adminpanel.htm">Open admin panel</a><br>
     </body>
-
+</html>

@@ -161,6 +161,12 @@
             <artifactId>firebase-client-jvm</artifactId>
             <version>2.5.2</version>
         </dependency>
+         <!-- http://wiki.sitemesh.org/wiki/display/sitemesh/Setup+SiteMesh+in+5+Minutes+or+Less -->
+        <dependency>
+            <groupId>opensymphony</groupId>
+            <artifactId>sitemesh</artifactId>
+            <version>2.4.2</version>
+        </dependency>
     </dependencies>
 
     <build>

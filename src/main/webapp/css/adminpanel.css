@@ -1,0 +1,44 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 27-mrt-2017, 11:46:21
+    Author     : Arno Dekkers Los
+*/
+
+.wrapper{
+    position: relative;
+    width: 100%;
+}
+
+.information-list{
+    display: inline-block;
+    position: absolute;
+    width: 35%;
+    left: 0;
+    height: 1000px;
+}
+
+.create-modify-event{
+    display: inline-block;
+    position: absolute;
+    width: 60%;
+    right: 0;
+    height: 1000px;
+    padding-top: 10px;
+}
+
+.fieldDiv{
+    padding-top: 15px;
+    width: 20%;
+}
+
+.descriptionSpan{
+    padding-top: 15px;
+    padding-bottom: 10px;
+}
+
+
+
