@@ -30,7 +30,8 @@
         <property name="mappings">
             <props>
                 <prop key="index.htm">indexController</prop>
-                <prop key="adminpanel.htm">adminController</prop>
+                <prop key="adminpanel">adminController</prop>
+                <prop key="/filterList">adminController</prop>
                 <prop key="/createWorkshop">adminController</prop>
                 <prop key="/createLecture">adminController</prop>
                 <prop key="/createPerformance">adminController</prop>

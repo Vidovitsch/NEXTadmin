@@ -21,9 +21,10 @@
     <body>
         <div class="wrapper">
             <div class="information-list">
-                <span class="fieldSpan">Only list:</span>
-                <select name="cbSearchType">
+                <span class="fieldSpan" style="padding-left: 5%;">Apply Filter:</span>
+                <select name="cbSearchType" id="cbSearchType">
                     <option></option>
+                    <option value="all">all</option>
                     <c:forEach items="${types}" var="id">
                         <option value="${id}">${id}</option>
                     </c:forEach>
@@ -57,12 +58,19 @@
             </div>
         </div>
         
-        <script type="text/javascript" src="jquery-ui-1.10.0/tests/jquery-1.9.0.js"></script>
-        <script src="jquery-ui-1.10.0/ui/jquery-ui.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" ></script>
         <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>‌​
         <script src="../../../javascript/moment.js"></script>
         <script>    
+        $('#cbSearchType').on('change',function(){
+        var selection = $(this).val();
+        if(selection === "" || selection === "all"){
+            post("adminpanel", null, "get");
+        }else{
+            post('filterList', {type : selection});
+        }
+   });
+   
         $('#dbType').on('change',function(){
         var selection = $(this).val();
         switch(selection){
@@ -90,6 +98,7 @@
                 $("#presenterdiv").hide();
                 $("#maxUsersdiv").hide();
                 break;
+                
        }
    });
    
@@ -149,7 +158,7 @@
         if(type === ""){
             alert("select the type of event you want to create");
         }else if(eventName === ""){
-           alert("EventName cannot be null");
+            alert("EventName cannot be null");
        }else if(description === ""){
            alert("Give the event a description");
        }else if(locationName === ""){

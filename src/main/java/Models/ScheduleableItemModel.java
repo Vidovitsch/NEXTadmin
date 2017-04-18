@@ -20,6 +20,7 @@ public class ScheduleableItemModel {
     private String presenter;
     private String imageURL;
     private String maxUsers;
+    private String type;
 
     public String getEventName() {
         return eventName;
@@ -99,5 +100,13 @@ public class ScheduleableItemModel {
 
     public void setMaxUsers(String maxUsers) {
         this.maxUsers = maxUsers;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

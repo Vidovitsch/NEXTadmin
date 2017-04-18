@@ -21,7 +21,7 @@ and open the template in the editor.
 .information-list{
     display: inline-block;
     position: absolute;
-    width: 35%;
+    width: 50%;
     height: 90%;
     left: 0;
 }
@@ -29,7 +29,7 @@ and open the template in the editor.
 .create-modify-event{
     display: inline-block;
     position: absolute;
-    width: 60%;
+    width: 45%;
     right: 0;
     padding-top: 10px;
 }

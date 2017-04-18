@@ -36,21 +36,24 @@ public class adminController
     private DBEventModifier eventModifier;
     private DBDayModifier dayModifier;
 
-    @RequestMapping(value =
-    {
-        "/adminpanel", "/createWorkshop"
-    }, method = RequestMethod.GET)
+    @RequestMapping(value = "/adminpanel", method = RequestMethod.GET)
     public ModelAndView initAdminEventScreen()
     {
-        //insertDummySchedule();
+        System.out.println("admin");
         return createModelAndView(null);
+    }
+    
+    @RequestMapping(value = "/filterList", method = RequestMethod.POST)
+    public ModelAndView getFilteredList(@ModelAttribute("SpringWeb") ScheduleableItemModel scheduleableItemModel,
+            ModelMap model)
+    {
+        return createModelAndView(scheduleableItemModel.getType());
     }
 
     @RequestMapping(value = "/createWorkshop", method = RequestMethod.POST)
     public ModelAndView createWorkshop(@ModelAttribute("SpringWeb") ScheduleableItemModel scheduleableItemModel,
             ModelMap model)
     {
-        System.out.println("got in the method");
         Event newWorkshop = new Workshop(scheduleableItemModel.getEventName());
         newWorkshop = addEventFieldValues(scheduleableItemModel, newWorkshop);
         ((Workshop) newWorkshop).setPresenter(scheduleableItemModel.getPresenter());
@@ -107,11 +110,7 @@ public class adminController
         ModelAndView modelView = new ModelAndView("adminpanel", "command", new ScheduleableItemModel());
         modelView.addObject("types", getEventTypes());
         modelView.addObject("fields", getPossibleFields());
-        List<ScheduledItemModel> scheduledItems = getScheduledItems();
-        if (day != null)
-        {
-            scheduledItems = filterScheduledItems(day);
-        }
+        List<ScheduledItemModel> scheduledItems = getScheduledItems(day);
         modelView.addObject("scheduledItems", scheduledItems);
         return modelView;
     }
@@ -148,25 +147,22 @@ public class adminController
         return targetEventDate;
     }
 
-    private List<ScheduledItemModel> filterScheduledItems(String day)
-    {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    private List<ScheduledItemModel> getScheduledItems()
+    private List<ScheduledItemModel> getScheduledItems(String type)
     {
         List<ScheduledItemModel> scheduledItems = new ArrayList<ScheduledItemModel>();
         for (EventDay eD : dayModifier.getDays())
         {
-//            String text = "Type: " + eD.getEventType() + " Name: " + eD.getEventName() + " StartTime: " + eD.getEndTime() + " EndTime: " + eD.getEndTime();
-//            scheduledItems.add(new ScheduledItemModel(eD.getId(), text));
-            String text = eD.getEventType() + ": " + eD.getEventName() + ", Time: " + eD.getEndTime() + "-" + eD.getEndTime();
-            scheduledItems.add(new ScheduledItemModel(eD.getId(), text));
+            if(type == null || eD.getEventType().toString().equals(type)){
+                String text = "School: " + eD.getEventName() + ", Time: " + eD.getEndTime() + "-" + eD.getEndTime();
+                scheduledItems.add(new ScheduledItemModel(eD.getId(), text));
+            }
         }
         for (Event e : eventModifier.getEvents())
         {
-            String text = e.getEventType() + ": " + e.getEventName() + ", Time: " + e.getEndTime() + "-" + e.getEndTime();
-            scheduledItems.add(new ScheduledItemModel(e.getId(), text));
+            if(type == null || e.getEventType().toString().equals(type)){
+                String text = e.getEventType() + ": " + e.getEventName() + ", Time: " + e.getEndTime() + "-" + e.getEndTime();
+                scheduledItems.add(new ScheduledItemModel(e.getId(), text));
+            }
         }
         return scheduledItems;
     }
