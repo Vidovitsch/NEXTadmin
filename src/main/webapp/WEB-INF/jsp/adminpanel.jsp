@@ -23,6 +23,7 @@
             <div class="information-list">
                 <span class="fieldSpan">Only list:</span>
                 <select name="cbSearchType">
+                    <option></option>
                     <c:forEach items="${types}" var="id">
                         <option value="${id}">${id}</option>
                     </c:forEach>
@@ -36,7 +37,7 @@
             <div class="create-modify-event">
                 <div class="createType">
                     <select class="dbType" id="dbType">
-                        <option></option>/>
+                        <option></option>
                         <c:forEach items="${types}" var="id">
                             <option value="${id}">${id}</option>
                         </c:forEach>

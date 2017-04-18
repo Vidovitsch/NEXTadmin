@@ -48,7 +48,8 @@ and open the template in the editor.
 }
 
 .scheduledItemDiv{
-    height: 25px;
+    padding-top: 3%;
+    height: auto;
     padding-left: 5%;
     width: 90%;
     background: white;

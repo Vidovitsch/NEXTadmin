@@ -98,13 +98,9 @@ public class adminController {
         ModelAndView modelView = new ModelAndView("adminpanel", "command", new ScheduleableItemModel());
         modelView.addObject("types", getEventTypes());
         modelView.addObject("fields", getPossibleFields());
-        List<ScheduledItemModel> scheduledItems = new ArrayList<ScheduledItemModel>();
-        if("".equals(day) || day == null){
-            scheduledItems.add(new ScheduledItemModel("1", "eerste test item"));
-            scheduledItems.add(new ScheduledItemModel("2", "tweede test item"));
-            scheduledItems.add(new ScheduledItemModel("3", "derde test item"));
-        }else{
-            System.out.println("wrong statement");
+        List<ScheduledItemModel> scheduledItems = getScheduledItems();
+        if(day != null){
+            scheduledItems=filterScheduledItems(day);
         }
         modelView.addObject("scheduledItems", scheduledItems);
         return modelView;
@@ -137,5 +133,22 @@ public class adminController {
         targetEventDate.setStartTime(item.getStartTime());
         targetEventDate.setLocationName(item.getLocationName());
         return targetEventDate;
+    }
+
+    private List<ScheduledItemModel> filterScheduledItems(String day) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private List<ScheduledItemModel> getScheduledItems() {
+        List<ScheduledItemModel> scheduledItems = new ArrayList<ScheduledItemModel>();
+        for(EventDate eD : dayModifier.getDays()){
+            String text = "Type: " + eD.getEventType() + " Name: " + eD.getEventName() + " StartTime: " + eD.getEndTime() + " EndTime: " + eD.getEndTime();
+            //scheduledItems.add(new ScheduledItemModel(eD.getID(), text));
+        }
+        for(Event e : eventModifier.getEvents()){
+            String text = "Type: " + e.getEventType() + " Name: " + e.getEventName() + " StartTime: " + e.getEndTime() + " EndTime: " + e.getEndTime();
+            scheduledItems.add(new ScheduledItemModel(e.getId(), text));
+        }
+        return scheduledItems;
     }
 }
