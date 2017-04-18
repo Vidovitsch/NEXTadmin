@@ -30,16 +30,22 @@ import org.springframework.web.servlet.ModelAndView;
  * @author Arno Dekkers Los
  */
 @Controller
-public class adminController {
+public class adminController
+{
+
     private DBEventModifier eventModifier;
     private DBDayModifier dayModifier;
-    
-    @RequestMapping(value = {"/adminpanel", "/createWorkshop"} , method = RequestMethod.GET)
-    public ModelAndView initAdminEventScreen() {
+
+    @RequestMapping(value =
+    {
+        "/adminpanel", "/createWorkshop"
+    }, method = RequestMethod.GET)
+    public ModelAndView initAdminEventScreen()
+    {
         //insertDummySchedule();
         return createModelAndView(null);
     }
-    
+
     @RequestMapping(value = "/createWorkshop", method = RequestMethod.POST)
     public ModelAndView createWorkshop(@ModelAttribute("SpringWeb") ScheduleableItemModel scheduleableItemModel,
             ModelMap model)
@@ -47,23 +53,23 @@ public class adminController {
         System.out.println("got in the method");
         Event newWorkshop = new Workshop(scheduleableItemModel.getEventName());
         newWorkshop = addEventFieldValues(scheduleableItemModel, newWorkshop);
-        ((Workshop)newWorkshop).setPresenter(scheduleableItemModel.getPresenter());
-        ((Workshop)newWorkshop).setMaxUsers(Integer.parseInt(scheduleableItemModel.getMaxUsers()));
+        ((Workshop) newWorkshop).setPresenter(scheduleableItemModel.getPresenter());
+        ((Workshop) newWorkshop).setMaxUsers(Integer.parseInt(scheduleableItemModel.getMaxUsers()));
         eventModifier.insertEvent(newWorkshop);
         return createModelAndView(null);
     }
-    
+
     @RequestMapping(value = "/createLecture", method = RequestMethod.POST)
     public ModelAndView createLecture(@ModelAttribute("SpringWeb") ScheduleableItemModel scheduleableItemModel,
             ModelMap model)
     {
         Event newLecture = new Lecture(scheduleableItemModel.getEventName());
         newLecture = addEventFieldValues(scheduleableItemModel, newLecture);
-        ((Lecture)newLecture).setPresenter(scheduleableItemModel.getPresenter());
+        ((Lecture) newLecture).setPresenter(scheduleableItemModel.getPresenter());
         eventModifier.insertEvent(newLecture);
         return createModelAndView(null);
     }
-    
+
     @RequestMapping(value = "/createPerformance", method = RequestMethod.POST)
     public ModelAndView createPerformance(@ModelAttribute("SpringWeb") ScheduleableItemModel scheduleableItemModel,
             ModelMap model)
@@ -73,40 +79,45 @@ public class adminController {
         eventModifier.insertEvent(newPerformance);
         return createModelAndView(null);
     }
-    
+
     @RequestMapping(value = "/createSchoolday", method = RequestMethod.POST)
     public ModelAndView createSchoolday(@ModelAttribute("SpringWeb") ScheduleableItemModel scheduleableItemModel,
             ModelMap model)
     {
         EventDay newDay = new EventDay(scheduleableItemModel.getEventName());
-        newDay = (EventDay)addEventDateValues(scheduleableItemModel, (EventDate)newDay);
+        newDay = (EventDay) addEventDateValues(scheduleableItemModel, (EventDate) newDay);
         dayModifier.insertDay(newDay);
         return createModelAndView(null);
     }
-    
-    private List<String> getEventTypes(){
+
+    private List<String> getEventTypes()
+    {
         List<String> retV = new ArrayList<String>();
-        for(EventType eT : EventType.values()){
+        for (EventType eT : EventType.values())
+        {
             retV.add(eT.toString());
         }
         return retV;
     }
-    
-    private ModelAndView createModelAndView(String day){
+
+    private ModelAndView createModelAndView(String day)
+    {
         eventModifier = new DBEventModifier();
         dayModifier = new DBDayModifier();
         ModelAndView modelView = new ModelAndView("adminpanel", "command", new ScheduleableItemModel());
         modelView.addObject("types", getEventTypes());
         modelView.addObject("fields", getPossibleFields());
         List<ScheduledItemModel> scheduledItems = getScheduledItems();
-        if(day != null){
-            scheduledItems=filterScheduledItems(day);
+        if (day != null)
+        {
+            scheduledItems = filterScheduledItems(day);
         }
         modelView.addObject("scheduledItems", scheduledItems);
         return modelView;
     }
-    
-    private List<String> getPossibleFields(){
+
+    private List<String> getPossibleFields()
+    {
         List<String> retV = new ArrayList<String>();
         retV.add("id");
         retV.add("eventName");
@@ -119,14 +130,16 @@ public class adminController {
         retV.add("maxUsers");
         return retV;
     }
-    
-    private Event addEventFieldValues(ScheduleableItemModel item, Event targetEvent){
-        targetEvent = (Event)addEventDateValues(item, (EventDate)targetEvent);
+
+    private Event addEventFieldValues(ScheduleableItemModel item, Event targetEvent)
+    {
+        targetEvent = (Event) addEventDateValues(item, (EventDate) targetEvent);
         targetEvent.setImageURL(item.getImageURL());
         return targetEvent;
     }
-    
-    private EventDate addEventDateValues(ScheduleableItemModel item, EventDate targetEventDate){
+
+    private EventDate addEventDateValues(ScheduleableItemModel item, EventDate targetEventDate)
+    {
         targetEventDate.setDate(item.getDate());
         targetEventDate.setDescription(item.getDescription());
         targetEventDate.setEndTime(item.getEndTime());
@@ -135,18 +148,24 @@ public class adminController {
         return targetEventDate;
     }
 
-    private List<ScheduledItemModel> filterScheduledItems(String day) {
+    private List<ScheduledItemModel> filterScheduledItems(String day)
+    {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    private List<ScheduledItemModel> getScheduledItems() {
+    private List<ScheduledItemModel> getScheduledItems()
+    {
         List<ScheduledItemModel> scheduledItems = new ArrayList<ScheduledItemModel>();
-        for(EventDay eD : dayModifier.getDays()){
-            String text = "Type: " + eD.getEventType() + " Name: " + eD.getEventName() + " StartTime: " + eD.getEndTime() + " EndTime: " + eD.getEndTime();
+        for (EventDay eD : dayModifier.getDays())
+        {
+//            String text = "Type: " + eD.getEventType() + " Name: " + eD.getEventName() + " StartTime: " + eD.getEndTime() + " EndTime: " + eD.getEndTime();
+//            scheduledItems.add(new ScheduledItemModel(eD.getId(), text));
+            String text = eD.getEventType() + ": " + eD.getEventName() + ", Time: " + eD.getEndTime() + "-" + eD.getEndTime();
             scheduledItems.add(new ScheduledItemModel(eD.getId(), text));
         }
-        for(Event e : eventModifier.getEvents()){
-            String text = "Type: " + e.getEventType() + " Name: " + e.getEventName() + " StartTime: " + e.getEndTime() + " EndTime: " + e.getEndTime();
+        for (Event e : eventModifier.getEvents())
+        {
+            String text = e.getEventType() + ": " + e.getEventName() + ", Time: " + e.getEndTime() + "-" + e.getEndTime();
             scheduledItems.add(new ScheduledItemModel(e.getId(), text));
         }
         return scheduledItems;
