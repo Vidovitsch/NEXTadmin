@@ -20,19 +20,82 @@ span:hover {
 .wrapper{
     margin-top: 120px;
 }
+
+.leftpart{
+    float: left;
+    width: 30%;
+    text-align: center;
+    align-content: center;
+    overflow-y: auto;
+    max-height: 50%;
+    border-style: solid;
+    margin-left: 15px;
+}
+
+.rightpart{
+    float: right;
+    width: 30%;
+    text-align: left;
+}
+
+/* ### ### ### 01 */
+.b01_simple_rollover {
+    color: #000000;
+    border: #000000 solid 1px;
+    padding: 10px;
+    background-color: #ffffff;
+}
+
+.b01_simple_rollover:hover {
+    color: #ffffff;
+    background-color: #000000;
+}
+
+.adminlog{
+    position: absolute;
+    bottom: 0;
+    left: 20%;
+    right: 20%;
+    width: 60%;
+    margin-bottom: 15px;
+}
+
+ol li:hover{
+    background-color:black;
+    cursor: pointer;
+}
+.middlepart{
+    float: left;
+    width: 30%;
+    text-align: center;
+}
+
+#scroll{
+    direction:rtl; 
+    overflow:auto; 
+}
+
+#scroll div{
+    direction:ltr;
+}
+
 body{
-/*    background-color: #1C1C1C;*/
-  background: url(/images/indexbackground.jpg) no-repeat center center fixed; 
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
+    /*    background-color: #1C1C1C;*/
+    background: url(/images/indexbackground.jpg) no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
     text-align: -webkit-center;
 }
 
 
 h1,h2,h3,p,div,a, .headline{
     color: white;
+}
+
+.headline{
+    width: 100%;
 }
 
 .headline{
@@ -106,11 +169,10 @@ h1,h2,h3,p,div,a, .headline{
 }
 
 .button_base {
-    margin: 0;
+    margin: 4;
     border: 0;
     font-size: 18px;
-    position: relative;
-    width: 200px;
+    width: 250px;
     height: 50px;
     text-align: center;
     box-sizing: border-box;
@@ -118,6 +180,10 @@ h1,h2,h3,p,div,a, .headline{
     -moz-box-sizing: border-box;
     -webkit-user-select: none;
     cursor: pointer;
+}
+
+.buttonupdatedatabase {
+    background-color: darkred;
 }
 
 .b05_3d_roll {
