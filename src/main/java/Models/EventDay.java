@@ -12,6 +12,8 @@ import Enums.EventType;
  * @author Arno Dekkers Los
  */
 public class EventDay extends EventDate {
+    private String id;
+    
     public EventDay(String eventName){super(eventName);}
     
     /**
@@ -22,5 +24,13 @@ public class EventDay extends EventDate {
     @Override
     public EventType getEventType() {
         return EventType.None;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+    
+    public String getId(){
+        return id;
     }
 }

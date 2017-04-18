@@ -141,9 +141,9 @@ public class adminController {
 
     private List<ScheduledItemModel> getScheduledItems() {
         List<ScheduledItemModel> scheduledItems = new ArrayList<ScheduledItemModel>();
-        for(EventDate eD : dayModifier.getDays()){
+        for(EventDay eD : dayModifier.getDays()){
             String text = "Type: " + eD.getEventType() + " Name: " + eD.getEventName() + " StartTime: " + eD.getEndTime() + " EndTime: " + eD.getEndTime();
-            //scheduledItems.add(new ScheduledItemModel(eD.getID(), text));
+            scheduledItems.add(new ScheduledItemModel(eD.getId(), text));
         }
         for(Event e : eventModifier.getEvents()){
             String text = "Type: " + e.getEventType() + " Name: " + e.getEventName() + " StartTime: " + e.getEndTime() + " EndTime: " + e.getEndTime();

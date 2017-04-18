@@ -66,6 +66,7 @@ public class DBDayModifier implements IModDay {
                     String locationName = (String) ds.child("LocationName").getValue();
                     String eventName = (String) ds.child("EventName").getValue();
                     String description = (String) ds.child("Description").getValue();
+                    String id = (String) ds.getKey();
                     
                     EventDay day = new EventDay(eventName);
                     day.setStartTime(startTime);
@@ -73,6 +74,7 @@ public class DBDayModifier implements IModDay {
                     day.setDate(date);
                     day.setLocationName(locationName);
                     day.setDescription(description);
+                    day.setId(id);
                     
                     days.add(day);
                 }
