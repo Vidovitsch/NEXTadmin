@@ -15,6 +15,7 @@ import Models.EventDate;
 import Models.EventDay;
 import Models.Lecture;
 import Models.Performance;
+import Models.ScheduledItemModel;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Controller;
@@ -36,7 +37,7 @@ public class adminController {
     @RequestMapping(value = {"/adminpanel", "/createWorkshop"} , method = RequestMethod.GET)
     public ModelAndView initAdminEventScreen() {
         //insertDummySchedule();
-        return createModelAndView();
+        return createModelAndView(null);
     }
     
     @RequestMapping(value = "/createWorkshop", method = RequestMethod.POST)
@@ -49,7 +50,7 @@ public class adminController {
         ((Workshop)newWorkshop).setPresenter(scheduleableItemModel.getPresenter());
         ((Workshop)newWorkshop).setMaxUsers(Integer.parseInt(scheduleableItemModel.getMaxUsers()));
         eventModifier.insertEvent(newWorkshop);
-        return createModelAndView();
+        return createModelAndView(null);
     }
     
     @RequestMapping(value = "/createLecture", method = RequestMethod.POST)
@@ -60,7 +61,7 @@ public class adminController {
         newLecture = addEventFieldValues(scheduleableItemModel, newLecture);
         ((Lecture)newLecture).setPresenter(scheduleableItemModel.getPresenter());
         eventModifier.insertEvent(newLecture);
-        return createModelAndView();
+        return createModelAndView(null);
     }
     
     @RequestMapping(value = "/createPerformance", method = RequestMethod.POST)
@@ -70,7 +71,7 @@ public class adminController {
         Event newPerformance = new Performance(scheduleableItemModel.getEventName());
         newPerformance = addEventFieldValues(scheduleableItemModel, newPerformance);
         eventModifier.insertEvent(newPerformance);
-        return createModelAndView();
+        return createModelAndView(null);
     }
     
     @RequestMapping(value = "/createSchoolday", method = RequestMethod.POST)
@@ -80,7 +81,7 @@ public class adminController {
         EventDay newDay = new EventDay(scheduleableItemModel.getEventName());
         newDay = (EventDay)addEventDateValues(scheduleableItemModel, (EventDate)newDay);
         dayModifier.insertDay(newDay);
-        return createModelAndView();
+        return createModelAndView(null);
     }
     
     private List<String> getEventTypes(){
@@ -91,12 +92,21 @@ public class adminController {
         return retV;
     }
     
-    private ModelAndView createModelAndView(){
+    private ModelAndView createModelAndView(String day){
         eventModifier = new DBEventModifier();
         dayModifier = new DBDayModifier();
         ModelAndView modelView = new ModelAndView("adminpanel", "command", new ScheduleableItemModel());
         modelView.addObject("types", getEventTypes());
         modelView.addObject("fields", getPossibleFields());
+        List<ScheduledItemModel> scheduledItems = new ArrayList<ScheduledItemModel>();
+        if("".equals(day) || day == null){
+            scheduledItems.add(new ScheduledItemModel("1", "eerste test item"));
+            scheduledItems.add(new ScheduledItemModel("2", "tweede test item"));
+            scheduledItems.add(new ScheduledItemModel("3", "derde test item"));
+        }else{
+            System.out.println("wrong statement");
+        }
+        modelView.addObject("scheduledItems", scheduledItems);
         return modelView;
     }
     

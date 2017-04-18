@@ -40,5 +40,22 @@ and open the template in the editor.
     padding-bottom: 10px;
 }
 
+.itemList{
+    overflow-y: auto;
+    width: 90%;
+    height: 90%;
+    padding-left: 5%;
+}
 
+.scheduledItemDiv{
+    height: 25px;
+    padding-left: 5%;
+    width: 90%;
+    background: white;
+    border: black;
+}
+
+.scheduledItemDiv:hover{
+    background: grey;
+}
 

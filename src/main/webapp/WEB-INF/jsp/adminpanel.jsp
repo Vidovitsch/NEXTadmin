@@ -21,15 +21,18 @@
     <body>
         <div class="wrapper">
             <div class="information-list">
-                <%--<select name="cbSearchType">
+                <span class="fieldSpan">Only list:</span>
+                <select name="cbSearchType">
                     <c:forEach items="${types}" var="id">
                         <option value="${id}">${id}</option>
                     </c:forEach>
                 </select>
-                <table>
-                    
-                </table>--%>
-            </div>
+                <div class="itemList" >
+                    <c:forEach var="ScheduledItem" items="${scheduledItems}">
+                        <div class="scheduledItemDiv" id="${ScheduledItem.getId()}">${ScheduledItem.getString()}</div>
+                    </c:forEach>
+                </div>
+            </div>    
             <div class="create-modify-event">
                 <div class="createType">
                     <select class="dbType" id="dbType">
