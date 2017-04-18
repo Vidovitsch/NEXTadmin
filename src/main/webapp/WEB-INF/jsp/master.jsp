@@ -17,7 +17,7 @@
         <div id="next-header">
             <a href="index.htm"><img id="nav-logo" src="/images/next_logo.png" /></a>
             <ul class="nav-list">
-                <li class="nav-item"><a href="/adminpanel.htm">Panel</a></li>
+                <li class="nav-item"><a href="/adminpanel">Panel</a></li>
             </ul>
         </div>
         <div id="spacer"></div>

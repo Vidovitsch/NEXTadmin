@@ -14,7 +14,7 @@
     <body>
         <div class="wrapper">
             <div class="headline">Index page of the Next weeks admin application</div>
-            <a href="adminpanel.htm">Open admin panel</a><br>
+            <a href="adminpanel">Open admin panel</a><br>
             <input type="file" name="xlfile" id="xlf" /><br />
             <input type="button" id="test1" name="buttonparse" value="Update database" onclick="parsejson();"/><br />
             <pre id="out" name="jsontext"></pre>
