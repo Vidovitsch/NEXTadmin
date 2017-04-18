@@ -37,6 +37,7 @@
             </div>    
             <div class="create-modify-event">
                 <div class="createType">
+                    <span class="fieldSpan" style="padding-left: 5%;">EventDate type to create:</span>
                     <select class="dbType" id="dbType">
                         <option></option>
                         <c:forEach items="${types}" var="id">
@@ -45,16 +46,16 @@
                     </select>
                 </div>
                 <c:forEach var="row" items="${fields}">
-                    <div class="${row}div fieldDiv" id="${row}div">
+                    <div class="${row}div fieldDiv" style="display: none;" id="${row}div">
                         <span class="fieldSpan">${row}:</span>
                         <input class="form-control fieldInput" type="text" id="${row}" name="${row}" required></br>
                     </div>
                 </c:forEach>    
-                <div class="descriptiondiv fieldDiv" id="${row}div">
+                <div class="descriptiondiv fieldDiv" style="display: none;" id="${row}div">
                     <span class="descriptionSpan">Description:</span><br>
                     <textarea class="form-control" id="description" name="description"></textarea></br>
                 </div>
-                <input id="create-button" class="form-control" type="submit" value="createEvent" onclick/>      
+                <input id="create-button" class="form-control" type="submit" value="createEvent" onclick style="display: none;"/>      
             </div>
         </div>
         
@@ -75,32 +76,63 @@
         var selection = $(this).val();
         switch(selection){
             case "Workshop":
+                unHideEventDateFields()
                 $("#iddiv").hide();
                 $("#imageURLdiv").show();
                 $("#presenterdiv").show();
                 $("#maxUsersdiv").show();
                 break;
             case "Lecture":
+                unHideEventDateFields()
                 $("#iddiv").hide();
                 $("#imageURLdiv").show();
                 $("#presenterdiv").show();
                 $("#maxUsersdiv").hide();
                 break;
             case "Performance":
+                unHideEventDateFields()
                 $("#iddiv").hide();
                 $("#imageURLdiv").show();
                 $("#presenterdiv").hide();
                 $("#maxUsersdiv").hide();
                 break;
             case "None":
+                unHideEventDateFields()
                 $("#iddiv").hide();
                 $("#imageURLdiv").hide();
                 $("#presenterdiv").hide();
                 $("#maxUsersdiv").hide();
                 break;
-                
+            case "":
+                HideEventDateFields();
+                $("#iddiv").hide();
+                $("#imageURLdiv").hide();
+                $("#presenterdiv").hide();
+                $("#maxUsersdiv").hide();
+                break;
        }
    });
+   
+   function unHideEventDateFields(){
+        $("#eventNamediv").show();
+        $("#startTimediv").show();
+        $("#endTimediv").show();
+        $("#datediv").show();
+        $("#locationNamediv").show();
+        $("#iddiv").show();
+        $("#descriptiondiv").show();
+        $("#create-button").show();
+   }
+   
+   function HideEventDateFields(){
+        $("#eventNamediv").hide();
+        $("#startTimediv").hide();
+        $("#endTimediv").hide();
+        $("#datediv").hide();
+        $("#locationNamediv").hide();
+        $("#descriptiondiv").hide();
+        $("#create-button").hide();
+   }
    
    document.getElementById("create-button").onclick = function () {
        var type = document.getElementById("dbType").value;
