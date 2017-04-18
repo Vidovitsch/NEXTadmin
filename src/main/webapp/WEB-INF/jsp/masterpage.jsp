@@ -29,6 +29,7 @@
         <div id="next-header">
             <a href="index.htm"><img id="nav-logo" src="/images/next_logo.png" /></a>
             <ul class="nav-list">
+                <li class="nav-item"><a href="/mapcreation">Map Tool</a></li>
                 <li class="nav-item"><a href="/adminpanel">Activity panel</a></li>
             </ul>
         </div>

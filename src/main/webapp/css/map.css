@@ -1,0 +1,88 @@
+/* div wrappers for radio buttons  */
+.radio-wrapper-s {
+	display: table; /* act like a table */
+	height: 50px;	
+}
+
+.radio-wrapper-m {
+	display: table;
+	height: 75px;
+}
+
+.radio-wrapper-l {
+	display: table;
+	height: 100px;
+}
+
+/* main-radio button blocks based on radio wrappers */
+.radio-wrapper-s label,
+.radio-wrapper-m label,
+.radio-wrapper-l label {
+  display: table-cell; /* act like a table cell */
+  width: 100px;
+  text-align: center; /* put the text horizontally in the middle */
+  vertical-align: middle; /* put the text vertically in the middle */
+  background-color: #B0C4DE;
+  color: #ffffff !important;
+  font-weight: bold !important;
+  border: 1px solid black;
+}
+
+.radio-wrapper-s input[type="radio"],
+.radio-wrapper-m input[type="radio"],
+.radio-wrapper-l input[type="radio"] {
+  display: none;
+}
+
+.radio-wrapper-s input[type="radio"]:checked + label,
+.radio-wrapper-m input[type="radio"]:checked + label,
+.radio-wrapper-l input[type="radio"]:checked + label {
+  background-color: #A9A9A9;
+}
+
+.radio-wrapper-s .label-default:hover,
+.radio-wrapper-m .label-default:hover,
+.radio-wrapper-l .label-default:hover {
+  background-color: #A9A9A9;
+  color: #ffffff !important;
+}
+
+/* option-radio button blocks */
+.radio-wrapper-s .label-option,
+.radio-wrapper-m .label-option,
+.radio-wrapper-l .label-option {
+  display: table-cell;
+  width: 100px;
+  background-color: blue;
+  border: 1px solid black;
+}
+
+.radio-wrapper-s input[type="radio"]:checked + .label-option,
+.radio-wrapper-m input[type="radio"]:checked + .label-option,
+.radio-wrapper-l input[type="radio"]:checked + .label-option {
+	background-color: purple;
+}
+
+.radio-wrapper-s .label-option:hover,
+.radio-wrapper-m .label-option:hover,
+.radio-wrapper-l .label-option:hover {
+  background-color: green;
+}
+
+/* option-text and input based blocks */
+.radio-wrapper-s .label-visual,
+.radio-wrapper-m .label-visual,
+.radio-wrapper-l .label-visual {
+	display: table-cell;
+	width: 100px;
+	background-color: red;
+	border: 1px solid black;
+}
+
+.radio-wrapper-s .label-visual input[type="text"],
+.radio-wrapper-m .label-visual input[type="text"],
+.radio-wrapper-l .label-visual input[type="text"] {
+	width: 90%;
+}
+
+/* other */

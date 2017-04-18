@@ -29,13 +29,14 @@
     <bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
         <property name="mappings">
             <props>
-                <prop key="index.htm">indexController</prop>
-                <prop key="adminpanel">adminController</prop>
+                <prop key="/index">indexController</prop>
+                <prop key="/adminpanel">adminController</prop>
                 <prop key="/filterList">adminController</prop>
                 <prop key="/createWorkshop">adminController</prop>
                 <prop key="/createLecture">adminController</prop>
                 <prop key="/createPerformance">adminController</prop>
                 <prop key="/createSchoolday">adminController</prop>
+                <prop key="/mapcreation">mapcreationController</prop>
             </props>
         </property>
     </bean>
