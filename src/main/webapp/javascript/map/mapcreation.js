@@ -15,8 +15,6 @@ var selected = null;
 var mouseDown = false;
 var clickDifX, clickDifY;
 
-var countUp = 0;
-
 /*************
  * Functions *
  *************/
@@ -24,27 +22,46 @@ function createComponent(x, y) {
     var obj = document.getElementsByName("drawing-objects");
     if (obj[0].checked) {
         //alert("Rectangle selected.");
-        selected = new rectangle("obj" + (countUp++), x, y, 50, 50);
+        selected = new rectangle(generateNewId(), x, y, 50, 50);
         components.push(selected);
     }
     else if (obj[1].checked) {
         //alert("Table selected.");
-        selected = new table("obj" + (countUp++), x, y, 50, 50, 0);
+        selected = new table(generateNewId(), x, y, 50, 50, 0);
         components.push(selected);
     }
     else if (obj[2].checked) {
         //alert("Circle selected.");
-        selected = new circle("obj" + (countUp++), x, y, 25);
+        selected = new circle(generateNewId(), x, y, 25);
         components.push(selected);
     }
     else if (obj[3].checked) {
         //alert("Line selected.");
-        selected = new line("obj" + (countUp++), x, y);
+        selected = new line(generateNewId(), x, y);
         components.push(selected);
     }
     else if (obj[4].checked) {
         //alert("Text selected.");
     }
+}
+
+function generateNewId() {
+    var countup = 0;
+    var id = "obj" + countup; 
+    while (checkIfIdExists(id)) {
+        id = "obj" + countup++;
+        console.log("New ID: " + id);
+    }
+    return id;
+}
+
+function checkIfIdExists(id) {
+    for (var i = 0; i < components.length; i++) {
+        if (String(id) === String(components[i].id)) {
+            return true;
+        }
+    }
+    return false;
 }
 
 function getSelected() {

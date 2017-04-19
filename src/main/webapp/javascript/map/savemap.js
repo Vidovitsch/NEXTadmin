@@ -66,19 +66,3 @@ function clearMapFromDB() {
     var mapRef = database.ref('Map');
     mapRef.remove();
 }
-
-
-function writeToFirebase(dateTime, content, uid) {
-    var groupID = getGroupID(uid);
-    database.ref('Group/' + groupID + '/Messages/' + dateTime).set({
-        Content: content,
-        UID: uid
-    });
-};
-
-
-
-//var messages = database.ref("Group/0/Messages");
-//messages.on("child_added", function(snapshot) {
-//var message = snapshot.val();
-//var userName = database.ref("User/" + message.UID + "/Name").valueOf();
