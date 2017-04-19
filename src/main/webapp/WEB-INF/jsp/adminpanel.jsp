@@ -51,7 +51,7 @@
                         <input class="form-control fieldInput" type="text" id="${row}" name="${row}" required></br>
                     </div>
                 </c:forEach>    
-                <div class="descriptiondiv fieldDiv" id="descriptiondiv" style="display: none;" id="${row}div">
+                <div class="descriptiondiv fieldDiv" id="descriptiondiv" style="display: none;">
                     <span class="descriptionSpan">Description:</span><br>
                     <textarea class="form-control" id="description" name="description"></textarea></br>
                 </div>
