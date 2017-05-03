@@ -24,30 +24,26 @@ function createComponent(x, y) {
         //alert("Rectangle selected.");
         selected = new rectangle(generateNewId(), x, y, 50, 50);
         components.push(selected);
-    }
-    else if (obj[1].checked) {
+    } else if (obj[1].checked) {
         //alert("Table selected.");
         selected = new table(generateNewId(), x, y, 50, 50, 0);
         components.push(selected);
-    }
-    else if (obj[2].checked) {
+    } else if (obj[2].checked) {
         //alert("Circle selected.");
         selected = new circle(generateNewId(), x, y, 25);
         components.push(selected);
-    }
-    else if (obj[3].checked) {
+    } else if (obj[3].checked) {
         //alert("Line selected.");
         selected = new line(generateNewId(), x, y);
         components.push(selected);
-    }
-    else if (obj[4].checked) {
+    } else if (obj[4].checked) {
         //alert("Text selected.");
     }
 }
 
 function generateNewId() {
     var countup = 0;
-    var id = "obj" + countup; 
+    var id = "obj" + countup;
     while (checkIfIdExists(id)) {
         id = "obj" + countup++;
         console.log("New ID: " + id);
@@ -72,8 +68,7 @@ function getSelected() {
             redrawAll();
             mapCreationOptions();
             break;
-        }
-        else {
+        } else {
             selected = null;
         }
     }
@@ -88,7 +83,7 @@ function redrawAll() {
         if (selected == null) {
             components[i].strokeStyle = "#000000";
         }
-        components[i].draw(); 
+        components[i].draw();
     }
 }
 
@@ -98,102 +93,95 @@ function redrawAll() {
 function handleMouseDown(e) {
     mouseX = parseInt(e.clientX - offsetX);
     mouseY = parseInt(e.clientY - offsetY);
-	
-	mouseDown = true;
-		
-	if (selected != null) {
-		// Measure the click difference between the mouseclick and the selected XY
-		// This has to happen in the mousedown as this is the part where the dragging/resizing will start
-		clickDifX = mouseX - selected.x;
-		clickDifY = mouseY - selected.y;
-		if (selected.type == "line") {
-			selected.checkCloseEnough(mouseX, mouseY);
-		}
-		else {
-			selected.checkCloseEnough(mouseX, mouseY);
-		}
 
-	}
+    mouseDown = true;
+
+    if (selected != null) {
+        // Measure the click difference between the mouseclick and the selected XY
+        // This has to happen in the mousedown as this is the part where the dragging/resizing will start
+        clickDifX = mouseX - selected.x;
+        clickDifY = mouseY - selected.y;
+        if (selected.type == "line") {
+            selected.checkCloseEnough(mouseX, mouseY);
+        } else {
+            selected.checkCloseEnough(mouseX, mouseY);
+        }
+
+    }
 }
 
 
 function handleMouseMove(e) {
     mouseX = parseInt(e.clientX - offsetX);
     mouseY = parseInt(e.clientY - offsetY);
-		
-	document.getElementById("coordinates").innerHTML = "<b>X:</b> " + mouseX + ", <b>Y:</b> " + mouseY;
-	
-	if (resize.checked && mouseDown) {	
-		if (selected != null) {
-			var newX = mouseX - clickDifX;
-			var newY = mouseY - clickDifY;
-			
-			if (selected.isResizing()) {
-				selected.resizeTo(mouseX, mouseY);
-				mapCreationOptions();
-			}
-			else {
-				selected.moveTo(newX, newY);
-				mapCreationOptions();
-			}
-			redrawAll();
-		}
-	}
+
+    document.getElementById("coordinates").innerHTML = "<b>X:</b> " + mouseX + ", <b>Y:</b> " + mouseY;
+
+    if (resize.checked && mouseDown) {
+        if (selected != null) {
+            var newX = mouseX - clickDifX;
+            var newY = mouseY - clickDifY;
+
+            if (selected.isResizing()) {
+                selected.resizeTo(mouseX, mouseY);
+                mapCreationOptions();
+            } else {
+                selected.moveTo(newX, newY);
+                mapCreationOptions();
+            }
+            redrawAll();
+        }
+    }
 }
 
 function handleMouseUp(e) {
-	mouseX = parseInt(e.clientX - offsetX);
-	mouseY = parseInt(e.clientY - offsetY);
-	
-	mouseDown = false;
-	if (selected != null) {
-		clickDifX = mouseX - selected.width;
-		clickDifY = mouseY - selected.height;
-		selected.stopResize();
-		selected.strokeStyle = "#000000";
-	}
+    mouseX = parseInt(e.clientX - offsetX);
+    mouseY = parseInt(e.clientY - offsetY);
+
+    mouseDown = false;
+    if (selected != null) {
+        clickDifX = mouseX - selected.width;
+        clickDifY = mouseY - selected.height;
+        selected.stopResize();
+        selected.strokeStyle = "#000000";
+    }
 }
 
 function handleMouseClick(e) {
-	mouseX = parseInt(e.clientX - offsetX);
-	mouseY = parseInt(e.clientY - offsetY);	
-		
-	if (draw.checked) {
-		selected = null;
-		createComponent(mouseX, mouseY);
-	}
-	else if (resize.checked) {	
-		getSelected();
-		redrawAll();
-		mapCreationOptions();
-	}
-	else if (modify.checked) {
-		getSelected();
-		redrawAll();
-		mapCreationOptions();
-	}
+    mouseX = parseInt(e.clientX - offsetX);
+    mouseY = parseInt(e.clientY - offsetY);
+
+    if (draw.checked) {
+        selected = null;
+        createComponent(mouseX, mouseY);
+    } else if (resize.checked) {
+        getSelected();
+        redrawAll();
+        mapCreationOptions();
+    } else if (modify.checked) {
+        getSelected();
+        redrawAll();
+        mapCreationOptions();
+    }
 }
 
 function onKeyup(e) {
-	if(e.keyCode == 46) {
-		if (selected != null) {
-			var confirmation = prompt("You are about to delete " + selected.id + ". Are you sure? (YES / NO)");
-			if (confirmation.toUpperCase() == "YES") {
-				var remove;
-				for (var i = 0; i < components.length; i++)
-				{
-					if (components[i] == selected) {
-						remove = i;
-						break;
-					}
-				}
-				components.splice(remove, 1);
-				console.log("REMOVED " + remove + ", LEFT: " + components.length);
-				selected = null;
-				redrawAll();
-			}
-		}
-	}
+    if (e.keyCode == 46) {
+        if (selected != null) {
+            var remove;
+            for (var i = 0; i < components.length; i++)
+            {
+                if (components[i] == selected) {
+                    remove = i;
+                    break;
+                }
+            }
+            components.splice(remove, 1);
+            console.log("REMOVED " + remove + ", LEFT: " + components.length);
+            selected = null;
+            redrawAll();
+        }
+    }
 }
 
 //
