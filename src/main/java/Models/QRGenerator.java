@@ -14,6 +14,7 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import static java.lang.Math.random;
 import java.math.BigInteger;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 
 /**
  *
@@ -33,7 +34,14 @@ public class QRGenerator {
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot ds) {
-                generateQRCodes((int) ds.getChildrenCount());
+                ArrayList<String> groupLocations = new ArrayList();
+                for (DataSnapshot key : ds.getChildren()) {
+                    //If statemen for safety reasons
+                    //Prevents overriding current qr-codes
+                    if (!key.getValue().toString().equals("null")) {
+                        generateQRCode(key.getKey());
+                    }
+                }
             }
 
             @Override
@@ -43,10 +51,14 @@ public class QRGenerator {
         });
     }
     
-    private void generateQRCodes(int amount) {
+    private void generateQRCode(String key) {
         SecureRandom sRandom = new SecureRandom();
-        for (int i = 0; i < amount; i++) {
-            String text = new BigInteger(130, sRandom).toString(32);
-        }
+        String text = new BigInteger(130, sRandom).toString(32);
+        saveToFirebase(key, text);
+    }
+    
+    private void saveToFirebase(String key, String value) {
+        Firebase ref = firebase.child("GroupLocation").child(key);
+        ref.setValue(value);
     }
 }
