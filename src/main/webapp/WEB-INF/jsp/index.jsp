@@ -14,12 +14,14 @@
     <body>
         <div class="wrapper">
             <div class="leftpart">
-                <ol id="studentlist" type="1">
+                <button class="button_base b01_simple_rollover copymailsbutton" id="buttoncopytoclipboard" onclick="copyToClipboard();">Copy student mails</button>
+                <input type="text" id="searchText" class="studentsearchbar" onkeyup="searchfunction()" placeholder="Search for students..">
+                <ol id="studentlist" class="borderedlist" type="1">
                 </ol>
             </div>
             <div class="middlepart">
+                <label id="selectedstudent" class="selectedstudentlabel">Selected student: none</label>
                 <button class="button_base b01_simple_rollover" id="buttonremovestudent">Remove selected student</button></br>
-                <button class="button_base b01_simple_rollover" id="buttoncopytoclipboard" onclick="copyToClipboard();">Copy student mails</button>
             </div>
             <div class="rightpart">
                 <label class="button_base b01_simple_rollover">Browse<input type="file" name="xlfile" id="xlf" style="display: none;"></input>
@@ -51,7 +53,7 @@
                     /*jshint browser:true */
                     /*global XLSX */
                     var clipboardstudents = "";
-
+                    var studentlist = [];
                     function copyToClipboard() {
                         var aux = document.createElement("input");
                         aux.setAttribute("value", clipboardstudents);
@@ -67,15 +69,44 @@
                     {
                         document.getElementById('adminlog').innerHTML += logtext + "&#13;&#10;";
                     }
+                    function searchfunction() {
+                        // Declare variables
+                        var input, filter, ul, li, a, i;
+                        input = document.getElementById('searchText');
+                        filter = input.value.toUpperCase();
+                        ul = document.getElementById("studentlist");
+                        li = ul.getElementsByTagName('li');
 
+                        // Loop through all list items, and hide those who don't match the search query
+                        for (i = 0; i < li.length; i++) {
+                            a = li[i].getElementsByTagName("a")[0];
+                            if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                                li[i].style.display = "";
+                            } else {
+                                li[i].style.display = "none";
+                            }
+                        }
+                    }
+                    
                     function setstudentlist() {
                         var updatedrecords = 0;
                         var studenthtml;
+                        var student;
                         firebase.database().ref('/User').once("value", function (snapshot) {
                             snapshot.forEach(function (childSnapshot) {
                                 var mail = childSnapshot.val().Mail;
+                                student = {
+                                    email: mail,
+                                    executesearch: function (searchtext, htmlelement) {
+                                        if (this.mail.indexOf(searchtext) !== -1)
+                                        {
+                                            var curstudenthtml = "<li>" + mail + "</li>";
+                                            htmlelement.innerHTML += curstudenthtml;
+                                        }
+                                    }};
+                                studentlist.push(student);
                                 updatedrecords++;
-                                studenthtml = "<li>" + mail + "</li>";
+                                studenthtml = "<li><a href='#'>" + mail + "</li>";
                                 document.getElementById('studentlist').innerHTML += studenthtml;
                                 clipboardstudents += mail + ";";
                             });
