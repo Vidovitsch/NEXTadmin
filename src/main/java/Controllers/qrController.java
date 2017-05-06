@@ -6,7 +6,7 @@
 
 package Controllers;
 
-import Models.QRGenerator;
+import Models.QRManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,7 +22,7 @@ public class qrController {
 
     @RequestMapping(value = "/qrcodes", method = RequestMethod.GET)
     public ModelAndView initAdminEventScreen() {
-        new QRGenerator().generate();
+        new QRManager().generate();
         return new ModelAndView("qrcodes");
     }
 }
