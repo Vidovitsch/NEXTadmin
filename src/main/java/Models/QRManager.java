@@ -45,6 +45,9 @@ public class QRManager extends HttpServlet {
         firebase = (Firebase) connector.getConnectionObject();
     }
     
+    /**
+     * Generates a random QR-code for eacht group location on the event
+     */
     public void generate() {
         Firebase ref = firebase.child("GroupLocation");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -66,9 +69,15 @@ public class QRManager extends HttpServlet {
         });
     }
     
+    /**
+     * Generates the QR-code image with a random generated key as content
+     * @throws WriterException 
+     */
     private void generateQRCode() throws WriterException {
+        //Generating a random text
         String text = new BigInteger(130, new SecureRandom()).toString(32);
         
+        //Creating a QR-code based on the generated text
         Hashtable hintMap = new Hashtable();
         hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
@@ -78,6 +87,8 @@ public class QRManager extends HttpServlet {
         BufferedImage image = new BufferedImage(matrixWidth, matrixWidth,
                         BufferedImage.TYPE_INT_RGB);
         image.createGraphics();
+        
+        //Adding graphics to the generated QR-code
         Graphics2D graphics = (Graphics2D) image.getGraphics();
         graphics.setColor(Color.WHITE);
         graphics.fillRect(0, 0, matrixWidth, matrixWidth);
@@ -90,9 +101,15 @@ public class QRManager extends HttpServlet {
             }
         }
         
+        //Saving the generate QR-code to firabase
         saveQRCode(text, image);
     }
     
+    /**
+     * Saves the QR-code to firebase (under 'QRCode')
+     * @param text: key (String format)
+     * @param bImage: value (String format) 
+     */
     private void saveQRCode(String text, BufferedImage bImage) {
         try {
             Firebase ref = firebase.child("QRCode").child(text);
@@ -102,6 +119,12 @@ public class QRManager extends HttpServlet {
         }
     }
     
+    /**
+     * Converts a buffered image to a base64 format
+     * @param bImage
+     * @return a base64 string
+     * @throws IOException 
+     */
     private String toBase64(BufferedImage bImage) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ImageIO.write(bImage, FILE_TYPE, out);
