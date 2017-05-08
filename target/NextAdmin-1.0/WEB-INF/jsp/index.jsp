@@ -20,8 +20,16 @@
                 </ol>
             </div>
             <div class="middlepart">
-                <label id="selectedstudent" class="selectedstudentlabel">Selected student: none</label>
-                <button class="button_base b01_simple_rollover" id="buttonremovestudent">Remove selected student</button></br>
+                <div id='editaccountpart' class='middlepartcontainer'>
+                    <h3>Edit account</h3>
+                    <label id="selectedstudent" class="selectedstudentlabel middlepartitem">Selected student: none</label>
+                    <button class="button_base b01_simple_rollover middlepartitem" id="buttonremovestudent">Remove selected student</button></br>    
+                </div>
+                <div id='createaccountpart' class='middlepartcontainer'>
+                    <h3>Create PiE-Account</h3>
+                    <input type='text' id='createaccountname' class='createaccountname middlepartitem' name='createaccountname' placeholder='Specify account name...'>
+                    <button class="button_base b01_simple_rollover middlepartitem" id="buttoncreateaccount" onclick="createaccount()">Create account</button></br>
+                </div>
             </div>
             <div class="rightpart">
                 <label class="button_base b01_simple_rollover">Browse<input type="file" name="xlfile" id="xlf" style="display: none;"></input>
@@ -75,10 +83,11 @@
                         e = e || window.event;
                         return e.target || e.srcElement;
                     }
-                                        
-                    function updateselectedstudent(studentmail){
+
+                    function updateselectedstudent(studentmail) {
                         selectedstudent = studentmail;
                         document.getElementById('selectedstudent').innerHTML = "Selected student: " + selectedstudent;
+                        updatelog(studentmail + ' is now selected and ready for editing');
                     }
 
                     var olstudents = document.getElementById('studentlist');
@@ -86,8 +95,33 @@
                         var target = getEventTarget(event);
                         updateselectedstudent(target.innerHTML);
                     };
+                    function createaccount() {
+                        var emailvalue = document.getElementsByName("createaccountname")[0].value;
+                        updatelog('creating account with email: ' + emailvalue);
+                        firebase.auth().createUserWithEmailAndPassword(emailvalue, "temp123").then(function (user) {
+                            updatelog('Succesfully created user: ' + user.email);
+                            sendresetmail(user.email);
+                        }).catch(function (error) {
+                            var errorMessage = error.message;
+                            if (errorMessage === "A network error (such as timeout, interrupted connection or unreachable host) has occurred.") {
+                            } else {
+                                updatelog(errorMessage);
+                            }
+                        });
+                    }
 
-                    
+                    function sendresetmail(email) {
+                        firebase.auth().sendPasswordResetEmail(email).then(function () {
+                            updatelog("Mail voor passwordreset verstuurd");
+                        }, function (error) {
+                            var errorMessage = error.message;
+                            if (errorMessage === "A network error (such as timeout, interrupted connection or unreachable host) has occurred.") {
+                            } else {
+                                alert(errorMessage);
+                            }
+                        });
+                    }
+
                     function searchfunction() {
                         // Declare variables
                         var input, filter, ul, li, a, i;
@@ -95,7 +129,6 @@
                         filter = input.value.toUpperCase();
                         ul = document.getElementById("studentlist");
                         li = ul.getElementsByTagName('li');
-
                         // Loop through all list items, and hide those who don't match the search query
                         for (i = 0; i < li.length; i++) {
                             a = li[i].getElementsByTagName("a")[0];
