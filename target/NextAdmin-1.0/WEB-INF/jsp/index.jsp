@@ -53,6 +53,7 @@
                     /*jshint browser:true */
                     /*global XLSX */
                     var clipboardstudents = "";
+                    var selectedstudent = "";
                     var studentlist = [];
                     function copyToClipboard() {
                         var aux = document.createElement("input");
@@ -69,6 +70,24 @@
                     {
                         document.getElementById('adminlog').innerHTML += logtext + "&#13;&#10;";
                     }
+
+                    function getEventTarget(e) {
+                        e = e || window.event;
+                        return e.target || e.srcElement;
+                    }
+                                        
+                    function updateselectedstudent(studentmail){
+                        selectedstudent = studentmail;
+                        document.getElementById('selectedstudent').innerHTML = "Selected student: " + selectedstudent;
+                    }
+
+                    var olstudents = document.getElementById('studentlist');
+                    olstudents.onclick = function (event) {
+                        var target = getEventTarget(event);
+                        updateselectedstudent(target.innerHTML);
+                    };
+
+                    
                     function searchfunction() {
                         // Declare variables
                         var input, filter, ul, li, a, i;
@@ -87,7 +106,7 @@
                             }
                         }
                     }
-                    
+
                     function setstudentlist() {
                         var updatedrecords = 0;
                         var studenthtml;
