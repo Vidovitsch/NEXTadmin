@@ -15,15 +15,15 @@ import java.util.ArrayList;
  */
 public class QRViewModel {
     
-    private ArrayList<String> qrCodes;
+    private ArrayList<String> codes;
     private String generated;
 
     public ArrayList<String> getCodes() {
-        return qrCodes;
+        return this.codes;
     }
 
-    public void setCodesGenerated(ArrayList<String> qrCodes) {
-        this.qrCodes = qrCodes;
+    public void setCodes(ArrayList<String> codes) {
+        this.codes = codes;
     }
     
     public String getGenerated() {
@@ -31,10 +31,6 @@ public class QRViewModel {
     }
     
     public void setGenerated(String generated) {
-        if (!generated.equals("false") || !generated.equals("true")) {
-            generated = "false";
-        } else {
-            generated = "true";
-        }
+        this.generated = generated;
     }
 }

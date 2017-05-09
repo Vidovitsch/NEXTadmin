@@ -27,16 +27,17 @@ public class qrController {
     private QRManager qrManager = new QRManager();
     
     @RequestMapping(value = "/qrcodes", method = RequestMethod.GET)
-    public ModelAndView initAdminEventScreen() {
+    public ModelAndView initAdminEventScreen() {       
         ModelAndView mav = new ModelAndView("qrcodes");
         QRViewModel vModel = new QRViewModel();
         if (qrManager.checkGenerated()) {
             vModel.setGenerated("true");
-            vModel.setCodesGenerated(qrManager.getQRCodes());
+            vModel.setCodes(qrManager.getQRCodes());
         } else {
+            System.out.println("not generated");
             vModel.setGenerated("false");
         }
-        mav.addObject(vModel);
+        mav.addObject("vModel", vModel);
         
         return mav;
     }
@@ -46,10 +47,10 @@ public class qrController {
             ModelMap model) {
         qrManager.generate();
         vModel.setGenerated("true");
-        vModel.setCodesGenerated(qrManager.getQRCodes());
+        vModel.setCodes(qrManager.getQRCodes());
         
         ModelAndView mav = new ModelAndView("qrcodes");
-        mav.addObject(vModel);
+        mav.addObject("vModel", vModel);
         
         return mav;
     }

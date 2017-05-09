@@ -8,3 +8,48 @@ and open the template in the editor.
     Author     : David
 */
 
+#form-gen-codes {
+    text-align: center;
+}
+
+#btn-gen-codes {
+    color: white;
+    background-color: #333333;
+    border-radius: 15px;
+    font-size: 50px;
+    border: none;
+    font-weight: 400;
+    padding: 25px;
+    margin-top: 15%;
+}
+
+#btn-gen-codes:hover {
+    cursor: pointer;
+    background-color: #555555;
+}
+
+#forms-default {
+    display: inline-block;
+    padding: 10px;
+}
+
+#form-default {
+    float: left;
+    padding-right: 10px;
+}
+
+.btn-form-default {
+    width: 175px;
+    color: white;
+    background-color: #333333;
+    border-radius: 5px;
+    font-size: 15px;
+    border: none;
+    font-weight: 400;
+    padding: 5px;
+}
+
+.btn-form-default:hover {
+    cursor: pointer;
+    background-color: #555555;
+}
