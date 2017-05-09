@@ -6,6 +6,8 @@
 
 package Models;
 
+import java.util.ArrayList;
+
 
 /**
  *
@@ -13,22 +15,26 @@ package Models;
  */
 public class QRViewModel {
     
-    private String codesGenerated;
-    private String oldLog;
+    private ArrayList<String> qrCodes;
+    private String generated;
 
-    public String getCodesGenerated() {
-        return codesGenerated;
+    public ArrayList<String> getCodes() {
+        return qrCodes;
     }
 
-    public void setCodesGenerated(String codesGenerated) {
-        this.codesGenerated = codesGenerated;
+    public void setCodesGenerated(ArrayList<String> qrCodes) {
+        this.qrCodes = qrCodes;
     }
-
-    public String getOldLog() {
-        return oldLog;
+    
+    public String getGenerated() {
+        return this.generated;
     }
-
-    public void setOldLog(String oldLog) {
-        this.oldLog = oldLog;
+    
+    public void setGenerated(String generated) {
+        if (!generated.equals("false") || !generated.equals("true")) {
+            generated = "false";
+        } else {
+            generated = "true";
+        }
     }
 }

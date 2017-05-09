@@ -12,11 +12,14 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <spring:url value="/css/qrcodes.css" var="qrcodes" />
         <link href="${qrcodes}" rel="stylesheet" />
+    
         <title>QR-codes</title>
     </head>
     <body>
         <div class="wrapper">
-            <h1>QR-codes</h1>
+            <div id="no-qrcodes">
+                <input type="submit" value="Generate QR-codes" name="Submit" id="frm1_submit" />
+            </div>
         </div>
     </body>
 </html>

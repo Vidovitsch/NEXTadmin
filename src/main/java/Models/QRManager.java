@@ -1,5 +1,6 @@
 package Models;
 
+import Database.DBEventModifier;
 import Database.FBConnector;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -15,9 +16,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
-import static java.lang.Math.random;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -36,6 +35,9 @@ public class QRManager extends HttpServlet {
     
     private final static int SIZE = 125;
     private final static String FILE_TYPE = "png";
+    private Object lock;
+    private boolean done = false;
+    private boolean generated;
     
     private static Firebase firebase;
     
@@ -60,6 +62,7 @@ public class QRManager extends HttpServlet {
                         Logger.getLogger(QRManager.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
+                unlockFXThread();
             }
 
             @Override
@@ -67,6 +70,50 @@ public class QRManager extends HttpServlet {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
         });
+        lockFXThread();
+    }
+    
+    
+    public ArrayList<String> getQRCodes() {
+        final ArrayList<String> qrCodes = new ArrayList();
+        Firebase ref = firebase.child("QRCode");
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot ds) {
+                for (DataSnapshot snapshot : ds.getChildren()) {
+                    String base64Image = snapshot.getValue().toString();
+                    qrCodes.add(base64Image);
+                }
+                unlockFXThread();
+            }
+
+            @Override
+            public void onCancelled(FirebaseError fe) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+        });
+        lockFXThread();
+        
+        return qrCodes;
+    }
+    
+    public boolean checkGenerated() {
+        Firebase ref = firebase.child("QRCode");
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot ds) {
+                generated = (ds.getChildrenCount() != 0);
+                unlockFXThread();
+            }
+
+            @Override
+            public void onCancelled(FirebaseError fe) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+        });
+        lockFXThread();
+                
+        return generated;
     }
     
     /**
@@ -126,12 +173,45 @@ public class QRManager extends HttpServlet {
      * @throws IOException 
      */
     private String toBase64(BufferedImage bImage) throws IOException {
+        //Represents data type
+        String prefix = "data:image/png;base64,";
+        
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ImageIO.write(bImage, FILE_TYPE, out);
         byte[] bytes = out.toByteArray();
         byte[] base64bytes = Base64.encodeBase64(bytes);
         String base64Image = new String(base64bytes);
+        String result = prefix + base64Image;
         
-        return base64Image;
+        return result;
+    }
+
+    
+    /**
+     * Tells a random object to wait while in a loop.
+     * The loop stops, and won't cause any unnecessary cpu use.
+     */
+    private void lockFXThread() {
+        lock = new Object();
+        synchronized (lock) {
+            while (!done) {
+                try {
+                    lock.wait();
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(DBEventModifier.class.getName()).log(Level.SEVERE, null, ex);
+                } 
+            }
+        }
+        done = false;
+    }
+    
+    /**
+     * Wakes the lock. The while loop in the method 'lockFXThread' will proceed and break free.
+     */
+    private void unlockFXThread() {
+        synchronized (lock) {
+            done = true;
+            lock.notifyAll();
+        }
     }
 }
