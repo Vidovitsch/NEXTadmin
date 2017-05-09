@@ -43,11 +43,6 @@ public class adminController
         return createModelAndView(null);
     }
     
-    @RequestMapping(value = "/adminpanel", method = RequestMethod.POST)
-    public ModelAndView refreshAdminScreen() {
-        
-    }
-    
     @RequestMapping(value = "/filterList", method = RequestMethod.POST)
     public ModelAndView getFilteredList(@ModelAttribute("SpringWeb") ScheduleableItemModel scheduleableItemModel,
             ModelMap model)

@@ -22,7 +22,7 @@ public class qrController {
 
     @RequestMapping(value = "/qrcodes", method = RequestMethod.GET)
     public ModelAndView initAdminEventScreen() {
-        new QRManager().generate();
+        //new QRManager().generate();
         return new ModelAndView("qrcodes");
     }
 }

@@ -20,10 +20,6 @@
             <div class="middlepart">
                 <button class="button_base b01_simple_rollover" id="buttonremovestudent">Remove selected student</button></br>
                 <button class="button_base b01_simple_rollover" id="buttoncopytoclipboard" onclick="copyToClipboard();">Copy student mails</button>
-                <!-- qr generator form -->
-                <form action="/qrcodes" method="get">
-                    <input type="submit" value="Generate QR-codes" name="Submit" id="frm1_submit" />
-                </form>
             </div>
             <div class="rightpart">
                 <label class="button_base b01_simple_rollover">Browse<input type="file" name="xlfile" id="xlf" style="display: none;"></input>
