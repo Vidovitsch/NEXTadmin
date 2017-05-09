@@ -95,6 +95,7 @@
                         var target = getEventTarget(event);
                         updateselectedstudent(target.innerHTML);
                     };
+
                     function createaccount() {
                         var emailvalue = document.getElementsByName("createaccountname")[0].value;
                         updatelog('creating account with email: ' + emailvalue);
@@ -181,26 +182,28 @@
                     var use_worker = typeof Worker !== 'undefined';
                     var transferable = use_worker;
                     var wtf_mode = false;
+
                     function parsejson() {
                         setdatabasedata();
                     }
+
                     function setdatabasedata() {
                         var updatedrecords = 0;
                         var obj;
+                        var groupid = -1;
                         firebase.database().ref('/User').once("value", function (snapshot) {
                             snapshot.forEach(function (childSnapshot) {
                                 var mail = childSnapshot.val().Mail;
                                 for (i in jsondata.Blad1) {
                                     obj = jsondata.Blad1[i];
-                                    var groupid = -1;
-                                    try {
-                                        if (obj.GroupID == null) {
-                                        } else {
-                                            groupid = obj.GroupID;
+                                    if (mail == obj.mail) {
+                                        try {
+                                            if (childSnapshot.val().GroupID === null) {
+                                            } else {
+                                                groupid = childSnapshot.val().GroupID;
+                                            }
+                                        } catch (err) {
                                         }
-                                    } catch (err) {
-                                    }
-                                    if (mail === obj.mail) {
                                         uid = childSnapshot.key;
                                         firebase.database().ref('User/' + uid).set({
                                             Mail: obj.mail,
@@ -296,19 +299,15 @@
                         });
                         return result;
                     }
+
                     var global_wb;
+
                     function process_wb(wb) {
                         global_wb = wb;
-                        var output = "";
                         jsondata = to_json(wb);
-                        output = JSON.stringify(jsondata, 2, 2);
                         updatelog("Succesfully loaded the excel file");
                         document.getElementById('buttonupdatedatabase').style.backgroundColor = "green";
                         document.getElementById('buttonupdatedatabase').disabled = false;
-                        if (out.innerText === undefined)
-                            out.textContent = output;
-                        else
-                            out.innerText = output;
                         if (typeof console !== 'undefined')
                             console.log("output", new Date());
                     }
