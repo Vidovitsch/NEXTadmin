@@ -97,9 +97,20 @@ public class adminController
     public ModelAndView editItem(@ModelAttribute("SpringWeb") ScheduledItemModel itemToEdit,
             ModelMap model)
     {
-        System.out.println("I got in the method");
-        System.out.println(itemToEdit.getId());
-        return createModelAndView(null);
+        System.out.println(itemToEdit.getId() + " " + itemToEdit.getString());
+        ModelAndView thisView = createModelAndView(null);
+        ScheduleableItemModel selectedItem = null;
+        if(itemToEdit.getString().substring(0, 6).equals("School")){
+            dayModifier = new DBDayModifier();
+            EventDay selectedDay = dayModifier.getDay(itemToEdit.getId());
+            System.out.println(selectedDay.toString());
+        }else{
+            eventModifier = new DBEventModifier();
+            eventModifier.getEvent(itemToEdit.getId());
+            System.out.println("Non school item");
+        }
+        thisView.addObject("selectedItem", selectedItem);
+        return thisView;
     }
 
     private List<String> getEventTypes()

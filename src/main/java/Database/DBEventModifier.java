@@ -193,4 +193,8 @@ public class DBEventModifier implements IModEvent {
             lock.notifyAll();
         }
     }
+
+    public void getEvent(String id) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

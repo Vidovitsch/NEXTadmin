@@ -60,23 +60,7 @@ public class DBDayModifier implements IModDay {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 for (DataSnapshot ds : snapshot.getChildren()) {
-                    String date = (String) ds.child("Date").getValue();
-                    String startTime = (String) ds.child("StartTime").getValue();
-                    String endTime = (String) ds.child("EndTime").getValue();
-                    String locationName = (String) ds.child("LocationName").getValue();
-                    String eventName = (String) ds.child("EventName").getValue();
-                    String description = (String) ds.child("Description").getValue();
-                    String id = (String) ds.getKey();
-                    
-                    EventDay day = new EventDay(eventName);
-                    day.setStartTime(startTime);
-                    day.setEndTime(endTime);
-                    day.setDate(date);
-                    day.setLocationName(locationName);
-                    day.setDescription(description);
-                    day.setId(id);
-                    
-                    days.add(day);
+                    days.add(dsToEventDay(ds));
                 }
                 unlockFXThread();
             }
@@ -117,5 +101,49 @@ public class DBDayModifier implements IModDay {
             done = true;
             lock.notifyAll();
         }
+    }
+    
+    public EventDay getDay(final String id) {
+        System.out.println("in db method");
+        final ArrayList<EventDay> days = new ArrayList();
+        Firebase ref = firebase.child("Days/" + id);
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                System.out.println("found my match");
+                EventDay day = dsToEventDay(snapshot);
+                day.setId(id);
+                days.add(day);
+                unlockFXThread();
+            }
+            
+            @Override
+            public void onCancelled(FirebaseError fe) {
+                System.out.println(fe.toException().toString());
+            }
+        });
+        
+        lockFXThread();
+        return days.get(0);
+    }
+    
+    private EventDay dsToEventDay(DataSnapshot ds){
+        String date = (String) ds.child("Date").getValue();
+        String startTime = (String) ds.child("StartTime").getValue();
+        String endTime = (String) ds.child("EndTime").getValue();
+        String locationName = (String) ds.child("LocationName").getValue();
+        String eventName = (String) ds.child("EventName").getValue();
+        String description = (String) ds.child("Description").getValue();
+        String id = (String) ds.getKey();
+
+        EventDay day = new EventDay(eventName);
+        day.setStartTime(startTime);
+        day.setEndTime(endTime);
+        day.setDate(date);
+        day.setLocationName(locationName);
+        day.setDescription(description);
+        day.setId(id);
+        return day;
     }
 }

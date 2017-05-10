@@ -35,6 +35,10 @@ public class ScheduledItemModel {
     public String getString() {
         return string;
     }
+    
+    public String getStringWithSpecialchars(){
+        return "'" + string + "'";
+    }
 
     public void setString(String string) {
         this.string = string;
