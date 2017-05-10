@@ -93,14 +93,14 @@
                             document.getElementById('adminlog').innerHTML += logtext + "&#13;&#10;";
                         }
 
-                        function hidelog()
-                        {
-                            alert("hide log");
-                            var elem = document.getElementById('adminlog');
-                            elem.parentNode.removeChild(elem);
-                            return false;
+                        function hidelog() {
+                            document.getElementById("adminlog").style.visibility = "hidden";
                         }
-                        
+
+                        function showlog() {
+                            document.getElementById("adminlog").style.visibility = "visible";
+                        }
+
                         function getEventTarget(e) {
                             e = e || window.event;
                             return e.target || e.srcElement;
