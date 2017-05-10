@@ -31,47 +31,47 @@
                 </c:when>    
                 <c:otherwise>
                     <div id="forms-default" />
-                        <form action="/qrcodes" method="post" id="form-default">
-                            <input type="submit" value="Re-generate Codes" name="Submit" class="btn-form-default" />
-                        </form>
-                        <form action="javascript:downloadCodes();" method="post" id="form-default">
-                            <input type="submit" value="Download Codes" name="Submit" class="btn-form-default" />
-                        </form>
-                    </div>
-                    <br>
-                    <c:forEach var="row" items="${vModel.codes}">
-                        <img src="${row}" />
-                    </c:forEach>
-                </c:otherwise>
-            </c:choose>
-        </div>
-        <script src="jszip.js"></script>
-        <script src="FileSaver.js"></script>
-        <script>
-            var config = {
-                apiKey: "AIzaSyCRi0Ma5ekQxhwg-BfQCa6684hMzvR3Z1o",
-                authDomain: "nextweek-b9a58.firebaseapp.com",
-                databaseURL: "https://nextweek-b9a58.firebaseio.com",
-                storageBucket: "nextweek-b9a58.appspot.com",
-                messagingSenderId: "488624254338"
-            };
-            firebase.initializeApp(config);
-            var database = firebase.database();
-            var zip = new JSZip();
-            var img = zip.folder("QR-codes");
-            function downloadCodes() {
-                firebase.database().ref('/QRCode/').once('value').then(function (snapshot) {
-                    snapshot.forEach(function (childSnapshot) {
-                        var key = childSnapshot.key.toString();
-                        var value = childSnapshot.val().toString().split(",")[1];
-                        img.file(key + ".png", value, {base64: true});
-                    });
-                    zip.generateAsync({type:"blob"}).then(function(content) {
-                        // see FileSaver.js
-                        saveAs(content, "QR-codes.zip");
-                    });
+                    <form action="/qrcodes" method="post" id="form-default">
+                        <input type="submit" value="Re-generate Codes" name="Submit" class="btn-form-default" />
+                    </form>
+                    <form action="javascript:downloadCodes();" method="post" id="form-default">
+                        <input type="submit" value="Download Codes" name="Submit" class="btn-form-default" />
+                    </form>
+                </div>
+                <br>
+                <c:forEach var="row" items="${vModel.codes}">
+                    <img src="${row}" />
+                </c:forEach>
+            </c:otherwise>
+        </c:choose>
+    </div>
+    <script src="jszip.js"></script>
+    <script src="FileSaver.js"></script>
+    <script>
+        var config = {
+            apiKey: "AIzaSyCRi0Ma5ekQxhwg-BfQCa6684hMzvR3Z1o",
+            authDomain: "nextweek-b9a58.firebaseapp.com",
+            databaseURL: "https://nextweek-b9a58.firebaseio.com",
+            storageBucket: "nextweek-b9a58.appspot.com",
+            messagingSenderId: "488624254338"
+        };
+        firebase.initializeApp(config);
+        var database = firebase.database();
+        var zip = new JSZip();
+        var img = zip.folder("QR-codes");
+        function downloadCodes() {
+            firebase.database().ref('/QRCode/').once('value').then(function (snapshot) {
+                snapshot.forEach(function (childSnapshot) {
+                    var key = childSnapshot.key.toString();
+                    var value = childSnapshot.val().toString().split(",")[1];
+                    img.file(key + ".png", value, {base64: true});
                 });
-            }
-        </script>
-    </body>
+                zip.generateAsync({type: "blob"}).then(function (content) {
+                    // see FileSaver.js
+                    saveAs(content, "QR-codes.zip");
+                });
+            });
+        }
+    </script>
+</body>
 </html>
