@@ -45,6 +45,8 @@
                 </c:otherwise>
             </c:choose>
         </div>
+        <script src="jszip.js"></script>
+        <script src="FileSaver.js"></script>
         <script>
             var config = {
                 apiKey: "AIzaSyCRi0Ma5ekQxhwg-BfQCa6684hMzvR3Z1o",
@@ -55,16 +57,18 @@
             };
             firebase.initializeApp(config);
             var database = firebase.database();
-            
-            function test() {
-                alert(${codes});
-             
-            }
-            
+            var zip = new JSZip();
+            var img = zip.folder("QR-codes");
             function downloadCodes() {
                 firebase.database().ref('/QRCode/').once('value').then(function (snapshot) {
                     snapshot.forEach(function (childSnapshot) {
-                        window.open(childSnapshot.val().toString());
+                        var key = childSnapshot.key.toString();
+                        var value = childSnapshot.val().toString().split(",")[1];
+                        img.file(key + ".png", value, {base64: true});
+                    });
+                    zip.generateAsync({type:"blob"}).then(function(content) {
+                        // see FileSaver.js
+                        saveAs(content, "QR-codes.zip");
                     });
                 });
             }
