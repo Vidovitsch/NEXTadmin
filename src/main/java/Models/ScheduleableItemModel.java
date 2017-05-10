@@ -10,6 +10,7 @@ package Models;
  * @author Arno Dekkers Los
  */
 public class ScheduleableItemModel {
+    private String id;
     private String eventName;
     private String startTime;
     private String endTime;
@@ -21,6 +22,14 @@ public class ScheduleableItemModel {
     private String imageURL;
     private String maxUsers;
     private String type;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getEventName() {
         return eventName;

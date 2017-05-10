@@ -103,12 +103,15 @@ public class adminController
         if(itemToEdit.getString().substring(0, 6).equals("School")){
             dayModifier = new DBDayModifier();
             EventDay selectedDay = dayModifier.getDay(itemToEdit.getId());
-            System.out.println(selectedDay.getEventName());
+            eventDateToScheduleableItemModel(selectedItem, (EventDate) selectedDay);
+            selectedItem.setType(EventType.None.toString());
         }else{
             eventModifier = new DBEventModifier();
             Event selectedEvent = eventModifier.getEvent(itemToEdit.getId());
+            eventToScheduleableItemModel(selectedItem, selectedEvent);
             System.out.println(selectedEvent.getEventName());
         }
+        selectedItem.setId(itemToEdit.getId());
         thisView.addObject("selectedItem", selectedItem);
         return thisView;
     }
@@ -185,5 +188,29 @@ public class adminController
             }
         }
         return scheduledItems;
+    }
+
+    private void eventDateToScheduleableItemModel(ScheduleableItemModel selectedItem, EventDate selectedDay) {
+        selectedItem.setEventName(selectedDay.getEventName());
+        selectedItem.setDate(selectedDay.getDate());
+        selectedItem.setStartTime(selectedDay.getStartTime());
+        selectedItem.setEndTime(selectedDay.getEndTime());
+        selectedItem.setLocationName(selectedDay.getLocationName());
+        selectedItem.setDescription(selectedDay.getDescription());
+    }
+
+    private void eventToScheduleableItemModel(ScheduleableItemModel selectedItem, Event selectedEvent) {
+        eventDateToScheduleableItemModel(selectedItem, (EventDate)selectedEvent);
+        selectedItem.setImageURL(selectedEvent.getImageURL());
+        selectedItem.setType(selectedEvent.getEventType().toString());
+        switch(selectedEvent.getEventType()){
+            case Workshop:
+                selectedItem.setMaxUsers(Integer.toString(((Workshop)selectedEvent).getMaxUsers()));
+                selectedItem.setPresenter(((Workshop)selectedEvent).getPresenter());
+                break;
+            case Lecture:
+                selectedItem.setPresenter(((Lecture)selectedEvent).getPresenter());
+                break;
+        }
     }
 }
