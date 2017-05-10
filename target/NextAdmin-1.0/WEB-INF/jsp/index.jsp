@@ -14,16 +14,22 @@
     <body>
         <div class="wrapper">
             <div class="leftpart">
-                <ol id="studentlist" type="1">
+                <button class="button_base b01_simple_rollover copymailsbutton" id="buttoncopytoclipboard" onclick="copyToClipboard();">Copy student mails</button>
+                <input type="text" id="searchText" class="studentsearchbar" onkeyup="searchfunction()" placeholder="Search for students..">
+                <ol id="studentlist" class="borderedlist" type="1">
                 </ol>
             </div>
             <div class="middlepart">
-                <button class="button_base b01_simple_rollover" id="buttonremovestudent">Remove selected student</button></br>
-                <button class="button_base b01_simple_rollover" id="buttoncopytoclipboard" onclick="copyToClipboard();">Copy student mails</button>
-                <!-- qr generator form -->
-                <form action="/qrcodes" method="get">
-                    <input type="submit" value="Generate QR-codes" name="Submit" id="frm1_submit" />
-                </form>
+                <div id='editaccountpart' class='middlepartcontainer'>
+                    <h3>Edit account</h3>
+                    <label id="selectedstudent" class="selectedstudentlabel middlepartitem">Selected student: none</label>
+                    <button class="button_base b01_simple_rollover middlepartitem" id="buttonremovestudent">Remove selected student</button></br>    
+                </div>
+                <div id='createaccountpart' class='middlepartcontainer'>
+                    <h3>Create PiE-Account</h3>
+                    <input type='text' id='createaccountname' class='createaccountname middlepartitem' name='createaccountname' placeholder='Specify account name...'>
+                    <button class="button_base b01_simple_rollover middlepartitem" id="buttoncreateaccount" onclick="createaccount()">Create account</button></br>
+                </div>
             </div>
             <div class="rightpart">
                 <label class="button_base b01_simple_rollover">Browse<input type="file" name="xlfile" id="xlf" style="display: none;"></input>
@@ -55,7 +61,8 @@
                     /*jshint browser:true */
                     /*global XLSX */
                     var clipboardstudents = "";
-
+                    var selectedstudent = "";
+                    var studentlist = [];
                     function copyToClipboard() {
                         var aux = document.createElement("input");
                         aux.setAttribute("value", clipboardstudents);
@@ -72,14 +79,87 @@
                         document.getElementById('adminlog').innerHTML += logtext + "&#13;&#10;";
                     }
 
+                    function getEventTarget(e) {
+                        e = e || window.event;
+                        return e.target || e.srcElement;
+                    }
+
+                    function updateselectedstudent(studentmail) {
+                        selectedstudent = studentmail;
+                        document.getElementById('selectedstudent').innerHTML = "Selected student: " + selectedstudent;
+                        updatelog(studentmail + ' is now selected and ready for editing');
+                    }
+
+                    var olstudents = document.getElementById('studentlist');
+                    olstudents.onclick = function (event) {
+                        var target = getEventTarget(event);
+                        updateselectedstudent(target.innerHTML);
+                    };
+
+                    function createaccount() {
+                        var emailvalue = document.getElementsByName("createaccountname")[0].value;
+                        updatelog('creating account with email: ' + emailvalue);
+                        firebase.auth().createUserWithEmailAndPassword(emailvalue, "temp123").then(function (user) {
+                            updatelog('Succesfully created user: ' + user.email);
+                            sendresetmail(user.email);
+                        }).catch(function (error) {
+                            var errorMessage = error.message;
+                            if (errorMessage === "A network error (such as timeout, interrupted connection or unreachable host) has occurred.") {
+                            } else {
+                                updatelog(errorMessage);
+                            }
+                        });
+                    }
+
+                    function sendresetmail(email) {
+                        firebase.auth().sendPasswordResetEmail(email).then(function () {
+                            updatelog("Mail voor passwordreset verstuurd");
+                        }, function (error) {
+                            var errorMessage = error.message;
+                            if (errorMessage === "A network error (such as timeout, interrupted connection or unreachable host) has occurred.") {
+                            } else {
+                                alert(errorMessage);
+                            }
+                        });
+                    }
+
+                    function searchfunction() {
+                        // Declare variables
+                        var input, filter, ul, li, a, i;
+                        input = document.getElementById('searchText');
+                        filter = input.value.toUpperCase();
+                        ul = document.getElementById("studentlist");
+                        li = ul.getElementsByTagName('li');
+                        // Loop through all list items, and hide those who don't match the search query
+                        for (i = 0; i < li.length; i++) {
+                            a = li[i].getElementsByTagName("a")[0];
+                            if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                                li[i].style.display = "";
+                            } else {
+                                li[i].style.display = "none";
+                            }
+                        }
+                    }
+
                     function setstudentlist() {
                         var updatedrecords = 0;
                         var studenthtml;
+                        var student;
                         firebase.database().ref('/User').once("value", function (snapshot) {
                             snapshot.forEach(function (childSnapshot) {
                                 var mail = childSnapshot.val().Mail;
+                                student = {
+                                    email: mail,
+                                    executesearch: function (searchtext, htmlelement) {
+                                        if (this.mail.indexOf(searchtext) !== -1)
+                                        {
+                                            var curstudenthtml = "<li>" + mail + "</li>";
+                                            htmlelement.innerHTML += curstudenthtml;
+                                        }
+                                    }};
+                                studentlist.push(student);
                                 updatedrecords++;
-                                studenthtml = "<li>" + mail + "</li>";
+                                studenthtml = "<li><a href='#'>" + mail + "</li>";
                                 document.getElementById('studentlist').innerHTML += studenthtml;
                                 clipboardstudents += mail + ";";
                             });
@@ -102,26 +182,28 @@
                     var use_worker = typeof Worker !== 'undefined';
                     var transferable = use_worker;
                     var wtf_mode = false;
+
                     function parsejson() {
                         setdatabasedata();
                     }
+
                     function setdatabasedata() {
                         var updatedrecords = 0;
                         var obj;
+                        var groupid = -1;
                         firebase.database().ref('/User').once("value", function (snapshot) {
                             snapshot.forEach(function (childSnapshot) {
                                 var mail = childSnapshot.val().Mail;
                                 for (i in jsondata.Blad1) {
                                     obj = jsondata.Blad1[i];
-                                    var groupid = -1;
-                                    try {
-                                        if (obj.GroupID == null) {
-                                        } else {
-                                            groupid = obj.GroupID;
+                                    if (mail == obj.mail) {
+                                        try {
+                                            if (childSnapshot.val().GroupID === null) {
+                                            } else {
+                                                groupid = childSnapshot.val().GroupID;
+                                            }
+                                        } catch (err) {
                                         }
-                                    } catch (err) {
-                                    }
-                                    if (mail === obj.mail) {
                                         uid = childSnapshot.key;
                                         firebase.database().ref('User/' + uid).set({
                                             Mail: obj.mail,
@@ -217,19 +299,15 @@
                         });
                         return result;
                     }
+
                     var global_wb;
+
                     function process_wb(wb) {
                         global_wb = wb;
-                        var output = "";
                         jsondata = to_json(wb);
-                        output = JSON.stringify(jsondata, 2, 2);
                         updatelog("Succesfully loaded the excel file");
                         document.getElementById('buttonupdatedatabase').style.backgroundColor = "green";
                         document.getElementById('buttonupdatedatabase').disabled = false;
-                        if (out.innerText === undefined)
-                            out.textContent = output;
-                        else
-                            out.innerText = output;
                         if (typeof console !== 'undefined')
                             console.log("output", new Date());
                     }

@@ -24,12 +24,27 @@ span:hover {
 .leftpart{
     float: left;
     width: 30%;
+    max-height: 50%;
+}
+
+.selectedstudentlabel{
+    margin:10px;
+}
+
+.studentsearchbar{
+    width: 90%;
+    padding: 10px;
+    margin: 20px 20px 5px 20px;
+}
+
+.borderedlist{
+    border-style: solid;
+    margin-left: 15px;
     text-align: center;
     align-content: center;
     overflow-y: auto;
-    max-height: 50%;
-    border-style: solid;
-    margin-left: 15px;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 .rightpart{
@@ -68,6 +83,7 @@ ol li:hover{
     float: left;
     width: 30%;
     text-align: center;
+    margin-left: 10px;
 }
 
 #scroll{
@@ -186,6 +202,14 @@ h1,h2,h3,p,div,a, .headline{
     background-color: darkred;
 }
 
+.copymailsbutton{
+    width: 90%;
+}
+
+.deletestudentbutton{
+    width: 90%;
+}
+
 .b05_3d_roll {
     perspective: 500px;
     -webkit-perspective: 500px;
@@ -259,4 +283,16 @@ h1,h2,h3,p,div,a, .headline{
     position: fixed;
     right: 0;
     bottom: 0;
+}
+
+.middlepartitem{
+    width: 80%;
+    margin: 10px;
+}
+
+.middlepartcontainer{
+    border: antiquewhite;
+    border-style: solid;
+    padding: 10px;
+    margin: 5px;
 }
