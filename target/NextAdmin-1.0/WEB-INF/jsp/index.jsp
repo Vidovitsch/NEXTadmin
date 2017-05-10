@@ -29,15 +29,16 @@
                     <h3>Create Assignment</h3>
                     <input type='text' id='createassignmentname' class='createassignmentname middlepartitem' name='createassignmentname' placeholder='Specify assignment name...'>
                     <textarea rows="4" cols="50" name="createassignmentdescription" class="createassignmentdescription middlepartitem" id="createassignmentdescription" placeholder="Description"></textarea>
-                    <button class="button_base b01_simple_rollover middlepartitem" id="buttoncreateaccount" onclick="createaccount()">Submit</button></br>
+                    <button class="button_base b01_simple_rollover middlepartitem middleparthalfbutton" id="buttoncreateassignment" onclick="updateassignment()">Submit</button>
+                    <button class="button_base b01_simple_rollover middlepartitem middleparthalfbutton" id="buttonremoveassignment" onclick="removeselectedassignment()">Remove</button></br>
                     <ol id="assignmentlist" class="borderedlist" type="1">
                     </ol>
                 </div>
             </div>
             <div class="rightpart">
                 <div id='updatestudentdatapart' class='middlepartcontainer'>
-                    <h3>Update student data</h3>buttonbrowseexcel
-                    <label class="button_base b01_simple_rollover middlepartitem ">Browse<input type="file" name="xlfile" id="xlf" style="display: none;"></input>
+                    <h3>Update student data</h3>
+                    <label class="button_base b01_simple_rollover middlepartitem buttonbrowseexcel">Browse<input type="file" name="xlfile" id="xlf" style="display: none;"></input>
                     </label>
                     <input class="button_base b01_simple_rollover buttonupdatedatabase middlepartitem" disabled type="button" id="buttonupdatedatabase" name="buttonparse" value="Update database" onclick="parsejson();"/><br />
                 </div>
@@ -72,8 +73,9 @@
                         /*global XLSX */
                         var clipboardstudents = "";
                         var selectedstudent = "";
+                        var selectedassignmentname = "";
                         var studentlist = [];
-                        var assignmentlist;
+                        var assignmentlist = [];
                         function copyToClipboard() {
                             var aux = document.createElement("input");
                             aux.setAttribute("value", clipboardstudents);
@@ -106,6 +108,24 @@
                             var target = getEventTarget(event);
                             updateselectedstudent(target.innerHTML);
                         };
+
+                        var olassignments = document.getElementById('assignmentlist');
+                        olassignments.onclick = function (event) {
+                            var target = getEventTarget(event);
+                            updateselectedassignment(target.innerHTML);
+                        };
+
+                        function updateselectedassignment(assignmentname) {
+                            selectedassignmentname = assignmentname;
+                            var arrayLength = assignmentlist.length;
+                            for (var i = 0; i < arrayLength; i++) {
+                                if (assignmentlist[i].name === assignmentname)
+                                {
+                                    document.getElementsByName("createassignmentname")[0].value = assignmentlist[i].name;
+                                    document.getElementsByName("createassignmentdescription")[0].value = assignmentlist[i].description;
+                                }
+                            }
+                        }
 
                         function createaccount() {
                             var emailvalue = document.getElementsByName("createaccountname")[0].value;
@@ -168,7 +188,6 @@
                                                 htmlelement.innerHTML += curstudenthtml;
                                             }
                                         }};
-                                    studentlist.push(student);
                                     updatedrecords++;
                                     studenthtml = "<li><a href='#'>" + mail + "</li>";
                                     document.getElementById('studentlist').innerHTML += studenthtml;
@@ -179,6 +198,61 @@
                             });
                         }
                         setstudentlist();
+
+                        function setassignmentlist() {
+                            var updatedrecords = 0;
+                            var assigmenthtml;
+                            var assignmentname;
+                            assignmentlist = [];
+                            document.getElementById('assignmentlist').innerHTML = "";
+                            firebase.database().ref('/Assignment').once("value", function (snapshot) {
+                                snapshot.forEach(function (childSnapshot) {
+                                    assignmentname = childSnapshot.key;
+                                    assignmentdsc = childSnapshot.val().Description;
+                                    assignment = {
+                                        name: assignmentname,
+                                        description: assignmentdsc}
+                                    assignmentlist.push(assignment);
+                                    updatedrecords++;
+                                    assigmenthtml = "<li><a href='#'>" + assignmentname + "</li>";
+                                    document.getElementById('assignmentlist').innerHTML += assigmenthtml;
+                                });
+                                var updatetext = updatedrecords + " assignments loaded";
+                                updatelog(updatetext);
+                            });
+                        }
+                        setassignmentlist();
+
+                        function updateassignment() {
+                            var assignment;
+                            var assignmentname = document.getElementsByName("createassignmentname")[0].value;
+                            var assignmentdescription = document.getElementsByName("createassignmentdescription")[0].value;
+                            assignment = {
+                                name: assignmentname,
+                                description: assignmentdescription};
+                            firebase.database().ref('Assignment/' + assignment.name).set({
+                                Description: assignment.description
+                            }).then(finishassignmentupdate(assignmentname));
+                        }
+
+                        function removeselectedassignment() {
+                            var assignmentname = document.getElementsByName("createassignmentname")[0].value;
+                            firebase.database().ref('Assignment/' + assignmentname).remove().then(finishassigmentremoval(assignmentname));
+                        }
+
+                        function finishassigmentremoval(assignmentname) {
+                            updatelog(assignmentname + " has been removed");
+                            document.getElementsByName("createassignmentname")[0].value = "";
+                            document.getElementsByName("createassignmentdescription")[0].value = "";
+                            setassignmentlist();
+                        }
+
+                        function finishassignmentupdate(assignmentname)
+                        {
+                            updatelog(assignmentname + " has been updated/created");
+                            setassignmentlist();
+                        }
+
                         var jsondata;
                         var X = XLSX;
                         var XW = {
