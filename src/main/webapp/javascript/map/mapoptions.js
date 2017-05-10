@@ -335,7 +335,7 @@ function createFileOptions() {
     return layout;
 }
 function createUpdateModification() {
-    var layout = '<label class="label-visual" onclick="updateElement()">Update</label>';
+    var layout = '<input type="button" class="soflow-btn-l" value="Update" onclick="updateElement()" />';//'<label class="label-visual" onclick="updateElement()">Update</label>';
     return layout;
 }
 
@@ -591,6 +591,42 @@ function createNewElement() {
         // unimplemented
     }
     redrawAll();
+}
+
+function createLocationForm() {
+	var layout = "";
+	if (document.getElementById("btn-add-location").value == "+") {
+		layout = '<div><span class="soflow-regular-txt">NAME</span>' +
+		'<input class="soflow-input-txt" type="text" id="locationform-name" placeholder="name" /></div><br>' +
+		'<div><span class="soflow-regular-txt">ADDRESS</span>' +
+		'<input class="soflow-input-txt" type="text" id="locationform-address" placeholder="address" /></div><br>' + 		
+		'<div><span class="soflow-regular-txt">POSTAL</span>' +
+		'<input class="soflow-input-txt" type="text" id="locationform-postal" placeholder="postal" /></div><br>' + 		
+		'<div><input type="button" class="soflow-btn" value="SAVE" onclick="console.log(\'saving\')" /></div>';
+		// Set button from + to -
+		document.getElementById("btn-add-location").value = "-";
+	}
+	else {
+		// Set button from - to +
+		document.getElementById("btn-add-location").value = "+";
+	}	
+	document.getElementById("location-form").innerHTML = layout;
+}
+
+function createFloorForm() {
+	var layout = "";
+	if (document.getElementById("btn-add-floor").value == "+") {
+		layout = '<div><span class="soflow-regular-txt">FLOORNAME</span>' + 
+		'<input class="soflow-input-txt" type="text" id="floorform-floorname" placeholder="floorname" /></div><br>' + 
+		'<div><input type="button" class="soflow-btn" value="SAVE" onclick="console.log(\'saving\')" /></div>';
+		// Set button from + to -
+		document.getElementById("btn-add-floor").value = "-";
+	}
+	else {
+		// Set button from + to -
+		document.getElementById("btn-add-floor").value = "+";	
+	}
+	document.getElementById("floor-form").innerHTML = layout;
 }
 
 mapCreationOptions();

@@ -18,7 +18,7 @@
         <title>Mapcreation</title>
     </head>
     <body>
-        <div class="wrapper">
+        <div class="map-wrapper" style="border-top: 1px solid white">
             <div class="menu">
                 <div class="menu-item">
                     <!-- show the locations and an option to add a new location -->
@@ -29,7 +29,11 @@
                         <option>Fontys Rachelsmolen</option>
                         <option>Klokgebouw</option>
                     </select>
-                    <input type="button" class="soflow-btn" id="btn-add-location" value="+" onclick="console.log('function to add location')" />
+                    <input type="button" class="soflow-btn" id="btn-add-location" value="+" onclick="createLocationForm()" />
+                    
+                    <div id="location-form" class="info-form">
+                        <!-- Dynamic location adding when pressed on + -->
+                    </div>
                 </div>
                 <div class="menu-item">
                     <!-- show the floors and an option to add a new floor -->
@@ -40,11 +44,15 @@
                         <option>Begane grond</option>
                         <option>Verdieping 1</option>
                     </select>
-                    <input type="button" class="soflow-btn" id="btn-add-floor" value="+" onclick="console.log('function to add floor')" />
-                </div>
-                    <div class="menu-item-title">
-                        <span class="soflow-title">Floor items</span>
+                    <input type="button" class="soflow-btn" id="btn-add-floor" value="+" onclick="createFloorForm()" />
+                    
+                    <div id="floor-form" class="info-form">
+                        <!-- Dynamic floor adding when pressed on + -->
                     </div>
+                </div>
+                <div class="menu-item-title">
+                    <span class="soflow-title">Floor items</span>
+                </div>
                 <div id="menu-items" class="menu-item">
                     <!-- show selectable rooms, tables, walls, etc. -->
                     <!-- dynamic divs being added called "floor-item" -->
