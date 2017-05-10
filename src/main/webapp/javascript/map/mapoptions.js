@@ -1,78 +1,78 @@
-var draw = document.getElementById("option-draw");
-var resize = document.getElementById("option-resize");
-var modify = document.getElementById("option-modify");
-var file = document.getElementById("option-file");
+var draw = document.getElementById("option-create");
+//var resize = document.getElementById("option-resize");
+var modify = document.getElementById("option-edit");
+//var file = document.getElementById("option-file");
 
 function mapCreationOptions() {
     if (draw.checked) {
         // Open div container
-        document.getElementById("dynamic_options").innerHTML = '<div class="radio-wrapper-m">' +
+        document.getElementById("dynamic-options").innerHTML = '<div class="radio-wrapper-m">' +
         // Radio button: Rectangle
-        '<input id="option_rectangle" type="radio" name="drawing-objects" value="rectangle" checked>' +
-        '<label class="label-option" for="option_rectangle"><img src="/images/map/rectangle.png" width="64px" height="64px" /></label>' +
+        '<input id="option-rectangle" type="radio" name="drawing-objects" value="rectangle" checked>' +
+        '<label class="label-option" for="option-rectangle"><img src="/images/map/rectangle.png" width="64px" height="64px" /></label>' +
         // Radio button: Table
-        '<input id="option_table" type="radio" name="drawing-objects" value="table">' +
-        '<label class="label-option" for="option_table"><img src="/images/map/table.png" width="64px" height="64px" /></label>' +
+        '<input id="option-table" type="radio" name="drawing-objects" value="table">' +
+        '<label class="label-option" for="option-table"><img src="/images/map/table.png" width="64px" height="64px" /></label>' +
         // Radio button: Circle
-        '<input id="option_circle" type="radio" name="drawing-objects" value="circle">' +
-        '<label class="label-option" for="option_circle"><img src="/images/map/circle.png" width="64px" height="64px" /></label>' +
+        '<input id="option-circle" type="radio" name="drawing-objects" value="circle">' +
+        '<label class="label-option" for="option-circle"><img src="/images/map/circle.png" width="64px" height="64px" /></label>' +
         // Radio button: Line
-        '<input id="option_line" type="radio" name="drawing-objects" value="line">' +
-        '<label class="label-option" for="option_line"><img src="/images/map/line.png" width="64px" height="64px" /></label>' +
+        '<input id="option-line" type="radio" name="drawing-objects" value="line">' +
+        '<label class="label-option" for="option-line"><img src="/images/map/line.png" width="64px" height="64px" /></label>' +
         // Radio button: Text
-        '<input id="option_text" type="radio" name="drawing-objects" value="text">' +
-        '<label class="label-option" for="option_text"><img src="/images/map/txt.png" width="64px" height="64pxpx" /></label>' +
+        '<input id="option-text" type="radio" name="drawing-objects" value="text">' +
+        '<label class="label-option" for="option-text"><img src="/images/map/txt.png" width="64px" height="64pxpx" /></label>' +
         // Close div container
         '</div>';
     }
-    else if (resize.checked) {
+    /*else if (resize.checked) {
         if (selected == null) {
-            document.getElementById("dynamic_options").innerHTML = "Nothing to see here, move on..";
+            document.getElementById("dynamic-options").innerHTML = "Nothing to see here, move on..";
         }
         else if (selected.type == "rectangle") {
-            document.getElementById("dynamic_options").innerHTML = createRectangleResize();
+            document.getElementById("dynamic-options").innerHTML = createRectangleResize();
         }
         else if(selected.type == "table") {
-            document.getElementById("dynamic_options").innerHTML = createTableResize();
+            document.getElementById("dynamic-options").innerHTML = createTableResize();
         }
         else if (selected.type == "circle") {
-            document.getElementById("dynamic_options").innerHTML = createCircleResize();
+            document.getElementById("dynamic-options").innerHTML = createCircleResize();
         }
         else if (selected.type == "line") {
-            document.getElementById("dynamic_options").innerHTML = createLineResize();
+            document.getElementById("dynamic-options").innerHTML = createLineResize();
         }
         else if (selected.type == "text") {
             // TO DO
         }
-    }
+    }*/
     else if (modify.checked) {
         // Open div container
         if (selected == null) {
-            document.getElementById("dynamic_options").innerHTML = createNewModifications();
+            document.getElementById("dynamic-options").innerHTML = createNewModifications();
         }
         else if (selected.type == "rectangle") {
-            document.getElementById("dynamic_options").innerHTML = createRectangleModifications();
+            document.getElementById("dynamic-options").innerHTML = createRectangleModifications();
             document.getElementById("option-style").selectedIndex = 1;
         }
         else if (selected.type == "table") {
-            document.getElementById("dynamic_options").innerHTML = createTableModifications();
+            document.getElementById("dynamic-options").innerHTML = createTableModifications();
             document.getElementById("option-style").selectedIndex = 2
         }
         else if (selected.type == "circle") {
-            document.getElementById("dynamic_options").innerHTML = createCircleModifications();
+            document.getElementById("dynamic-options").innerHTML = createCircleModifications();
             document.getElementById("option-style").selectedIndex = 3;
         }
         else if (selected.type == "line") {
-            document.getElementById("dynamic_options").innerHTML = createLineModifications();
+            document.getElementById("dynamic-options").innerHTML = createLineModifications();
             document.getElementById("option-style").selectedIndex = 4;
         }
         else if (selected.type == "text") {
-            document.getElementById("dynamic_options").innerHTML = createTextModifications();
+            document.getElementById("dynamic-options").innerHTML = createTextModifications();
             document.getElementById("option-style").selectedIndex = 5;
         }
     }
     else if (file.checked) {
-        document.getElementById("dynamic_options").innerHTML = createFileOptions();
+        document.getElementById("dynamic-options").innerHTML = createFileOptions();
     }
 }
 
@@ -499,7 +499,7 @@ function createSpecifiedElementForm() {
     }
 	
     // Add the create option 
-    layout += '<label class="label-visual" onclick="createNewElement()">Create</label>';
+    layout += '<input type="button" class="soflow-btn-l" value="Create" onclick="createNewElement()" />';
     document.getElementById("modify-div").innerHTML = layout;
 }
 

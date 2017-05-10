@@ -1,16 +1,16 @@
+// Canvas + Context
 var canvas = document.getElementById("map");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
+//canvas.width = window.innerWidth;
+//canvas.height = window.innerHeight;
 var ctx = canvas.getContext("2d");
-
-// Set the canvas offsets
 var canvasOffset = $("#map").offset();
 var offsetX = canvasOffset.left;
 var offsetY = canvasOffset.top;
 
+// Object lists
 var components = [];
 
+// Selection
 var selected = null;
 var mouseDown = false;
 var clickDifX, clickDifY;
@@ -117,7 +117,7 @@ function handleMouseMove(e) {
 
     document.getElementById("coordinates").innerHTML = "<b>X:</b> " + mouseX + ", <b>Y:</b> " + mouseY;
 
-    if (resize.checked && mouseDown) {
+    /*if (resize.checked && mouseDown) {
         if (selected != null) {
             var newX = mouseX - clickDifX;
             var newY = mouseY - clickDifY;
@@ -131,7 +131,7 @@ function handleMouseMove(e) {
             }
             redrawAll();
         }
-    }
+    }*/
 }
 
 function handleMouseUp(e) {
@@ -154,10 +154,10 @@ function handleMouseClick(e) {
     if (draw.checked) {
         selected = null;
         createComponent(mouseX, mouseY);
-    } else if (resize.checked) {
+    /*} else if (resize.checked) {
         getSelected();
         redrawAll();
-        mapCreationOptions();
+        mapCreationOptions();*/
     } else if (modify.checked) {
         getSelected();
         redrawAll();
