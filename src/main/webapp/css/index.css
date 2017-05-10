@@ -23,7 +23,7 @@ span:hover {
 
 .leftpart{
     float: left;
-    width: 30%;
+    width: 33%;
     max-height: 50%;
 }
 
@@ -49,8 +49,8 @@ span:hover {
 
 .rightpart{
     float: right;
-    width: 30%;
-    text-align: left;
+    width: 33%;
+    text-align: center;
 }
 
 /* ### ### ### 01 */
@@ -81,7 +81,7 @@ ol li:hover{
 }
 .middlepart{
     float: left;
-    width: 30%;
+    width: 33%;
     text-align: center;
     margin-left: 10px;
 }
@@ -295,4 +295,8 @@ h1,h2,h3,p,div,a, .headline{
     border-style: solid;
     padding: 10px;
     margin: 5px;
+}
+
+.buttonbrowseexcel{
+    display: inline-block;
 }
