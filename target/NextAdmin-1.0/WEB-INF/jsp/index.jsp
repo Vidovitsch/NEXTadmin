@@ -46,6 +46,7 @@
                     <h3>Create PiE-Account</h3>
                     <input type='text' id='createaccountname' class='createaccountname middlepartitem' name='createaccountname' placeholder='Specify account name...'>
                     <button class="button_base b01_simple_rollover middlepartitem" id="buttoncreateaccount" onclick="createaccount()">Create account</button></br>
+                    <button class="button_base b01_simple_rollover buttonremovelog" type="button" id="buttonhidelog" name="buttonhidelog" value="Hide log" onclick="hidelog()"/>Hide log</button><br />
                 </div>
             </div>
             <textarea readonly id="adminlog" class="adminlog" rows="10" cols="70">Log:&#13;&#10;</textarea>
@@ -92,6 +93,14 @@
                             document.getElementById('adminlog').innerHTML += logtext + "&#13;&#10;";
                         }
 
+                        function hidelog()
+                        {
+                            alert("hide log");
+                            var elem = document.getElementById('adminlog');
+                            elem.parentNode.removeChild(elem);
+                            return false;
+                        }
+                        
                         function getEventTarget(e) {
                             e = e || window.event;
                             return e.target || e.srcElement;
