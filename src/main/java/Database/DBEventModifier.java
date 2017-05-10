@@ -85,24 +85,7 @@ public class DBEventModifier implements IModEvent {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 for (DataSnapshot ds : snapshot.getChildren()) {
-                    String id = ds.getKey();
-                    String startTime = (String) ds.child("StartTime").getValue();
-                    String endTime = (String) ds.child("EndTime").getValue();
-                    String date = (String) ds.child("Date").getValue();
-                    String imageURL = (String) ds.child("ImageURL").getValue();
-                    String locationName = (String) ds.child("LocationName").getValue();
-                    String description = (String) ds.child("Description").getValue();
-                    
-                    Event event = specifyEvent(ds);
-                    event.setId(id);
-                    event.setStartTime(startTime);
-                    event.setEndTime(endTime);
-                    event.setDate(date);
-                    event.setImageURL(imageURL);
-                    event.setLocationName(locationName);
-                    event.setDescription(description);
-                    
-                    events.add(event);
+                    events.add(dsToEvent(ds));
                 }
                 unlockFXThread();
             }
@@ -115,6 +98,47 @@ public class DBEventModifier implements IModEvent {
         
         lockFXThread();
         return events;
+    }
+    
+    public Event getEvent(String id) {
+        final ArrayList<Event> events = new ArrayList();
+        Firebase ref = firebase.child("Event/" + id);
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                events.add(dsToEvent(snapshot));
+                unlockFXThread();
+            }
+            
+            @Override
+            public void onCancelled(FirebaseError fe) {
+                System.out.println(fe.toException().toString());
+            }
+        });
+        
+        lockFXThread();
+        return events.get(0);
+    }
+    
+    private Event dsToEvent(DataSnapshot ds){
+        String id = ds.getKey();
+        String startTime = (String) ds.child("StartTime").getValue();
+        String endTime = (String) ds.child("EndTime").getValue();
+        String date = (String) ds.child("Date").getValue();
+        String imageURL = (String) ds.child("ImageURL").getValue();
+        String locationName = (String) ds.child("LocationName").getValue();
+        String description = (String) ds.child("Description").getValue();
+
+        Event event = specifyEvent(ds);
+        event.setId(id);
+        event.setStartTime(startTime);
+        event.setEndTime(endTime);
+        event.setDate(date);
+        event.setImageURL(imageURL);
+        event.setLocationName(locationName);
+        event.setDescription(description);
+        return event;
     }
     
     private Event specifyEvent(DataSnapshot ds) {
@@ -192,9 +216,5 @@ public class DBEventModifier implements IModEvent {
             done = true;
             lock.notifyAll();
         }
-    }
-
-    public void getEvent(String id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

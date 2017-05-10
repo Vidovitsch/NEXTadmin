@@ -75,34 +75,6 @@ public class DBDayModifier implements IModDay {
         return days;
     }
     
-    /**
-     * Tells a random object to wait while in a loop.
-     * The loop stops, and won't cause any unnecessary cpu use.
-     */
-    private void lockFXThread() {
-        lock = new Object();
-        synchronized (lock) {
-            while (!done) {
-                try {
-                    lock.wait();
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(DBEventModifier.class.getName()).log(Level.SEVERE, null, ex);
-                } 
-            }
-        }
-        done = false;
-    }
-    
-    /**
-     * Wakes the lock. The while loop in the method 'lockFXThread' will proceed and break free.
-     */
-    private void unlockFXThread() {
-        synchronized (lock) {
-            done = true;
-            lock.notifyAll();
-        }
-    }
-    
     public EventDay getDay(final String id) {
         System.out.println("in db method");
         final ArrayList<EventDay> days = new ArrayList();
@@ -145,5 +117,33 @@ public class DBDayModifier implements IModDay {
         day.setDescription(description);
         day.setId(id);
         return day;
+    }
+    
+    /**
+     * Tells a random object to wait while in a loop.
+     * The loop stops, and won't cause any unnecessary cpu use.
+     */
+    private void lockFXThread() {
+        lock = new Object();
+        synchronized (lock) {
+            while (!done) {
+                try {
+                    lock.wait();
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(DBEventModifier.class.getName()).log(Level.SEVERE, null, ex);
+                } 
+            }
+        }
+        done = false;
+    }
+    
+    /**
+     * Wakes the lock. The while loop in the method 'lockFXThread' will proceed and break free.
+     */
+    private void unlockFXThread() {
+        synchronized (lock) {
+            done = true;
+            lock.notifyAll();
+        }
     }
 }

@@ -103,11 +103,11 @@ public class adminController
         if(itemToEdit.getString().substring(0, 6).equals("School")){
             dayModifier = new DBDayModifier();
             EventDay selectedDay = dayModifier.getDay(itemToEdit.getId());
-            System.out.println(selectedDay.toString());
+            System.out.println(selectedDay.getEventName());
         }else{
             eventModifier = new DBEventModifier();
-            eventModifier.getEvent(itemToEdit.getId());
-            System.out.println("Non school item");
+            Event selectedEvent = eventModifier.getEvent(itemToEdit.getId());
+            System.out.println(selectedEvent.getEventName());
         }
         thisView.addObject("selectedItem", selectedItem);
         return thisView;
