@@ -92,6 +92,15 @@ public class adminController
         dayModifier.insertDay(newDay);
         return createModelAndView(null);
     }
+    
+    @RequestMapping(value = "/editItem", method = RequestMethod.POST)
+    public ModelAndView editItem(@ModelAttribute("SpringWeb") ScheduledItemModel itemToEdit,
+            ModelMap model)
+    {
+        System.out.println("I got in the method");
+        System.out.println(itemToEdit.getId());
+        return createModelAndView(null);
+    }
 
     private List<String> getEventTypes()
     {

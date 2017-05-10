@@ -31,7 +31,7 @@
                 </select>
                 <div class="itemList" >
                     <c:forEach var="ScheduledItem" items="${scheduledItems}">
-                        <div class="scheduledItemDiv" id="${ScheduledItem.getId()}">${ScheduledItem.getString()}</div>
+                        <div onclick="post('editItem', {id : ${ScheduledItem.getIdWithSpecialChars()}, string : 'details'});" class="scheduledItemDiv">${ScheduledItem.getString()}</div>
                     </c:forEach>
                 </div>
             </div>    

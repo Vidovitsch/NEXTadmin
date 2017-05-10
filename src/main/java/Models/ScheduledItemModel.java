@@ -13,6 +13,8 @@ public class ScheduledItemModel {
     private String id;
     private String string;
 
+    public ScheduledItemModel(){}
+    
     public ScheduledItemModel(String id, String string) {
         this.id = id;
         this.string = string;
@@ -21,8 +23,22 @@ public class ScheduledItemModel {
     public String getId() {
         return id;
     }
+    
+    public String getIdWithSpecialChars(){
+        return "'" + id + "'";
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getString() {
         return string;
     }
+
+    public void setString(String string) {
+        this.string = string;
+    }
+
+    
 }
