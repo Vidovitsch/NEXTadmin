@@ -13,7 +13,10 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <spring:url value="/css/qrcodes.css" var="qrcodes" />
         <link href="${qrcodes}" rel="stylesheet" />
-    
+        <script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-auth.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-database.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/3.7.2/firebase.js"></script>
         <title>QR-codes</title>
     </head>
     <body>
@@ -31,7 +34,7 @@
                         <form action="/qrcodes" method="post" id="form-default">
                             <input type="submit" value="Re-generate Codes" name="Submit" class="btn-form-default" />
                         </form>
-                        <form action="/qrcodes" method="post" id="form-default">
+                        <form action="javascript:downloadCodes();" method="post" id="form-default">
                             <input type="submit" value="Download Codes" name="Submit" class="btn-form-default" />
                         </form>
                     </div>
@@ -42,5 +45,29 @@
                 </c:otherwise>
             </c:choose>
         </div>
+        <script>
+            var config = {
+                apiKey: "AIzaSyCRi0Ma5ekQxhwg-BfQCa6684hMzvR3Z1o",
+                authDomain: "nextweek-b9a58.firebaseapp.com",
+                databaseURL: "https://nextweek-b9a58.firebaseio.com",
+                storageBucket: "nextweek-b9a58.appspot.com",
+                messagingSenderId: "488624254338"
+            };
+            firebase.initializeApp(config);
+            var database = firebase.database();
+            
+            function test() {
+                alert(${codes});
+             
+            }
+            
+            function downloadCodes() {
+                firebase.database().ref('/QRCode/').once('value').then(function (snapshot) {
+                    snapshot.forEach(function (childSnapshot) {
+                        window.open(childSnapshot.val().toString());
+                    });
+                });
+            }
+        </script>
     </body>
 </html>
