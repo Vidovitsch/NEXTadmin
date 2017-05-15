@@ -25,6 +25,8 @@
                     <label id="selectedstudent" class="selectedstudentlabel middlepartitem">Selected student: none</label>
                     <button class="button_base b01_simple_rollover middlepartitem" id="buttonremovestudent">Remove selected student</button></br>    
                 </div>
+                <ol id="eventlist" class="borderedlist" type="1">
+                </ol>
             </div>
             <div class="rightpart">
                 <button class="button_base b01_simple_rollover buttonremovelog" type="button" id="buttonhidelog" name="buttonhidelog" value="Hide log" onclick="hidelog()"/>Hide log</button>
@@ -143,6 +145,26 @@
                         });
                     }
                     setstudentlist();
+
+                    function seteventlist() {
+                        var updatedrecords = 0;
+                        var eventhtml;
+                        var event;
+                        firebase.database().ref('/Event').once("value", function (snapshot) {
+                            snapshot.forEach(function (childSnapshot) {
+                                var eventname = childSnapshot.val().EventName;
+                                event = {
+                                    Name: eventname
+                                };
+                                updatedrecords++;
+                                eventhtml = "<li><a href='#'>" + eventname + "</li>";
+                                document.getElementById('eventlist').innerHTML += eventhtml;
+                            });
+                            var updatetext = updatedrecords + " events loaded";
+                            updatelog(updatetext);
+                        });
+                    }
+                    seteventlist();
 
                     function setstudentlistgroup() {
                         var updatedrecords = 0;

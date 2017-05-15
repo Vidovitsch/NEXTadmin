@@ -33,7 +33,6 @@
                 </div>
             </div>
             <div class="rightpart">
-
                 <div id='createaccountpart' class='middlepartcontainer'>
                     <h3>Create PiE-Account</h3>
                     <input type='text' id='createaccountname' class='createaccountname middlepartitem' name='createaccountname' placeholder='Specify account name...'>

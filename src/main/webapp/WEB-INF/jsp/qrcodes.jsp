@@ -36,9 +36,9 @@
                         </form>
                     </div>
                 <br>
-                <c:forEach var="row" items="${vModel.codes}">
+               <c:forEach var="row" items="${vModel.codes}">
                     <img src="${row}" />
-                </c:forEach>
+                </c:forEach> 
             </c:otherwise>
         </c:choose>
     </div>
