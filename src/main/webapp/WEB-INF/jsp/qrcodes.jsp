@@ -31,13 +31,10 @@
                 </c:when>    
                 <c:otherwise>
                     <div id="forms-default" />
-                    <form action="/qrcodes" method="post" id="form-default">
-                        <input type="submit" value="Re-generate Codes" name="Submit" class="btn-form-default" />
-                    </form>
-                    <form action="javascript:downloadCodes();" method="post" id="form-default">
-                        <input type="submit" value="Download Codes" name="Submit" class="btn-form-default" />
-                    </form>
-                </div>
+                        <form action="javascript:downloadCodes();" method="post" id="form-default">
+                            <input type="submit" value="Download Codes" name="Submit" class="btn-form-default" />
+                        </form>
+                    </div>
                 <br>
                 <c:forEach var="row" items="${vModel.codes}">
                     <img src="${row}" />
@@ -67,7 +64,6 @@
                     img.file(key + ".png", value, {base64: true});
                 });
                 zip.generateAsync({type: "blob"}).then(function (content) {
-                    // see FileSaver.js
                     saveAs(content, "QR-codes.zip");
                 });
             });
