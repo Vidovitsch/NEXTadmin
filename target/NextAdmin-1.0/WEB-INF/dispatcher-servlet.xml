@@ -38,6 +38,7 @@
                 <prop key="/createSchoolday">adminController</prop>
                 <prop key="/mapcreation">mapcreationController</prop>
                 <prop key="/qrcodes">qrController</prop>
+                <prop key="/studentmanagement">studentManagementController</prop>
             </props>
         </property>
     </bean>
