@@ -14,17 +14,6 @@
     <body>
         <div class="wrapper">
             <div class="leftpart">
-                <button class="button_base b01_simple_rollover copymailsbutton" id="buttoncopytoclipboard" onclick="copyToClipboard();">Copy student mails</button>
-                <input type="text" id="searchText" class="studentsearchbar" onkeyup="searchfunction()" placeholder="Search for students..">
-                <ol id="studentlist" class="borderedlist" type="1">
-                </ol>
-            </div>
-            <div class="middlepart">
-                <div id='editaccountpart' class='middlepartcontainer'>
-                    <h3>Edit account</h3>
-                    <label id="selectedstudent" class="selectedstudentlabel middlepartitem">Selected student: none</label>
-                    <button class="button_base b01_simple_rollover middlepartitem" id="buttonremovestudent">Remove selected student</button></br>    
-                </div>
                 <div id='createassigmentpart' class='middlepartcontainer'>
                     <h3>Create Assignment</h3>
                     <input type='text' id='createassignmentname' class='createassignmentname middlepartitem' name='createassignmentname' placeholder='Specify assignment name...'>
@@ -35,13 +24,16 @@
                     </ol>
                 </div>
             </div>
-            <div class="rightpart">
+            <div class="middlepart">
                 <div id='updatestudentdatapart' class='middlepartcontainer'>
                     <h3>Update student data</h3>
                     <label class="button_base b01_simple_rollover middlepartitem buttonbrowseexcel">Browse<input type="file" name="xlfile" id="xlf" style="display: none;"></input>
                     </label>
                     <input class="button_base b01_simple_rollover buttonupdatedatabase middlepartitem" disabled type="button" id="buttonupdatedatabase" name="buttonparse" value="Update database" onclick="parsejson();"/><br />
                 </div>
+            </div>
+            <div class="rightpart">
+
                 <div id='createaccountpart' class='middlepartcontainer'>
                     <h3>Create PiE-Account</h3>
                     <input type='text' id='createaccountname' class='createaccountname middlepartitem' name='createaccountname' placeholder='Specify account name...'>
@@ -49,12 +41,13 @@
                 </div>
                 <button class="button_base b01_simple_rollover buttonremovelog" type="button" id="buttonhidelog" name="buttonhidelog" value="Hide log" onclick="hidelog()"/>Hide log</button>
             </div>
-            <textarea readonly id="adminlog" class="adminlog" rows="10" cols="70">Log:&#13;&#10;</textarea>
-            <script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-app.js"></script>
-            <script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-auth.js"></script>
-            <script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-database.js"></script>
-            <script src="https://www.gstatic.com/firebasejs/3.7.2/firebase.js"></script>
-            <script>
+        </div>
+        <textarea readonly id="adminlog" class="adminlog" rows="10" cols="70">Log:&#13;&#10;</textarea>
+        <script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-auth.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-database.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/3.7.2/firebase.js"></script>
+        <script>
                     // Initialize Firebase
                     var config = {
                         apiKey: "AIzaSyCRi0Ma5ekQxhwg-BfQCa6684hMzvR3Z1o",
@@ -64,12 +57,12 @@
                         messagingSenderId: "488624254338"
                     };
                     firebase.initializeApp(config);
-            </script>
-            <script src="dist/cpexcel.js"></script>
-            <script src="shim.js"></script>
-            <script src="jszip.js"></script>
-            <script src="xlsx.js"></script>
-            <script>
+        </script>
+        <script src="dist/cpexcel.js"></script>
+        <script src="shim.js"></script>
+        <script src="jszip.js"></script>
+        <script src="xlsx.js"></script>
+        <script>
                     /*jshint browser:true */
                     /*global XLSX */
                     var clipboardstudents = "";
@@ -77,16 +70,6 @@
                     var selectedassignmentname = "";
                     var studentlist = [];
                     var assignmentlist = [];
-                    function copyToClipboard() {
-                        var aux = document.createElement("input");
-                        aux.setAttribute("value", clipboardstudents);
-                        document.body.appendChild(aux);
-                        aux.select();
-                        document.execCommand("copy");
-                        document.body.removeChild(aux);
-                        updatelog("Attending students copied to clipboard");
-                        updatelog("Ready to paste emails in your email-client");
-                    }
 
                     function updatelog(logtext)
                     {
@@ -105,18 +88,6 @@
                         e = e || window.event;
                         return e.target || e.srcElement;
                     }
-
-                    function updateselectedstudent(studentmail) {
-                        selectedstudent = studentmail;
-                        document.getElementById('selectedstudent').innerHTML = "Selected student: " + selectedstudent;
-                        updatelog(studentmail + ' is now selected and ready for editing');
-                    }
-
-                    var olstudents = document.getElementById('studentlist');
-                    olstudents.onclick = function (event) {
-                        var target = getEventTarget(event);
-                        updateselectedstudent(target.innerHTML);
-                    };
 
                     var olassignments = document.getElementById('assignmentlist');
                     olassignments.onclick = function (event) {
@@ -160,77 +131,6 @@
                             } else {
                                 alert(errorMessage);
                             }
-                        });
-                    }
-
-                    function searchfunction() {
-                        // Declare variables
-                        var input, filter, ul, li, a, i;
-                        input = document.getElementById('searchText');
-                        filter = input.value.toUpperCase();
-                        ul = document.getElementById("studentlist");
-                        li = ul.getElementsByTagName('li');
-                        // Loop through all list items, and hide those who don't match the search query
-                        for (i = 0; i < li.length; i++) {
-                            a = li[i].getElementsByTagName("a")[0];
-                            if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
-                                li[i].style.display = "";
-                            } else {
-                                li[i].style.display = "none";
-                            }
-                        }
-                    }
-
-                    function setstudentlist() {
-                        var updatedrecords = 0;
-                        var studenthtml;
-                        var student;
-                        firebase.database().ref('/User').once("value", function (snapshot) {
-                            snapshot.forEach(function (childSnapshot) {
-                                var mail = childSnapshot.val().Mail;
-                                student = {
-                                    email: mail,
-                                    executesearch: function (searchtext, htmlelement) {
-                                        if (this.mail.indexOf(searchtext) !== -1)
-                                        {
-                                            var curstudenthtml = "<li>" + mail + "</li>";
-                                            htmlelement.innerHTML += curstudenthtml;
-                                        }
-                                    }};
-                                updatedrecords++;
-                                studenthtml = "<li><a href='#'>" + mail + "</li>";
-                                document.getElementById('studentlist').innerHTML += studenthtml;
-                                clipboardstudents += mail + ";";
-                            });
-                            var updatetext = updatedrecords + " students loaded";
-                            updatelog(updatetext);
-                        });
-                    }
-                    setstudentlist();
-
-                    function setstudentlistgroup() {
-                        var updatedrecords = 0;
-                        var studenthtml;
-                        var student;
-                        firebase.database().ref('/User').once("value", function (snapshot) {
-                            snapshot.forEach(function (childSnapshot) {
-                                var mail = childSnapshot.val().Mail;
-                                student = {
-                                    email: mail,
-                                    executesearch: function (searchtext, htmlelement) {
-                                        if (this.mail.indexOf(searchtext) !== -1)
-                                        {
-                                            var curstudenthtml = "<li>" + mail + "</li>";
-                                            htmlelement.innerHTML += curstudenthtml;
-                                        }
-                                    }};
-                                updatedrecords++;
-                                studenthtml = "<li><a href='#'>" + mail + "</li>";
-                                document.getElementById('studentlist').innerHTML += studenthtml;
-                                clipboardstudents += mail + ";";
-                            });
-                            var updatetext = updatedrecords + " students loaded";
-                            updatelog(updatetext);
                         });
                     }
 
@@ -469,6 +369,6 @@
                     }
                     if (xlf.addEventListener)
                         xlf.addEventListener('change', handleFile, false);
-            </script>
+        </script>
     </body>
 </html>
