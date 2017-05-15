@@ -62,13 +62,13 @@
         <script src="jszip.js"></script>
         <script src="xlsx.js"></script>
         <script>
-                    /*jshint browser:true */
-                    /*global XLSX */
-                    var clipboardstudents = "";
-                    var selectedstudent = "";
-                    var selectedassignmentname = "";
-                    var studentlist = [];
-                    var assignmentlist = [];
+                        /*jshint browser:true */
+                        /*global XLSX */
+                        var clipboardstudents = "";
+                        var selectedstudent = "";
+                        var selectedassignmentname = "";
+                        var studentlist = [];
+                        var assignmentlist = [];
 
                     function updatelog(logtext)
                     {
