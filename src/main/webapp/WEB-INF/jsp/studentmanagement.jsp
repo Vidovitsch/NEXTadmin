@@ -5,7 +5,8 @@
     "http://www.w3.org/TR/html4/loose.dtd">
 <%! int fontSize;%> 
 <%! int maxfontSize = 3;%> 
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
     <head>
         <spring:url value="/css/index.css" var="mainCSS" />
@@ -25,9 +26,14 @@
                     <label id="selectedstudent" class="selectedstudentlabel middlepartitem">Selected student: none</label>
                     <button class="button_base b01_simple_rollover middlepartitem" id="buttonremovestudent">Remove selected student</button></br>    
                 </div>
+                <div id="workshop-list">
+                    <c:forEach items="${types}" var="id">
+                        <option value="${id}">${id}</option>
+                    </c:forEach>
+                </div>
             </div>
             <div class="rightpart">
-                <button class="button_base b01_simple_rollover buttonremovelog" type="button" id="buttonhidelog" name="buttonhidelog" value="Hide log" onclick="hidelog()"/>Hide log</button>
+                
             </div>
         </div>
         <textarea readonly id="adminlog" class="adminlog" rows="10" cols="70">Log:&#13;&#10;</textarea>
