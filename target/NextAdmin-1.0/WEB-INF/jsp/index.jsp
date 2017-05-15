@@ -49,12 +49,13 @@
                     <button class="button_base b01_simple_rollover buttonremovelog" type="button" id="buttonhidelog" name="buttonhidelog" value="Hide log" onclick="hidelog()"/>Hide log</button><br />
                 </div>
             </div>
-            <textarea readonly id="adminlog" class="adminlog" rows="10" cols="70">Log:&#13;&#10;</textarea>
-            <script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-app.js"></script>
-            <script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-auth.js"></script>
-            <script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-database.js"></script>
-            <script src="https://www.gstatic.com/firebasejs/3.7.2/firebase.js"></script>
-            <script>
+        </div>
+        <textarea readonly id="adminlog" class="adminlog" rows="10" cols="70">Log:&#13;&#10;</textarea>
+        <script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-auth.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-database.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/3.7.2/firebase.js"></script>
+        <script>
                         // Initialize Firebase
                         var config = {
                             apiKey: "AIzaSyCRi0Ma5ekQxhwg-BfQCa6684hMzvR3Z1o",
@@ -64,12 +65,12 @@
                             messagingSenderId: "488624254338"
                         };
                         firebase.initializeApp(config);
-            </script>
-            <script src="dist/cpexcel.js"></script>
-            <script src="shim.js"></script>
-            <script src="jszip.js"></script>
-            <script src="xlsx.js"></script>
-            <script>
+        </script>
+        <script src="dist/cpexcel.js"></script>
+        <script src="shim.js"></script>
+        <script src="jszip.js"></script>
+        <script src="xlsx.js"></script>
+        <script>
                         /*jshint browser:true */
                         /*global XLSX */
                         var clipboardstudents = "";
@@ -443,6 +444,6 @@
                         }
                         if (xlf.addEventListener)
                             xlf.addEventListener('change', handleFile, false);
-            </script>
+        </script>
     </body>
 </html>

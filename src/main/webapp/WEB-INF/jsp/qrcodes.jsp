@@ -42,7 +42,7 @@
             </c:otherwise>
         </c:choose>
     </div>
-    <script src="jszip.js"></script>
+    <script src="jszip_1.js"></script>
     <script src="FileSaver.js"></script>
     <script>
         var config = {
