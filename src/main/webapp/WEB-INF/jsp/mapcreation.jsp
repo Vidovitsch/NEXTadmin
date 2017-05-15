@@ -99,6 +99,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
         <script src="/javascript/map/rectangle.js"></script> <!-- rectangle class -->
         <script src="/javascript/map/table.js"></script> <!-- table class -->
+        <script src="/javascript/map/room.js"></script> <!-- room class -->
         <script src="/javascript/map/circle.js"></script> <!-- circle class -->
         <script src="/javascript/map/line.js"></script> <!-- line class -->
         <script src="/javascript/map/mapcreation.js"></script> <!-- mapcreation tool -->

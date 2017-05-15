@@ -20,6 +20,12 @@ var clickDifX, clickDifY;
  *************/
 function createComponent(x, y) {
     var obj = document.getElementsByName("drawing-objects");
+    console.log("Creating a component...");
+    console.log("- rect: " + obj[0].checked);
+    console.log("- table: " + obj[1].checked);
+    console.log("- room: " + obj[2].checked);
+    console.log("- circle: " + obj[3].checked);
+    console.log("- line: " + obj[4].checked);
     if (obj[0].checked) {
         //alert("Rectangle selected.");
         selected = new rectangle(generateNewId(), x, y, 50, 50);
@@ -29,15 +35,17 @@ function createComponent(x, y) {
         selected = new table(generateNewId(), x, y, 50, 50, 0);
         components.push(selected);
     } else if (obj[2].checked) {
+        //alert("Room selected.");
+        selected = new room(generateNewId(), x, y, 100, 100, 0, "new_room");
+        components.push(selected);
+    } else if (obj[3].checked) {
         //alert("Circle selected.");
         selected = new circle(generateNewId(), x, y, 25);
         components.push(selected);
-    } else if (obj[3].checked) {
+    } else if (obj[4].checked) {
         //alert("Line selected.");
         selected = new line(generateNewId(), x, y);
         components.push(selected);
-    } else if (obj[4].checked) {
-        //alert("Text selected.");
     }
 }
 

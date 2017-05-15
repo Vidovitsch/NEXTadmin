@@ -38,8 +38,8 @@ var room = (function () {
         ctx.beginPath();
         ctx.rect(this.x, this.y, this.width, this.height);
         ctx.font = "18px Arial";
-        ctx.fillText(this.roomname, (this.x + this.width / 2) - 6);
-        ctx.fillText(this.capacity, (this.x + this.width / 2) - 6, (this.y + this.height / 2) + 6);
+        ctx.fillText(this.roomname, (this.x + 5), (this.y + 20));
+        ctx.fillText("Cap.: " + this.capacity, (this.x + 5), (this.y + 40));
         ctx.strokeStyle = this.strokeStyle;
         ctx.lineWidth = 5;
         ctx.stroke();
@@ -128,7 +128,7 @@ var room = (function () {
     }
     // toString() value for writing to the firebase
     room.prototype.toString = function() {
-        return String(this.type + ";" + this.x + ";" + this.y + ";" + this.width + ";" + this.height + ";" + this.number);
+        return String(this.type + ";" + this.x + ";" + this.y + ";" + this.width + ";" + this.height + ";" + this.capacity + ";" + this.roomname);
     }
     return room;
 })();
