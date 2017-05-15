@@ -5,8 +5,16 @@
  */
 package Controllers;
 
+import Database.DBEventModifier;
+import Database.DBGroupModifier;
+import Database.IModEvent;
+import Database.IModGroup;
+import Models.Event;
+import Models.Group;
 import Models.QRViewModel;
 import Models.StudentManagerViewModel;
+import Models.Workshop;
+import java.util.ArrayList;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -18,23 +26,21 @@ import org.springframework.web.servlet.ModelAndView;
  * @author Michiel van Eijkeren
  */
 @Controller
-public class studentManagementController
-{
+public class studentManagementController {
+    
     @RequestMapping(value = "/studentmanagement", method = RequestMethod.GET)
     public ModelAndView studentmanagementrequest() {
-        return new ModelAndView("studentmanagement");
+        ModelAndView mav = new ModelAndView("studentmanagement");
+        
+        return mav;
     }
     
     @RequestMapping(value = "/studentmanagement", method = RequestMethod.POST)
     public ModelAndView handleAttend(@ModelAttribute("SpringWeb") StudentManagerViewModel vModel,
             ModelMap model) {
-        return new ModelAndView("studentmanagement");
+        ModelAndView mav = new ModelAndView("studentmanagement");
+        
+        return mav;
     }
-    
-    private StudentManagerViewModel createViewModel() {
-        StudentManagerViewModel vModel = new StudentManagerViewModel();
-        vModel.setGroupSelected(null);
-        vModel.setMailSelected(null);
-        vModel.setWorkshopSelected(null);
-    }
+   
 }

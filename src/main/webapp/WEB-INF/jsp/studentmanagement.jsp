@@ -27,9 +27,7 @@
                     <button class="button_base b01_simple_rollover middlepartitem" id="buttonremovestudent">Remove selected student</button></br>    
                 </div>
                 <div id="workshop-list">
-                    <c:forEach items="${types}" var="id">
-                        <option value="${id}">${id}</option>
-                    </c:forEach>
+                    
                 </div>
             </div>
             <div class="rightpart">

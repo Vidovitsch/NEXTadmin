@@ -16,6 +16,7 @@ import java.util.ArrayList;
 public class StudentManagerViewModel {
 
     private ArrayList<String> groups;
+    private ArrayList<String> workshops;
     private String mailSelected = null;
     private String workshopSelected = null;
     private String groupSelected = null;
@@ -50,5 +51,13 @@ public class StudentManagerViewModel {
     
     public void setGroups(ArrayList<String> groups) {
         this.groups = groups;
+    }
+    
+    public ArrayList<String> getWorkshops() {
+        return this.workshops;
+    }
+    
+    public void setWorkshops(ArrayList<String> workshops) {
+        this.workshops = workshops;
     }
 }
