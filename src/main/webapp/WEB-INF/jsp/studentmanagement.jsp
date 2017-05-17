@@ -140,7 +140,6 @@
                             snapshot.forEach(function (childSnapshot) {
                                 var mail = childSnapshot.val().Mail;
                                 var uid = childSnapshot.key.toString();
-                                alert(uid);
                                 var student = {
                                     email: mail,
                                     id: uid,
@@ -239,7 +238,6 @@
                                 uid = student.id;
                             }
                         });
-                        alert(uid);
                         return uid;
                     }
         </script>
