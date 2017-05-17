@@ -25,11 +25,11 @@
                     <label id="selectedstudent" class="selectedstudentlabel middlepartitem">Selected student: none</label>
                     <button class="button_base b01_simple_rollover middlepartitem" id="buttonremovestudent">Remove selected student</button></br>    
                 </div>
-                <ol id="eventlist" class="borderedlist" type="1">
-                </ol>
+
             </div>
             <div class="rightpart">
-                <button class="button_base b01_simple_rollover buttonremovelog" type="button" id="buttonhidelog" name="buttonhidelog" value="Hide log" onclick="hidelog()"/>Hide log</button>
+                <ol id="eventlist" class="borderedlist" type="1">
+                </ol>
             </div>
         </div>
         <textarea readonly id="adminlog" class="adminlog" rows="10" cols="70">Log:&#13;&#10;</textarea>
