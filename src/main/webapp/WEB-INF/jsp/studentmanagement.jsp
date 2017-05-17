@@ -57,9 +57,9 @@
                     /*global XLSX */
                     var clipboardstudents = "";
                     var selectedstudent = "";
-                    var selectedassignmentname = "";
+                    var selecteventname = "";
                     var studentlist = [];
-                    var assignmentlist = [];
+                    var eventlist = [];
                     function copyToClipboard() {
                         var aux = document.createElement("input");
                         aux.setAttribute("value", clipboardstudents);
@@ -121,23 +121,26 @@
 
                     function setstudentlist() {
                         var updatedrecords = 0;
-                        var studenthtml;
-                        var student;
                         firebase.database().ref('/User').once("value", function (snapshot) {
                             snapshot.forEach(function (childSnapshot) {
                                 var mail = childSnapshot.val().Mail;
-                                student = {
+                                var student = {
                                     email: mail,
+                                    GroupID: childSnapshot.val().GroupID,
                                     executesearch: function (searchtext, htmlelement) {
                                         if (this.mail.indexOf(searchtext) !== -1)
                                         {
-                                            var curstudenthtml = "<li>" + mail + "</li>";
+                                            var curstudenthtml = "<li>" + email + "</li>";
                                             htmlelement.innerHTML += curstudenthtml;
                                         }
-                                    }};
+                                    },
+                                    getlistitemhtml: function () {
+                                        return "<li><a href='#'>" + this.email + "</li>";
+                                    }
+                                };
+                                studentlist.push(student);
                                 updatedrecords++;
-                                studenthtml = "<li><a href='#'>" + mail + "</li>";
-                                document.getElementById('studentlist').innerHTML += studenthtml;
+                                document.getElementById('studentlist').innerHTML += student.getlistitemhtml();
                                 clipboardstudents += mail + ";";
                             });
                             var updatetext = updatedrecords + " students loaded";
