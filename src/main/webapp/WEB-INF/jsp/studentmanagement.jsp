@@ -26,12 +26,10 @@
                     <label id="selectedstudent" class="selectedstudentlabel middlepartitem">Selected student: none</label>
                     <button class="button_base b01_simple_rollover middlepartitem" id="buttonremovestudent">Remove selected student</button></br>    
                 </div>
-                <div id="workshop-list">
-                    
-                </div>
             </div>
             <div class="rightpart">
-                
+                <ol id="eventlist" class="borderedlist" type="1">
+                </ol>
             </div>
         </div>
         <textarea readonly id="adminlog" class="adminlog" rows="10" cols="70">Log:&#13;&#10;</textarea>
@@ -59,9 +57,9 @@
                     /*global XLSX */
                     var clipboardstudents = "";
                     var selectedstudent = "";
-                    var selectedassignmentname = "";
+                    var selecteventname = "";
                     var studentlist = [];
-                    var assignmentlist = [];
+                    var eventlist = [];
                     function copyToClipboard() {
                         var aux = document.createElement("input");
                         aux.setAttribute("value", clipboardstudents);
@@ -123,23 +121,26 @@
 
                     function setstudentlist() {
                         var updatedrecords = 0;
-                        var studenthtml;
-                        var student;
                         firebase.database().ref('/User').once("value", function (snapshot) {
                             snapshot.forEach(function (childSnapshot) {
                                 var mail = childSnapshot.val().Mail;
-                                student = {
+                                var student = {
                                     email: mail,
+                                    GroupID: childSnapshot.val().GroupID,
                                     executesearch: function (searchtext, htmlelement) {
                                         if (this.mail.indexOf(searchtext) !== -1)
                                         {
-                                            var curstudenthtml = "<li>" + mail + "</li>";
+                                            var curstudenthtml = "<li>" + email + "</li>";
                                             htmlelement.innerHTML += curstudenthtml;
                                         }
-                                    }};
+                                    },
+                                    getlistitemhtml: function () {
+                                        return "<li><a href='#'>" + this.email + "</li>";
+                                    }
+                                };
+                                studentlist.push(student);
                                 updatedrecords++;
-                                studenthtml = "<li><a href='#'>" + mail + "</li>";
-                                document.getElementById('studentlist').innerHTML += studenthtml;
+                                document.getElementById('studentlist').innerHTML += student.getlistitemhtml();
                                 clipboardstudents += mail + ";";
                             });
                             var updatetext = updatedrecords + " students loaded";
@@ -147,6 +148,26 @@
                         });
                     }
                     setstudentlist();
+
+                    function seteventlist() {
+                        var updatedrecords = 0;
+                        var eventhtml;
+                        var event;
+                        firebase.database().ref('/Event').once("value", function (snapshot) {
+                            snapshot.forEach(function (childSnapshot) {
+                                var eventname = childSnapshot.val().EventName;
+                                event = {
+                                    Name: eventname
+                                };
+                                updatedrecords++;
+                                eventhtml = "<li><a href='#'>" + eventname + "</li>";
+                                document.getElementById('eventlist').innerHTML += eventhtml;
+                            });
+                            var updatetext = updatedrecords + " events loaded";
+                            updatelog(updatetext);
+                        });
+                    }
+                    seteventlist();
 
                     function setstudentlistgroup() {
                         var updatedrecords = 0;
