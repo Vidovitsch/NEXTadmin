@@ -73,19 +73,29 @@ public class adminController
     public ModelAndView editEvent(@ModelAttribute("SpringWeb") ScheduleableItemModel scheduleableItemModel,
             ModelMap model)
     {
-        System.out.println("in method");
-        System.out.println(scheduleableItemModel.getType());
         EventDate itemToEdit = null;
         if(scheduleableItemModel.getType().equals(EventType.None.toString())){
-            System.out.println("in if");
             itemToEdit = new EventDay(scheduleableItemModel.getEventName());
             addEventDateValues(scheduleableItemModel, (EventDate) itemToEdit);
             ((EventDay)itemToEdit).setId(scheduleableItemModel.getId());
             dayModifier = new DBDayModifier();
             dayModifier.updateDay((EventDay)itemToEdit);
+        }else{
+            eventModifier = new DBEventModifier();
+            if(scheduleableItemModel.getType().equals(EventType.Workshop.toString())){
+                itemToEdit = new Workshop(scheduleableItemModel.getEventName());
+                ((Workshop) itemToEdit).setPresenter(scheduleableItemModel.getPresenter());
+                ((Workshop) itemToEdit).setMaxUsers(Integer.parseInt(scheduleableItemModel.getMaxUsers()));
+            }else if(scheduleableItemModel.getType().equals(EventType.Lecture.toString())){
+                itemToEdit = new Lecture(scheduleableItemModel.getEventName());
+                ((Lecture) itemToEdit).setPresenter(scheduleableItemModel.getPresenter());
+            }else if(scheduleableItemModel.getType().equals(EventType.Performance.toString())){
+                itemToEdit = new Performance(scheduleableItemModel.getEventName());
+            }
+            addEventFieldValues(scheduleableItemModel, (Event)itemToEdit);
+            ((Event)itemToEdit).setId(scheduleableItemModel.getId());
+            eventModifier.updateEvent((Event)itemToEdit);
         }
-       
-        
         return createModelAndView(null);
     }
 

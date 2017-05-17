@@ -62,7 +62,7 @@ public class DBEventModifier implements IModEvent {
     public void updateEvent(Event event) {
         Map<String, String> data = new HashMap();
         putEventValues(event, data);
-        Firebase ref = firebase.child("Event/" + event.getId()).push();
+        Firebase ref = firebase.child("Event/" + event.getId());
         ref.setValue(data);
     }
     

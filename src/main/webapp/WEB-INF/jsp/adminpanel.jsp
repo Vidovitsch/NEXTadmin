@@ -193,7 +193,7 @@
                                 if (newEvent === true) {
                                     post('createWorkshop', {eventName: eventName, description: description, startTime: startTime, endTime: endTime, date: date, locationName: locationName, imageURL: imageURL, presenter: presenter, maxUsers: maxUsers});
                                 } else {
-                                    post('editEvent', {id: ${selectedItem.AddSpecialChars(selectedItem.getId())}, eventName: eventName, description: description, startTime: startTime, endTime: endTime, date: date, locationName: locationName, imageURL: imageURL, presenter: presenter, maxUsers: maxUsers});
+                                    post('editEvent', {type: type, id: ${selectedItem.AddSpecialChars(selectedItem.getId())}, eventName: eventName, description: description, startTime: startTime, endTime: endTime, date: date, locationName: locationName, imageURL: imageURL, presenter: presenter, maxUsers: maxUsers});
                                 }
                             }
                         }
@@ -206,7 +206,7 @@
                                 if (newEvent === true) {
                                     post('createLecture', {eventName: eventName, description: description, startTime: startTime, endTime: endTime, date: date, locationName: locationName, imageURL: imageURL, presenter: presenter});
                                 } else {
-                                    alert('toDo edit lecture');
+                                    post('editEvent', {type: type, id: ${selectedItem.AddSpecialChars(selectedItem.getId())}, eventName: eventName, description: description, startTime: startTime, endTime: endTime, date: date, locationName: locationName, imageURL: imageURL, presenter: presenter});
                                 }
                             }
                         }
@@ -216,7 +216,7 @@
                             if (newEvent === true) {
                                 post('createPerformance', {eventName: eventName, description: description, startTime: startTime, endTime: endTime, date: date, locationName: locationName, imageURL: imageURL});
                             } else {
-                                alert('toDo edit Performance');
+                                post('editEvent', {type: type, id: ${selectedItem.AddSpecialChars(selectedItem.getId())}, eventName: eventName, description: description, startTime: startTime, endTime: endTime, date: date, locationName: locationName, imageURL: imageURL});
                             }
                         }
                         break;
@@ -224,7 +224,6 @@
                         if (newEvent === true) {
                             post('createSchoolday', {eventName: eventName, description: description, startTime: startTime, endTime: endTime, date: date, locationName: locationName});
                         } else {
-                            alert(${selectedItem.AddSpecialChars(selectedItem.getId())});
                             post('editEvent', {type: type, id: ${selectedItem.AddSpecialChars(selectedItem.getId())}, eventName: eventName, description: description, startTime: startTime, endTime: endTime, date: date, locationName: locationName});
                         }
                         break;
