@@ -59,7 +59,7 @@
                 <input id="discard-button" onclick="window.location.href='/adminpanel'" class="form-control" type="button" value="discard changes" style="display: none;"/>
                 <input id="save-button" onclick="SentToDB(false)" class="form-control" type="submit" value="save changes" style="display: none;"/>
                 <input id="delete-button" class="form-control" type="submit" value="Delete selected event" style="display: none;"/>
-            </div>create
+            </div>
         </div>
 
 
