@@ -151,14 +151,12 @@ public class adminController
         if(itemToEdit.getString().substring(0, 6).equals("School")){
             dayModifier = new DBDayModifier();
             EventDay selectedDay = dayModifier.getDay(itemToEdit.getId());
-            System.out.println(selectedDay.getEventName());
             eventDateToScheduleableItemModel(selectedItem, (EventDate) selectedDay);
             selectedItem.setType(EventType.None.toString());
         }else{
             eventModifier = new DBEventModifier();
             Event selectedEvent = eventModifier.getEvent(itemToEdit.getId());
             eventToScheduleableItemModel(selectedItem, selectedEvent);
-            System.out.println(selectedEvent.getEventName());
         }
         selectedItem.setId(itemToEdit.getId());
         thisView.addObject("selectedItem", selectedItem);
