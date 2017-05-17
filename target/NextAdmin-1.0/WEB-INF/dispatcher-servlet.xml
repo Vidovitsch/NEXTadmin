@@ -37,6 +37,7 @@
                 <prop key="/createPerformance">adminController</prop>
                 <prop key="/createSchoolday">adminController</prop>
                 <prop key="/editItem">adminController</prop>
+                <prop key="/deleteEvent">adminController</prop>
                 <prop key="/mapcreation">mapcreationController</prop>
                 <prop key="/qrcodes">qrController</prop>
             </props>

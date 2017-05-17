@@ -39,7 +39,6 @@ public class adminController
     @RequestMapping(value = "/adminpanel", method = RequestMethod.GET)
     public ModelAndView initAdminEventScreen()
     {
-        System.out.println("admin");
         return createModelAndView(null);
     }
     
@@ -59,6 +58,23 @@ public class adminController
         ((Workshop) newWorkshop).setPresenter(scheduleableItemModel.getPresenter());
         ((Workshop) newWorkshop).setMaxUsers(Integer.parseInt(scheduleableItemModel.getMaxUsers()));
         eventModifier.insertEvent(newWorkshop);
+        return createModelAndView(null);
+    }
+    
+    @RequestMapping(value = "/deleteEvent", method = RequestMethod.POST)
+    public ModelAndView deleteItem(@ModelAttribute("SpringWeb") ScheduledItemModel scheduledItemModel,
+            ModelMap model)
+    {
+        if(scheduledItemModel.getId() == null || "".equals(scheduledItemModel.getId())){
+            throw new IllegalArgumentException("tried to delete database entry with id null");
+        }
+        if(scheduledItemModel.getString().equals(EventType.None.toString())){
+            System.out.println("yay");
+            dayModifier = new DBDayModifier();
+            EventDay day = new EventDay("day to delete");
+            day.setId(scheduledItemModel.getId());
+            dayModifier.removeDay(day);
+        }
         return createModelAndView(null);
     }
 

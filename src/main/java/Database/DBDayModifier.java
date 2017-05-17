@@ -48,7 +48,8 @@ public class DBDayModifier implements IModDay {
 
     @Override
     public void removeDay(EventDay day) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Firebase ref = firebase.child("Days").child(day.getId());
+        ref.removeValue();
     }
 
     @Override
