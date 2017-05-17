@@ -14,25 +14,39 @@
     <body>
         <div class="wrapper">
             <div class="leftpart">
-                <ol id="studentlist" type="1">
-                </ol>
+                <div id='createassigmentpart' class='middlepartcontainer'>
+                    <h3>Create Assignment</h3>
+                    <input type='text' id='createassignmentname' class='createassignmentname middlepartitem' name='createassignmentname' placeholder='Specify assignment name...'>
+                    <textarea rows="4" cols="50" name="createassignmentdescription" class="createassignmentdescription middlepartitem" id="createassignmentdescription" placeholder="Description"></textarea>
+                    <button class="button_base b01_simple_rollover middlepartitem middleparthalfbutton" id="buttoncreateassignment" onclick="updateassignment()">Submit</button>
+                    <button class="button_base b01_simple_rollover middlepartitem middleparthalfbutton" id="buttonremoveassignment" onclick="removeselectedassignment()">Remove</button></br>
+                    <ol id="assignmentlist" class="borderedlist" type="1">
+                    </ol>
+                </div>
             </div>
             <div class="middlepart">
-                <button class="button_base b01_simple_rollover" id="buttonremovestudent">Remove selected student</button></br>
-                <button class="button_base b01_simple_rollover" id="buttoncopytoclipboard" onclick="copyToClipboard();">Copy student mails</button>
+                <div id='updatestudentdatapart' class='middlepartcontainer'>
+                    <h3>Update student data</h3>
+                    <label class="button_base b01_simple_rollover middlepartitem buttonbrowseexcel">Browse<input type="file" name="xlfile" id="xlf" style="display: none;"></input>
+                    </label>
+                    <input class="button_base b01_simple_rollover buttonupdatedatabase middlepartitem" disabled type="button" id="buttonupdatedatabase" name="buttonparse" value="Update database" onclick="parsejson();"/><br />
+                </div>
             </div>
             <div class="rightpart">
-                <label class="button_base b01_simple_rollover">Browse<input type="file" name="xlfile" id="xlf" style="display: none;"></input>
-                </label>
-                <input class="button_base b01_simple_rollover buttonupdatedatabase" disabled type="button" id="buttonupdatedatabase" name="buttonparse" value="Update database" onclick="parsejson();"/><br />
+                <div id='createaccountpart' class='middlepartcontainer'>
+                    <h3>Create PiE-Account</h3>
+                    <input type='text' id='createaccountname' class='createaccountname middlepartitem' name='createaccountname' placeholder='Specify account name...'>
+                    <button class="button_base b01_simple_rollover middlepartitem" id="buttoncreateaccount" onclick="createaccount()">Create account</button></br>
+                </div>
+                <button class="button_base b01_simple_rollover buttonremovelog" type="button" id="buttonhidelog" name="buttonhidelog" value="Hide log" onclick="hidelog()"/>Hide log</button>
             </div>
-            <textarea readonly id="adminlog" class="adminlog" rows="10" cols="70">Log:&#13;&#10;</textarea>
-            <!-- uncomment the next line here and in xlsxworker.js for encoding support -->
-            <script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-app.js"></script>
-            <script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-auth.js"></script>
-            <script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-database.js"></script>
-            <script src="https://www.gstatic.com/firebasejs/3.7.2/firebase.js"></script>
-            <script>
+        </div>
+        <textarea readonly id="adminlog" class="adminlog" rows="10" cols="70">Log:&#13;&#10;</textarea>
+        <script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-auth.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-database.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/3.7.2/firebase.js"></script>
+        <script>
                     // Initialize Firebase
                     var config = {
                         apiKey: "AIzaSyCRi0Ma5ekQxhwg-BfQCa6684hMzvR3Z1o",
@@ -42,48 +56,137 @@
                         messagingSenderId: "488624254338"
                     };
                     firebase.initializeApp(config);
-            </script>
-            <script src="dist/cpexcel.js"></script>
-            <script src="shim.js"></script>
-            <script src="jszip.js"></script>
-            <script src="xlsx.js"></script>
-            <script>
-                    /*jshint browser:true */
-                    /*global XLSX */
-                    var clipboardstudents = "";
-
-                    function copyToClipboard() {
-                        var aux = document.createElement("input");
-                        aux.setAttribute("value", clipboardstudents);
-                        document.body.appendChild(aux);
-                        aux.select();
-                        document.execCommand("copy");
-                        document.body.removeChild(aux);
-                        updatelog("Attending students copied to clipboard");
-                        updatelog("Ready to paste emails in your email-client");
-                    }
+        </script>
+        <script src="dist/cpexcel.js"></script>
+        <script src="shim.js"></script>
+        <script src="jszip.js"></script>
+        <script src="xlsx.js"></script>
+        <script>
+                        /*jshint browser:true */
+                        /*global XLSX */
+                        var clipboardstudents = "";
+                        var selectedstudent = "";
+                        var selectedassignmentname = "";
+                        var studentlist = [];
+                        var assignmentlist = [];
 
                     function updatelog(logtext)
                     {
                         document.getElementById('adminlog').innerHTML += logtext + "&#13;&#10;";
                     }
 
-                    function setstudentlist() {
+                    function hidelog() {
+                        document.getElementById("adminlog").style.visibility = "hidden";
+                    }
+
+                    function showlog() {
+                        document.getElementById("adminlog").style.visibility = "visible";
+                    }
+
+                    function getEventTarget(e) {
+                        e = e || window.event;
+                        return e.target || e.srcElement;
+                    }
+
+                    var olassignments = document.getElementById('assignmentlist');
+                    olassignments.onclick = function (event) {
+                        var target = getEventTarget(event);
+                        updateselectedassignment(target.innerHTML);
+                    };
+
+                    function updateselectedassignment(assignmentname) {
+                        selectedassignmentname = assignmentname;
+                        var arrayLength = assignmentlist.length;
+                        for (var i = 0; i < arrayLength; i++) {
+                            if (assignmentlist[i].name === assignmentname)
+                            {
+                                document.getElementsByName("createassignmentname")[0].value = assignmentlist[i].name;
+                                document.getElementsByName("createassignmentdescription")[0].value = assignmentlist[i].description;
+                            }
+                        }
+                    }
+
+                    function createaccount() {
+                        var emailvalue = document.getElementsByName("createaccountname")[0].value;
+                        updatelog('creating account with email: ' + emailvalue);
+                        firebase.auth().createUserWithEmailAndPassword(emailvalue, "temp123").then(function (user) {
+                            updatelog('Succesfully created user: ' + user.email);
+                            sendresetmail(user.email);
+                        }).catch(function (error) {
+                            var errorMessage = error.message;
+                            if (errorMessage === "A network error (such as timeout, interrupted connection or unreachable host) has occurred.") {
+                            } else {
+                                updatelog(errorMessage);
+                            }
+                        });
+                    }
+
+                    function sendresetmail(email) {
+                        firebase.auth().sendPasswordResetEmail(email).then(function () {
+                            updatelog("Mail voor passwordreset verstuurd");
+                        }, function (error) {
+                            var errorMessage = error.message;
+                            if (errorMessage === "A network error (such as timeout, interrupted connection or unreachable host) has occurred.") {
+                            } else {
+                                alert(errorMessage);
+                            }
+                        });
+                    }
+
+                    function setassignmentlist() {
                         var updatedrecords = 0;
-                        var studenthtml;
-                        firebase.database().ref('/User').once("value", function (snapshot) {
+                        var assigmenthtml;
+                        var assignmentname;
+                        assignmentlist = [];
+                        document.getElementById('assignmentlist').innerHTML = "";
+                        firebase.database().ref('/Assignment').once("value", function (snapshot) {
                             snapshot.forEach(function (childSnapshot) {
-                                var mail = childSnapshot.val().Mail;
+                                assignmentname = childSnapshot.key;
+                                assignmentdsc = childSnapshot.val().Description;
+                                assignment = {
+                                    name: assignmentname,
+                                    description: assignmentdsc}
+                                assignmentlist.push(assignment);
                                 updatedrecords++;
-                                studenthtml = "<li>" + mail + "</li>";
-                                document.getElementById('studentlist').innerHTML += studenthtml;
-                                clipboardstudents += mail + ";";
+                                assigmenthtml = "<li><a href='#'>" + assignmentname + "</li>";
+                                document.getElementById('assignmentlist').innerHTML += assigmenthtml;
                             });
-                            var updatetext = updatedrecords + " students loaded";
+                            var updatetext = updatedrecords + " assignments loaded";
                             updatelog(updatetext);
                         });
                     }
-                    setstudentlist();
+                    setassignmentlist();
+
+                    function updateassignment() {
+                        var assignment;
+                        var assignmentname = document.getElementsByName("createassignmentname")[0].value;
+                        var assignmentdescription = document.getElementsByName("createassignmentdescription")[0].value;
+                        assignment = {
+                            name: assignmentname,
+                            description: assignmentdescription};
+                        firebase.database().ref('Assignment/' + assignment.name).set({
+                            Description: assignment.description
+                        }).then(finishassignmentupdate(assignmentname));
+                    }
+
+                    function removeselectedassignment() {
+                        var assignmentname = document.getElementsByName("createassignmentname")[0].value;
+                        firebase.database().ref('Assignment/' + assignmentname).remove().then(finishassigmentremoval(assignmentname));
+                    }
+
+                    function finishassigmentremoval(assignmentname) {
+                        updatelog(assignmentname + " has been removed");
+                        document.getElementsByName("createassignmentname")[0].value = "";
+                        document.getElementsByName("createassignmentdescription")[0].value = "";
+                        setassignmentlist();
+                    }
+
+                    function finishassignmentupdate(assignmentname)
+                    {
+                        updatelog(assignmentname + " has been updated/created");
+                        setassignmentlist();
+                    }
+
                     var jsondata;
                     var X = XLSX;
                     var XW = {
@@ -98,26 +201,28 @@
                     var use_worker = typeof Worker !== 'undefined';
                     var transferable = use_worker;
                     var wtf_mode = false;
+
                     function parsejson() {
                         setdatabasedata();
                     }
+
                     function setdatabasedata() {
                         var updatedrecords = 0;
                         var obj;
+                        var groupid = -1;
                         firebase.database().ref('/User').once("value", function (snapshot) {
                             snapshot.forEach(function (childSnapshot) {
                                 var mail = childSnapshot.val().Mail;
                                 for (i in jsondata.Blad1) {
                                     obj = jsondata.Blad1[i];
-                                    var groupid = -1;
-                                    try {
-                                        if (obj.GroupID == null) {
-                                        } else {
-                                            groupid = obj.GroupID;
+                                    if (mail == obj.mail) {
+                                        try {
+                                            if (childSnapshot.val().GroupID === null) {
+                                            } else {
+                                                groupid = childSnapshot.val().GroupID;
+                                            }
+                                        } catch (err) {
                                         }
-                                    } catch (err) {
-                                    }
-                                    if (mail === obj.mail) {
                                         uid = childSnapshot.key;
                                         firebase.database().ref('User/' + uid).set({
                                             Mail: obj.mail,
@@ -213,19 +318,15 @@
                         });
                         return result;
                     }
+
                     var global_wb;
+
                     function process_wb(wb) {
                         global_wb = wb;
-                        var output = "";
                         jsondata = to_json(wb);
-                        output = JSON.stringify(jsondata, 2, 2);
                         updatelog("Succesfully loaded the excel file");
                         document.getElementById('buttonupdatedatabase').style.backgroundColor = "green";
                         document.getElementById('buttonupdatedatabase').disabled = false;
-                        if (out.innerText === undefined)
-                            out.textContent = output;
-                        else
-                            out.innerText = output;
                         if (typeof console !== 'undefined')
                             console.log("output", new Date());
                     }
@@ -267,6 +368,6 @@
                     }
                     if (xlf.addEventListener)
                         xlf.addEventListener('change', handleFile, false);
-            </script>
+        </script>
     </body>
 </html>
