@@ -35,20 +35,32 @@ public class DBDayModifier implements IModDay {
     @Override
     public void insertDay(EventDay day) {
         Map<String, String> data = new HashMap();
+        putDayValues(data, day);
+        Firebase ref = firebase.child("Days").push();
+        ref.setValue(data);
+    }
+    
+    public void updateDay(EventDay day){
+        Map<String, String> data = new HashMap();
+        putDayValues(data, day);
+        //data.put("id", day.getId());
+        Firebase ref = firebase.child("Days").child(day.getId());
+        ref.setValue(data);
+    }
+
+    public void putDayValues(Map<String, String> data, EventDay day){
         data.put("EventName", day.getEventName());
         data.put("StartTime", day.getStartTime());
         data.put("EndTime", day.getEndTime());
         data.put("Date", day.getDate());
         data.put("LocationName", day.getLocationName());
         data.put("Description", day.getDescription());
-        
-        Firebase ref = firebase.child("Days").push();
-        ref.setValue(data);
     }
-
+    
     @Override
     public void removeDay(EventDay day) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Firebase ref = firebase.child("Days").child(day.getId());
+        ref.removeValue();
     }
 
     @Override
@@ -60,23 +72,7 @@ public class DBDayModifier implements IModDay {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 for (DataSnapshot ds : snapshot.getChildren()) {
-                    String date = (String) ds.child("Date").getValue();
-                    String startTime = (String) ds.child("StartTime").getValue();
-                    String endTime = (String) ds.child("EndTime").getValue();
-                    String locationName = (String) ds.child("LocationName").getValue();
-                    String eventName = (String) ds.child("EventName").getValue();
-                    String description = (String) ds.child("Description").getValue();
-                    String id = (String) ds.getKey();
-                    
-                    EventDay day = new EventDay(eventName);
-                    day.setStartTime(startTime);
-                    day.setEndTime(endTime);
-                    day.setDate(date);
-                    day.setLocationName(locationName);
-                    day.setDescription(description);
-                    day.setId(id);
-                    
-                    days.add(day);
+                    days.add(dsToEventDay(ds));
                 }
                 unlockFXThread();
             }
@@ -89,6 +85,50 @@ public class DBDayModifier implements IModDay {
         
         lockFXThread();
         return days;
+    }
+    
+    public EventDay getDay(final String id) {
+        System.out.println("in db method");
+        final ArrayList<EventDay> days = new ArrayList();
+        Firebase ref = firebase.child("Days/" + id);
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                System.out.println("found my match");
+                EventDay day = dsToEventDay(snapshot);
+                day.setId(id);
+                days.add(day);
+                unlockFXThread();
+            }
+            
+            @Override
+            public void onCancelled(FirebaseError fe) {
+                System.out.println(fe.toException().toString());
+            }
+        });
+        
+        lockFXThread();
+        return days.get(0);
+    }
+    
+    private EventDay dsToEventDay(DataSnapshot ds){
+        String date = (String) ds.child("Date").getValue();
+        String startTime = (String) ds.child("StartTime").getValue();
+        String endTime = (String) ds.child("EndTime").getValue();
+        String locationName = (String) ds.child("LocationName").getValue();
+        String eventName = (String) ds.child("EventName").getValue();
+        String description = (String) ds.child("Description").getValue();
+        String id = (String) ds.getKey();
+
+        EventDay day = new EventDay(eventName);
+        day.setStartTime(startTime);
+        day.setEndTime(endTime);
+        day.setDate(date);
+        day.setLocationName(locationName);
+        day.setDescription(description);
+        day.setId(id);
+        return day;
     }
     
     /**
