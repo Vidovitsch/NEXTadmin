@@ -32,7 +32,7 @@
                 <ol id="eventlist" class="borderedlist" type="1">
                 </ol>
                 <label id="selectedWorkshop" class="selectedstudentlabel">Selected workshop: none</label></br>
-                <button class="button_base b01_simple_rollover" id="buttonaddstudent">Add student to workshop</button>
+                <button onclick='addStudentToWorkshop();' class="button_base b01_simple_rollover" id="buttonaddstudent">Add student to workshop</button>
             </div>
         </div>
         <textarea readonly id="adminlog" class="adminlog" rows="10" cols="70">Log:&#13;&#10;</textarea>
@@ -208,6 +208,14 @@
                             var updatetext = updatedrecords + " students loaded";
                             updatelog(updatetext);
                         });
+                    }
+                    
+                    function addStudentToWorkshop() {
+                        if (selectedstudent && selectedeventname) {
+                            
+                        } else {
+                            alert("Select a student and a workshop");
+                        }
                     }
         </script>
     </body>
