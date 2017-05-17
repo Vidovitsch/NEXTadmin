@@ -31,14 +31,14 @@
                 </select>
                 <div class="itemList" >
                     <c:forEach var="ScheduledItem" items="${scheduledItems}">
-                        <div onclick="post('editItem', {id : ${ScheduledItem.getIdWithSpecialChars()}, string : ${ScheduledItem.getStringWithSpecialchars()}});" class="scheduledItemDiv">${ScheduledItem.getString()}</div>
+                        <div onclick="post('editItem', {id : ${ScheduledItem.AddSpecialChars(ScheduledItem.getId())}, string : ${ScheduledItem.AddSpecialChars(ScheduledItem.getString())}});" class="scheduledItemDiv">${ScheduledItem.getString()}</div>
                     </c:forEach>
                 </div>
             </div>    
             <div class="create-modify-event">
                 <div class="createType">
                     <span class="fieldSpan" style="padding-left: 5%;">EventDate type to create:</span>
-                    <select class="dbType" id="dbType">
+                    <select class="dbType" id="dbType" onchange="dbTypeChanged()">
                         <option></option>
                         <c:forEach items="${types}" var="id">
                             <option value="${id}">${id}</option>
@@ -59,10 +59,38 @@
             </div>
         </div>
         
+        
+        
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" ></script>
         <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>‌​
         <script src="../../../javascript/moment.js"></script>
         <script>    
+        function pageLoad(){
+            if((window.location.href.indexOf("/editItem") > -1)){
+                //alert('The selected ID equals: ' + ${selectedItem.AddSpecialChars(selectedItem.getId())});
+                //$('#cbSearchType').text(${selectedItem.getType()});
+                document.getElementById("id").value = ${selectedItem.AddSpecialChars(selectedItem.getId())};
+                document.getElementById("dbType").value = ${selectedItem.AddSpecialChars(selectedItem.getType())};
+                document.getElementById("dbType").disabled = true;
+                dbTypeChanged();
+                document.getElementById("eventName").value = ${selectedItem.AddSpecialChars(selectedItem.getEventName())};
+                document.getElementById("startTime").value = ${selectedItem.AddSpecialChars(selectedItem.getStartTime())};
+                document.getElementById("endTime").value = ${selectedItem.AddSpecialChars(selectedItem.getEndTime())};
+                document.getElementById("date").value = ${selectedItem.AddSpecialChars(selectedItem.getDate())};
+                document.getElementById("locationName").value = ${selectedItem.AddSpecialChars(selectedItem.getLocationName())};
+                document.getElementById("description").value = ${selectedItem.AddSpecialChars(selectedItem.getDescription())};
+                if(${selectedItem.AddSpecialChars(selectedItem.getPresenter())} !== '-1'){
+                    document.getElementById("presenter").value = ${selectedItem.AddSpecialChars(selectedItem.getPresenter())};
+                }
+                if(${selectedItem.AddSpecialChars(selectedItem.getImageURL())} !== '-1'){
+                    document.getElementById("imageURL").value = ${selectedItem.AddSpecialChars(selectedItem.getImageURL())};
+                }
+                if(${selectedItem.AddSpecialChars(selectedItem.getMaxUsers())} !== '-1'){
+                    document.getElementById("maxUsers").value = ${selectedItem.AddSpecialChars(selectedItem.getMaxUsers())};
+                }
+            }
+        };    
+        pageLoad();
         $('#cbSearchType').on('change',function(){
         var selection = $(this).val();
         if(selection === "" || selection === "all"){
@@ -72,32 +100,32 @@
         }
    });
    
-        $('#dbType').on('change',function(){
-        var selection = $(this).val();
+    function dbTypeChanged(){
+        var selection = document.getElementById("dbType").value;
         switch(selection){
             case "Workshop":
-                unHideEventDateFields()
+                unHideEventDateFields();
                 $("#iddiv").hide();
                 $("#imageURLdiv").show();
                 $("#presenterdiv").show();
                 $("#maxUsersdiv").show();
                 break;
             case "Lecture":
-                unHideEventDateFields()
+                unHideEventDateFields();
                 $("#iddiv").hide();
                 $("#imageURLdiv").show();
                 $("#presenterdiv").show();
                 $("#maxUsersdiv").hide();
                 break;
             case "Performance":
-                unHideEventDateFields()
+                unHideEventDateFields();
                 $("#iddiv").hide();
                 $("#imageURLdiv").show();
                 $("#presenterdiv").hide();
                 $("#maxUsersdiv").hide();
                 break;
             case "None":
-                unHideEventDateFields()
+                unHideEventDateFields();
                 $("#iddiv").hide();
                 $("#imageURLdiv").hide();
                 $("#presenterdiv").hide();
@@ -111,7 +139,7 @@
                 $("#maxUsersdiv").hide();
                 break;
        }
-   });
+   };
    
    function unHideEventDateFields(){
         $("#eventNamediv").show();

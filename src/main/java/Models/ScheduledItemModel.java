@@ -24,8 +24,8 @@ public class ScheduledItemModel {
         return id;
     }
     
-    public String getIdWithSpecialChars(){
-        return "'" + id + "'";
+    public String AddSpecialChars(String s){
+        return "'" + s + "'";
     }
 
     public void setId(String id) {
@@ -34,10 +34,6 @@ public class ScheduledItemModel {
 
     public String getString() {
         return string;
-    }
-    
-    public String getStringWithSpecialchars(){
-        return "'" + string + "'";
     }
 
     public void setString(String string) {

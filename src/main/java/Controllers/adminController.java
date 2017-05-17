@@ -99,10 +99,11 @@ public class adminController
     {
         System.out.println(itemToEdit.getId() + " " + itemToEdit.getString());
         ModelAndView thisView = createModelAndView(null);
-        ScheduleableItemModel selectedItem = null;
+        ScheduleableItemModel selectedItem = new ScheduleableItemModel();
         if(itemToEdit.getString().substring(0, 6).equals("School")){
             dayModifier = new DBDayModifier();
             EventDay selectedDay = dayModifier.getDay(itemToEdit.getId());
+            System.out.println(selectedDay.getEventName());
             eventDateToScheduleableItemModel(selectedItem, (EventDate) selectedDay);
             selectedItem.setType(EventType.None.toString());
         }else{
@@ -112,6 +113,7 @@ public class adminController
             System.out.println(selectedEvent.getEventName());
         }
         selectedItem.setId(itemToEdit.getId());
+        System.out.println("selectedID: " + selectedItem.getId());
         thisView.addObject("selectedItem", selectedItem);
         return thisView;
     }
@@ -134,6 +136,9 @@ public class adminController
         modelView.addObject("types", getEventTypes());
         modelView.addObject("fields", getPossibleFields());
         List<ScheduledItemModel> scheduledItems = getScheduledItems(day);
+        ScheduleableItemModel dummySelectedItem = new ScheduleableItemModel();
+        dummySelectedItem.setId("-1");
+        modelView.addObject("selectedItem", dummySelectedItem);
         modelView.addObject("scheduledItems", scheduledItems);
         return modelView;
     }
