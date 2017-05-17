@@ -35,17 +35,28 @@ public class DBDayModifier implements IModDay {
     @Override
     public void insertDay(EventDay day) {
         Map<String, String> data = new HashMap();
+        putDayValues(data, day);
+        Firebase ref = firebase.child("Days").push();
+        ref.setValue(data);
+    }
+    
+    public void updateDay(EventDay day){
+        Map<String, String> data = new HashMap();
+        putDayValues(data, day);
+        //data.put("id", day.getId());
+        Firebase ref = firebase.child("Days").child(day.getId());
+        ref.setValue(data);
+    }
+
+    public void putDayValues(Map<String, String> data, EventDay day){
         data.put("EventName", day.getEventName());
         data.put("StartTime", day.getStartTime());
         data.put("EndTime", day.getEndTime());
         data.put("Date", day.getDate());
         data.put("LocationName", day.getLocationName());
         data.put("Description", day.getDescription());
-        
-        Firebase ref = firebase.child("Days").push();
-        ref.setValue(data);
     }
-
+    
     @Override
     public void removeDay(EventDay day) {
         Firebase ref = firebase.child("Days").child(day.getId());

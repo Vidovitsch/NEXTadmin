@@ -54,19 +54,15 @@ public class DBEventModifier implements IModEvent {
     @Override
     public void insertEvent(Event event) {
         Map<String, String> data = new HashMap();
-        data.put("EventName", event.getEventName());
-        data.put("StartTime", event.getStartTime());
-        data.put("EndTime", event.getEndTime());
-        data.put("Date", event.getDate());
-        data.put("ImageURL", event.getImageURL());
-        System.out.println("image url: " + event.getImageURL());
-        data.put("LocationName", event.getLocationName());
-        data.put("Description", event.getDescription());
-        data = putEventTypeValues(event, data);
-        if(event.getEventType() == EventType.Workshop){
-            data.put("maxUsers", String.valueOf(((Workshop)event).getMaxUsers()));
-        }
+        putEventValues(event, data);
         Firebase ref = firebase.child("Event").push();
+        ref.setValue(data);
+    }
+    
+    public void updateEvent(Event event) {
+        Map<String, String> data = new HashMap();
+        putEventValues(event, data);
+        Firebase ref = firebase.child("Event/" + event.getId()).push();
         ref.setValue(data);
     }
     
@@ -164,6 +160,20 @@ public class DBEventModifier implements IModEvent {
             Performance event = new Performance((String) ds.child("EventName").getValue());
             
             return event;
+        }
+    }
+    
+    private void putEventValues(Event event, Map<String, String> data) {
+        data.put("EventName", event.getEventName());
+        data.put("StartTime", event.getStartTime());
+        data.put("EndTime", event.getEndTime());
+        data.put("Date", event.getDate());
+        data.put("ImageURL", event.getImageURL());
+        data.put("LocationName", event.getLocationName());
+        data.put("Description", event.getDescription());
+        data = putEventTypeValues(event, data);
+        if(event.getEventType() == EventType.Workshop){
+            data.put("maxUsers", String.valueOf(((Workshop)event).getMaxUsers()));
         }
     }
     

@@ -32,7 +32,6 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class adminController
 {
-
     private DBEventModifier eventModifier;
     private DBDayModifier dayModifier;
 
@@ -48,6 +47,47 @@ public class adminController
     {
         return createModelAndView(scheduleableItemModel.getType());
     }
+    
+    @RequestMapping(value = "/deleteEvent", method = RequestMethod.POST)
+    public ModelAndView deleteItem(@ModelAttribute("SpringWeb") ScheduledItemModel scheduledItemModel,
+            ModelMap model)
+    {
+        if(scheduledItemModel.getId() == null || "".equals(scheduledItemModel.getId())){
+            throw new IllegalArgumentException("tried to delete database entry with id null");
+        }
+        if(scheduledItemModel.getString().equals(EventType.None.toString())){
+            dayModifier = new DBDayModifier();
+            EventDay day = new EventDay("day to delete");
+            day.setId(scheduledItemModel.getId());
+            dayModifier.removeDay(day);
+        }else{
+            eventModifier = new DBEventModifier();
+            Workshop event = new Workshop("event to delete");
+            event.setId(scheduledItemModel.getId());
+            eventModifier.removeEvent(event);
+        }
+        return createModelAndView(null);
+    }
+    
+    @RequestMapping(value = "/editEvent", method = RequestMethod.POST)
+    public ModelAndView editEvent(@ModelAttribute("SpringWeb") ScheduleableItemModel scheduleableItemModel,
+            ModelMap model)
+    {
+        System.out.println("in method");
+        System.out.println(scheduleableItemModel.getType());
+        EventDate itemToEdit = null;
+        if(scheduleableItemModel.getType().equals(EventType.None.toString())){
+            System.out.println("in if");
+            itemToEdit = new EventDay(scheduleableItemModel.getEventName());
+            addEventDateValues(scheduleableItemModel, (EventDate) itemToEdit);
+            ((EventDay)itemToEdit).setId(scheduleableItemModel.getId());
+            dayModifier = new DBDayModifier();
+            dayModifier.updateDay((EventDay)itemToEdit);
+        }
+       
+        
+        return createModelAndView(null);
+    }
 
     @RequestMapping(value = "/createWorkshop", method = RequestMethod.POST)
     public ModelAndView createWorkshop(@ModelAttribute("SpringWeb") ScheduleableItemModel scheduleableItemModel,
@@ -58,23 +98,6 @@ public class adminController
         ((Workshop) newWorkshop).setPresenter(scheduleableItemModel.getPresenter());
         ((Workshop) newWorkshop).setMaxUsers(Integer.parseInt(scheduleableItemModel.getMaxUsers()));
         eventModifier.insertEvent(newWorkshop);
-        return createModelAndView(null);
-    }
-    
-    @RequestMapping(value = "/deleteEvent", method = RequestMethod.POST)
-    public ModelAndView deleteItem(@ModelAttribute("SpringWeb") ScheduledItemModel scheduledItemModel,
-            ModelMap model)
-    {
-        if(scheduledItemModel.getId() == null || "".equals(scheduledItemModel.getId())){
-            throw new IllegalArgumentException("tried to delete database entry with id null");
-        }
-        if(scheduledItemModel.getString().equals(EventType.None.toString())){
-            System.out.println("yay");
-            dayModifier = new DBDayModifier();
-            EventDay day = new EventDay("day to delete");
-            day.setId(scheduledItemModel.getId());
-            dayModifier.removeDay(day);
-        }
         return createModelAndView(null);
     }
 
@@ -113,7 +136,6 @@ public class adminController
     public ModelAndView editItem(@ModelAttribute("SpringWeb") ScheduledItemModel itemToEdit,
             ModelMap model)
     {
-        System.out.println(itemToEdit.getId() + " " + itemToEdit.getString());
         ModelAndView thisView = createModelAndView(null);
         ScheduleableItemModel selectedItem = new ScheduleableItemModel();
         if(itemToEdit.getString().substring(0, 6).equals("School")){
@@ -129,7 +151,6 @@ public class adminController
             System.out.println(selectedEvent.getEventName());
         }
         selectedItem.setId(itemToEdit.getId());
-        System.out.println("selectedID: " + selectedItem.getId());
         thisView.addObject("selectedItem", selectedItem);
         return thisView;
     }

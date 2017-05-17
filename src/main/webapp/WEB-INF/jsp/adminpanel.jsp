@@ -55,7 +55,7 @@
                     <span class="descriptionSpan">Description:</span><br>
                     <textarea class="form-control" id="description" name="description"></textarea></br>
                 </div>
-                <input id="-button" onclick="SentToDB(true)" class="form-control" type="submit" value="create Event" style="display: none;"/>      
+                <input id="create-button" onclick="SentToDB(true)" class="form-control" type="submit" value="create Event" style="display: none;"/>      
                 <input id="discard-button" onclick="window.location.href='/adminpanel'" class="form-control" type="button" value="discard changes" style="display: none;"/>
                 <input id="save-button" onclick="SentToDB(false)" class="form-control" type="submit" value="save changes" style="display: none;"/>
                 <input id="delete-button" class="form-control" type="submit" value="Delete selected event" style="display: none;"/>
@@ -70,16 +70,14 @@
         <script>
         function pageLoad() {
             if ((window.location.href.indexOf("/editItem") > -1)) {
-                $("#create-button").hide();
                 $("#discard-button").show();
                 $("#save-button").show();
                 $("#delete-button").show();
-                //alert('The selected ID equals: ' + ${selectedItem.AddSpecialChars(selectedItem.getId())});
-                //$('#cbSearchType').text(${selectedItem.getType()});
                 document.getElementById("id").value = ${selectedItem.AddSpecialChars(selectedItem.getId())};
                 document.getElementById("dbType").value = ${selectedItem.AddSpecialChars(selectedItem.getType())};
                 document.getElementById("dbType").disabled = true;
                 dbTypeChanged();
+                $("#create-button").hide();
                 document.getElementById("eventName").value = ${selectedItem.AddSpecialChars(selectedItem.getEventName())};
                 document.getElementById("startTime").value = ${selectedItem.AddSpecialChars(selectedItem.getStartTime())};
                 document.getElementById("endTime").value = ${selectedItem.AddSpecialChars(selectedItem.getEndTime())};
@@ -182,55 +180,54 @@
             var maxUsers = document.getElementById("maxUsers").value;
             var description = document.getElementById("description").value;
             if (validateEventDateFields(type, eventName, startTime, endTime, date, locationName, description)) {
-                if ("".localeCompare(id) === 0) {
-                    switch (type) {
-                        case "Workshop":
-                            if (validateEventFields(imageURL)) {
-                                if (presenter === "") {
-                                    alert("enter the name of the one presenting the workshop.");
-                                } else if (maxUsers === "") {
-                                    alert("enter the maximal amount of people that can attend the workshop");
-                                } else if (!isFinite(String(maxUsers))) {
-                                    alert("enter a number in the maxUsers field");
-                                } else {
-                                    if (newEvent === true) {
-                                        post('createWorkshop', {eventName: eventName, description: description, startTime: startTime, endTime: endTime, date: date, locationName: locationName, imageURL: imageURL, presenter: presenter, maxUsers: maxUsers});
-                                    } else {
-                                        alert('toDo edit workshop');
-                                    }
-                                }
-                            }
-                            break;
-                        case "Lecture":
-                            if (validateEventFields(imageURL)) {
-                                if (presenter === "") {
-                                    alert("enter the name of the one presenting the Lecture.");
-                                } else {
-                                    if (newEvent === true) {
-                                        post('createLecture', {eventName: eventName, description: description, startTime: startTime, endTime: endTime, date: date, locationName: locationName, imageURL: imageURL, presenter: presenter});
-                                    } else {
-                                        alert('toDo edit lecture');
-                                    }
-                                }
-                            }
-                            break;
-                        case "Performance":
-                            if (validateEventFields(imageURL)) {
+                switch (type) {
+                    case "Workshop":
+                        if (validateEventFields(imageURL)) {
+                            if (presenter === "") {
+                                alert("enter the name of the one presenting the workshop.");
+                            } else if (maxUsers === "") {
+                                alert("enter the maximal amount of people that can attend the workshop");
+                            } else if (!isFinite(String(maxUsers))) {
+                                alert("enter a number in the maxUsers field");
+                            } else {
                                 if (newEvent === true) {
-                                    post('createPerformance', {eventName: eventName, description: description, startTime: startTime, endTime: endTime, date: date, locationName: locationName, imageURL: imageURL});
+                                    post('createWorkshop', {eventName: eventName, description: description, startTime: startTime, endTime: endTime, date: date, locationName: locationName, imageURL: imageURL, presenter: presenter, maxUsers: maxUsers});
                                 } else {
-                                    alert('toDo edit Performance');
+                                    post('editEvent', {id: ${selectedItem.AddSpecialChars(selectedItem.getId())}, eventName: eventName, description: description, startTime: startTime, endTime: endTime, date: date, locationName: locationName, imageURL: imageURL, presenter: presenter, maxUsers: maxUsers});
                                 }
                             }
-                            break;
-                        case "None":
+                        }
+                        break;
+                    case "Lecture":
+                        if (validateEventFields(imageURL)) {
+                            if (presenter === "") {
+                                alert("enter the name of the one presenting the Lecture.");
+                            } else {
+                                if (newEvent === true) {
+                                    post('createLecture', {eventName: eventName, description: description, startTime: startTime, endTime: endTime, date: date, locationName: locationName, imageURL: imageURL, presenter: presenter});
+                                } else {
+                                    alert('toDo edit lecture');
+                                }
+                            }
+                        }
+                        break;
+                    case "Performance":
+                        if (validateEventFields(imageURL)) {
                             if (newEvent === true) {
-                                post('createSchoolday', {eventName: eventName, description: description, startTime: startTime, endTime: endTime, date: date, locationName: locationName});
+                                post('createPerformance', {eventName: eventName, description: description, startTime: startTime, endTime: endTime, date: date, locationName: locationName, imageURL: imageURL});
                             } else {
                                 alert('toDo edit Performance');
                             }
-                            break;
-                    }
+                        }
+                        break;
+                    case "None":
+                        if (newEvent === true) {
+                            post('createSchoolday', {eventName: eventName, description: description, startTime: startTime, endTime: endTime, date: date, locationName: locationName});
+                        } else {
+                            alert(${selectedItem.AddSpecialChars(selectedItem.getId())});
+                            post('editEvent', {type: type, id: ${selectedItem.AddSpecialChars(selectedItem.getId())}, eventName: eventName, description: description, startTime: startTime, endTime: endTime, date: date, locationName: locationName});
+                        }
+                        break;
                 }
             }
         };
