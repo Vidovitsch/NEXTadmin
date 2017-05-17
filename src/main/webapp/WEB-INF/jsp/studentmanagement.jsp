@@ -60,7 +60,7 @@
                     /*global XLSX */
                     var clipboardstudents = "";
                     var selectedstudent = "";
-                    var selectedventname = "";
+                    var selectedeventname = "";
                     var studentlist = [];
                     var eventlist = [];
                     function copyToClipboard() {
@@ -99,8 +99,8 @@
                     }
                     
                     function updateselectedworkshop(eventName) {
-                        selecteventname = eventName;
-                        document.getElementById('selectedWorkshop').innerHTML = "Selected workshop: " + selecteventname;
+                        selectedeventname = eventName;
+                        document.getElementById('selectedWorkshop').innerHTML = "Selected workshop: " + selectedeventname;
                         updatelog(eventName + ' is now selected');
                     }
 
@@ -139,8 +139,11 @@
                         firebase.database().ref('/User').once("value", function (snapshot) {
                             snapshot.forEach(function (childSnapshot) {
                                 var mail = childSnapshot.val().Mail;
+                                var uid = childSnapshot.key.toString();
+                                alert(uid);
                                 var student = {
                                     email: mail,
+                                    id: uid,
                                     GroupID: childSnapshot.val().GroupID,
                                     executesearch: function (searchtext, htmlelement) {
                                         if (this.mail.indexOf(searchtext) !== -1)
@@ -212,10 +215,32 @@
                     
                     function addStudentToWorkshop() {
                         if (selectedstudent && selectedeventname) {
-                            
+                            firebase.database().ref('/Event').once("value", function (snapshot) {
+                            snapshot.forEach(function (childSnapshot) {
+                                var wsName = childSnapshot.val().EventName;
+                                if (wsName === selectedeventname) {
+                                    var wsKey = childSnapshot.key.toString();
+                                    var uid = getStudentID(selectedstudent);
+                                    firebase.database().ref('/Event/'+wsKey+"/Attending/"+uid).set({
+                                        Status: 'Attending'
+                                    }).then(updatelog(selectedstudent + " added to " + selectedeventname));
+                                }
+                            });
+                        });
                         } else {
                             alert("Select a student and a workshop");
                         }
+                    }
+                    
+                    function getStudentID(email) {
+                        var uid;
+                        studentlist.forEach(function(student) {
+                            if (student.email === email) {
+                                uid = student.id;
+                            }
+                        });
+                        alert(uid);
+                        return uid;
                     }
         </script>
     </body>
