@@ -37,13 +37,15 @@
             </div>    
             <div class="create-modify-event">
                 <div class="createType">
-                    <span class="fieldSpan" style="padding-left: 5%;">EventDate type to create:</span>
+                    <span class="fieldSpan" id="newfieldSpan">Select the type of event that you want to create:</span>
+                    <span class="fieldSpan" id="oldfieldSpan" style="display: none;">Go back to create a new event:</span>
                     <select class="dbType" id="dbType" onchange="dbTypeChanged()">
                         <option></option>
                         <c:forEach items="${types}" var="id">
                             <option value="${id}">${id}</option>
                         </c:forEach>
                     </select>
+                    <input id="newEvent-button" onclick="window.location.href='/adminpanel'" class="form-control" type="button" value="Navigate to New event" style="display: none;"/>
                 </div>
                 <c:forEach var="row" items="${fields}">
                     <div class="${row}div fieldDiv" style="display: none;" id="${row}div">
@@ -73,6 +75,10 @@
                 $("#discard-button").show();
                 $("#save-button").show();
                 $("#delete-button").show();
+                $("#dbType").hide();
+                $("#newEvent-button").show();
+                $("#newfieldSpan").hide();
+                $("#oldfieldSpan").show();
                 document.getElementById("id").value = ${selectedItem.AddSpecialChars(selectedItem.getId())};
                 document.getElementById("dbType").value = ${selectedItem.AddSpecialChars(selectedItem.getType())};
                 document.getElementById("dbType").disabled = true;
