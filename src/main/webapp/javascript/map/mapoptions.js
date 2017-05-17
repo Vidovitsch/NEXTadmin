@@ -710,10 +710,17 @@ function createLocationForm() {
     document.getElementById("location-form").innerHTML = layout;
 }
 function createFloorForm() {
+    if (selectedLoc == null) {
+        alert("Please select or create a location first.");
+        return;
+    }
+    
     var layout = "";
     if (document.getElementById("btn-add-floor").value == "+") {
         layout = '<div><span class="soflow-regular-txt">FLOORNAME</span>' + 
         '<input class="soflow-input-txt" type="text" id="floorform-floorname" placeholder="floorname" /></div><br>' + 
+        '<div><span class="soflow-regular-txt">LEVEL</span>' +
+        '<input class="soflow-input-txt" type="text" id="floorform-level" placeholder="level" /></div><br>' +
         '<div><input type="button" class="soflow-btn" value="SAVE" onclick="newFloor()" /></div>';
         // Set button from + to -
         document.getElementById("btn-add-floor").value = "-";
@@ -723,42 +730,6 @@ function createFloorForm() {
         document.getElementById("btn-add-floor").value = "+";	
     }
     document.getElementById("floor-form").innerHTML = layout;
-}
-
-
-function newLocation() {
-    var name = document.getElementById("locationform-name").value;
-    var address = document.getElementById("locationform-address").value;
-    var postal = document.getElementById("locationform-postal").value;
-    if (!name || !address || !postal) {
-        console.log("[LOCATION] Not all required info has been filled in.");
-        return;
-    }
-    
-    // TO DO: Write To Firebase
-    
-    var menu = document.getElementById("option-location");
-    var option = document.createElement("option");
-    option.text = name;
-    menu.add(option);
-    alert("New location successfully added!");
-    createLocationForm();
-}
-function newFloor() {
-    var floorname = document.getElementById("floorform-floorname").value;
-    if (!floorname) {
-        console.log("[FLOOR] Not all required info has been filled in.");
-        return;
-    }
-    
-    // TO DO: Write To Firebase
-    
-    var menu = document.getElementById("option-floor");
-    var option = document.createElement("option");
-    option.text = floorname;
-    menu.add(option);
-    alert("New floor successfully added!");
-    createFloorForm();
 }
 
 mapCreationOptions();

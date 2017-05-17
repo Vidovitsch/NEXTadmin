@@ -1,3 +1,22 @@
+/* 
+ * Reserved variables:
+ * - canvas
+ * - ctx
+ * - canvasOffset
+ * - offsetX
+ * - offsetY
+ * - locations
+ * - selectedLoc
+ * - mouseDown
+ * - clickDifX
+ * - clickDifY
+ * - venue (is the location variabele, location itself conflicts)
+ * - floor
+ * - room
+ * - circle
+ * - rectangle
+ */
+
 // Canvas + Context
 var canvas = document.getElementById("map");
 //canvas.width = window.innerWidth;
@@ -7,10 +26,11 @@ var canvasOffset = $("#map").offset();
 var offsetX = canvasOffset.left;
 var offsetY = canvasOffset.top;
 
-// Object lists
-var components = [];
+// Locations
+var locations = [];
 
 // Selection
+var selectedLoc = null;
 var selected = null;
 var mouseDown = false;
 var clickDifX, clickDifY;
@@ -18,58 +38,177 @@ var clickDifX, clickDifY;
 /*************
  * Functions *
  *************/
-function createComponent(x, y) {
-    var obj = document.getElementsByName("drawing-objects");
-    console.log("Creating a component...");
-    console.log("- rect: " + obj[0].checked);
-    console.log("- table: " + obj[1].checked);
-    console.log("- room: " + obj[2].checked);
-    console.log("- circle: " + obj[3].checked);
-    console.log("- line: " + obj[4].checked);
-    if (obj[0].checked) {
-        //alert("Rectangle selected.");
-        selected = new rectangle(generateNewId(), x, y, 50, 50);
-        components.push(selected);
-    } else if (obj[1].checked) {
-        //alert("Table selected.");
-        selected = new table(generateNewId(), x, y, 50, 50, 0);
-        components.push(selected);
-    } else if (obj[2].checked) {
-        //alert("Room selected.");
-        selected = new room(generateNewId(), x, y, 100, 100, 0, "new_room");
-        components.push(selected);
-    } else if (obj[3].checked) {
-        //alert("Circle selected.");
-        selected = new circle(generateNewId(), x, y, 25);
-        components.push(selected);
-    } else if (obj[4].checked) {
-        //alert("Line selected.");
-        selected = new line(generateNewId(), x, y);
-        components.push(selected);
+function newLocation() {
+    // Check the filled in values
+    var name = document.getElementById("locationform-name").value;
+    var address = document.getElementById("locationform-address").value;
+    var postal = document.getElementById("locationform-postal").value;
+    // If not everything is filled in, don't continue
+    if (!name || !address || !postal) {
+        console.log("[LOCATION] Not all required info has been filled in.");
+        return;
     }
+    
+    // Create a new location
+    selectedLoc = new Venue(generateNewId("location"), name, postal, address);
+    locations.push(selectedLoc);
+    
+    // Add the new location to the GUI
+    var menu = document.getElementById("option-location");
+    var option = document.createElement("option");
+    option.value = selectedLoc.id;
+    option.text = selectedLoc.name;
+    menu.add(option);
+    console.log("New location has been added!");
+    createLocationForm();
 }
 
-function generateNewId() {
-    var countup = 0;
-    var id = "obj" + countup;
-    while (checkIfIdExists(id)) {
-        id = "obj" + countup++;
-        console.log("New ID: " + id);
-    }
-    return id;
-}
-
-function checkIfIdExists(id) {
-    for (var i = 0; i < components.length; i++) {
-        if (String(id) === String(components[i].id)) {
+function findLocation(id) { 
+    for (var i = 0; i < locations.length; i++) {
+        if (String(locations[i].id) == String(id)) {
+            selectedLoc = locations[i];
             return true;
         }
     }
     return false;
 }
 
+function newFloor() {
+    // Check the filled in values
+    var floorname = document.getElementById("floorform-floorname").value;
+    var level = document.getElementById("floorform-level").value;
+    console.log("Floor: " + floorname + ", level: " + level);
+    // If not everything is filled in, don't continue
+    if (!floorname || !level) {
+        console.log("[FLOOR] Not all required info has been filled in.");
+        return;
+    }
+    
+    // Create new floor
+    var selectedFloor = new Floor(generateNewId("floor"), floorname, level);
+    selectedLoc.addFloor(selectedFloor);
+    selectedLoc.selectFloor(selectedFloor.name);
+    console.log("Floor: " + selectedFloor.name + ", level: " + selectedFloor.level);
+
+    
+    // Add the new floor to the GUI
+    var menu = document.getElementById("option-floor");
+    var option = document.createElement("option");
+    option.value = selectedFloor.id;
+    option.text = selectedFloor.name;
+    menu.add(option);
+    console.log("New floor has been added to " + selectedLoc.name + "!")
+    createFloorForm();
+}
+
+function clearFloorList() { 
+    var menu = document.getElementById("option-floor").options.length = 0;
+}
+
+function loadFloorList() { 
+    document.getElementById("option-floor").options.length = 0;
+    var menu = document.getElementById("option-floor");
+    for (var i = 0; i < selectedLoc.floors.length; i++) {
+        var option = document.createElement("option");
+        option.value = selectedLoc.floors[i].id;
+        option.text = selectedLoc.floors[i].name;
+        menu.add(option);
+    }
+    console.log("All floors have been added to the list related to the selected location.");
+}
+
+function createComponent(x, y) {   
+    if (selectedLoc == null || selectedLoc.selectedFloor == null) {
+        alert("No location/floor selected.");
+        return;
+    }
+    
+    var obj = document.getElementsByName("drawing-objects");
+    redrawAll();
+    if (obj[0].checked) {
+        //alert("Rectangle selected.");
+        selected = new Rectangle(generateNewId("rect"), x, y, 50, 50);
+    } else if (obj[1].checked) {
+        //alert("Table selected.");
+        selected = new Table(generateNewId("table"), x, y, 50, 50, 0);
+    } else if (obj[2].checked) {
+        //alert("Room selected.");
+        selected = new Room(generateNewId("room"), x, y, 100, 100, 0, "new_room");
+    } else if (obj[3].checked) {
+        //alert("Circle selected.");
+        selected = new Circle(generateNewId("circle"), x, y, 25);
+    } else if (obj[4].checked) {
+        //alert("Line selected.");
+        selected = new Wall(generateNewId("wall"), x, y);
+    }
+    selectedLoc.selectedFloor.addElement(selected);
+    selected.strokeStyle = '#ff0000';
+}
+
+function generateNewId(type) {
+    var countup = 0;
+    var id = type + countup;
+    while (checkIfIdExists(id, type)) {
+        id = type + countup++;
+        console.log("New ID: " + id);
+    }
+    return id;
+}
+
+function checkIfIdExists(id, type) {
+    if (type == "location") {
+        for (var i = 0; i < locations.length; i++) {
+            if (String(id) === String(locations[i].id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    else if (type == "floor") {
+        for (var i = 0; i < selectedLoc.floors.length; i++) {
+            if (String(id) === String(selectedLoc.floors[i].id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    else {
+        for (var i = 0; i < selectedLoc.selectedFloor.elements.length; i++) {
+            if (String(id) === String(selectedLoc.selectedFloor.elements[i].id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /*for (var i = 0; i < components.length; i++) {
+        if (String(id) === String(components[i].id)) {
+            return true;
+        }
+    }*/
+    return false;
+}
+
 function getSelected() {
-    for (var i = 0; i < components.length; i++) {
+    if (!selectedLoc || !selectedLoc.selectedFloor) {
+        alert("No location/floor selected.");
+        return;
+    }
+    
+    var elements = selectedLoc.selectedFloor.elements;
+    for (var i = 0; i < elements.length; i++) {
+        if (elements[i].isPointInside(mouseX, mouseY)) {
+            selected = elements[i];
+            selected.strokeStyle = "#ff0000";
+            redrawAll();
+            mapCreationOptions();
+            break;
+        } else {
+            selected = null;
+        }
+    }
+    
+    /*for (var i = 0; i < components.length; i++) {
         if (components[i].isPointInside(mouseX, mouseY)) {
             selected = components[i];
             selected.strokeStyle = '#ff0000';
@@ -79,25 +218,38 @@ function getSelected() {
         } else {
             selected = null;
         }
-    }
+    }*/
 }
 
 // This function redraws all the components and rectangles
 function redrawAll() {
+    if (!selectedLoc || !selectedLoc.selectedFloor) { 
+        alert("No location/floor selected.");
+        return;
+    }
+    
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    for (var i = 0; i < components.length; i++)
+    
+    var elements = selectedLoc.selectedFloor.elements;
+    for (var i = 0; i < elements.length; i++) {
+        if (selected == null) {
+            elements[i].strokeStyle = "#000000";
+        }
+        elements[i].draw();
+    }
+    
+    /*for (var i = 0; i < components.length; i++)
     {
         if (selected == null) {
             components[i].strokeStyle = "#000000";
         }
         components[i].draw();
-    }
+    }*/
 }
 
-/*****************
- * EventHandlers *
- *****************/
+/*********************
+ * Map-EventHandlers *
+ *********************/
 function handleMouseDown(e) {
     mouseX = parseInt(e.clientX - offsetX);
     mouseY = parseInt(e.clientY - offsetY);
@@ -117,7 +269,6 @@ function handleMouseDown(e) {
 
     }
 }
-
 
 function handleMouseMove(e) {
     mouseX = parseInt(e.clientX - offsetX);
@@ -173,35 +324,64 @@ function handleMouseClick(e) {
     }
 }
 
+// Bind the EventHandler functions to the Map control
+$("#map").mousedown(handleMouseDown);
+$("#map").mousemove(handleMouseMove);
+$("#map").mouseup(handleMouseUp);
+$("#map").click(handleMouseClick);
+
+
+/**********************
+ * HTML-EventHandlers *
+ **********************/
 function onKeyup(e) {
     if (e.keyCode == 46) {
         if (selected != null) {
+            var elements = selectedLoc.selectedFloor.elements;
             var remove;
-            for (var i = 0; i < components.length; i++)
-            {
-                if (components[i] == selected) {
+            for (var i = 0; i < elements.length; i++) {
+                if (elements[i] == selected) {
                     remove = i;
                     break;
                 }
             }
-            components.splice(remove, 1);
-            console.log("REMOVED " + remove + ", LEFT: " + components.length);
+            elements.splice(remove, 1);
+            console.log("REMOVED " + remove + ", LEFT: " + elements.length);
             selected = null;
             redrawAll();
         }
     }
 }
 
-//
-$("#map").mousedown(handleMouseDown);
-$("#map").mousemove(handleMouseMove);
-$("#map").mouseup(handleMouseUp);
-$("#map").click(handleMouseClick);
+// Bind the EventHandler functions to the complete HTML control
 $("html").keyup(onKeyup);
 
-// Draw dummy data
-//components.push(new rectangle("rectangle1", 150, 50, 75, 75));
-//components.push(new rectangle("rectangle2", 10, 200, 75, 75));
-//components.push(new circle("circle1", 300, 300, 25));
-//components.push(new line("line1", 200, 200));
-//components.push(new line("line2", 400, 200, 450, 300));
+
+/******************************************
+ * Location/Floor selection EventHandlers *
+ ******************************************/
+function onLocationChange() {
+    var result = document.getElementById("option-location");
+    
+    // Find location by ID
+    if (!findLocation(result.value)) {
+        return;
+    }
+    
+    // Load the designated floors in the list
+    loadFloorList();
+    
+    
+    // Reset floor selection 
+    selectedLoc.selectFloor(null);    
+}
+
+function onFloorChange() {
+    var result = document.getElementById("option-floor"); 
+    
+    //  Set the selected floor
+    selectedLoc.selectFloor(result.text);
+    
+    // Redraw the current floor
+    redrawAll();
+}

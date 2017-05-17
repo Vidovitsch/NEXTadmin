@@ -1,9 +1,9 @@
 /**************
  * Room Class *
  **************/
-var room = (function () {
+var Room = (function () {
     // constructor
-    function room(id, x, y, width, height, capacity, name) {
+    function Room(id, x, y, width, height, capacity, name) {
         this.id = id;
         this.x = x;
         this.y = y;
@@ -26,14 +26,14 @@ var room = (function () {
         return (this);
     }
     // Redraw the room - makes use of Draw
-    room.prototype.redraw = function (x, y) {
+    Room.prototype.redraw = function (x, y) {
         this.x = x || this.x;
         this.y = y || this.y;
         this.draw();
         return (this);
     }
     // Draw the room
-    room.prototype.draw = function () {
+    Room.prototype.draw = function () {
         ctx.save();
         ctx.beginPath();
         ctx.rect(this.x, this.y, this.width, this.height);
@@ -46,7 +46,7 @@ var room = (function () {
         ctx.restore();
     }
     // Check if the click is close enough
-    room.prototype.checkCloseEnough = function(mouseX, mouseY) {
+    Room.prototype.checkCloseEnough = function(mouseX, mouseY) {
         console.log("Check close enough Rect");
         // Top left corner check
         if (Math.abs(mouseX - this.x) < 2 && Math.abs(mouseY - this.y) < 2) {
@@ -70,7 +70,7 @@ var room = (function () {
         }
     }
     // Move the room
-    room.prototype.moveTo = function(mouseX, mouseY) {
+    Room.prototype.moveTo = function(mouseX, mouseY) {
         this.x = mouseX; 
         this.y = mouseY; 
 
@@ -78,11 +78,11 @@ var room = (function () {
         return (this);
     }
     // Check if a point is inside the room
-    room.prototype.isPointInside = function (x, y) {
+    Room.prototype.isPointInside = function (x, y) {
         return (x >= this.x && x <= this.x + this.width && y >= this.y && y <= this.y + this.height);
     }
     // Resize the room
-    room.prototype.resizeTo = function (mouseX, mouseY) {
+    Room.prototype.resizeTo = function (mouseX, mouseY) {
         if (this.topLeft) {
             this.width += this.x - mouseX;
             this.height += this.y - mouseY;
@@ -115,20 +115,20 @@ var room = (function () {
         return (this);
     }
     // Set the resizing values on false again
-    room.prototype.stopResize = function() {
+    Room.prototype.stopResize = function() {
         this.topLeft = false;
         this.topRight = false;
         this.botLeft = false;
         this.botRight = false;
     }
     // 
-    room.prototype.isResizing = function() {
+    Room.prototype.isResizing = function() {
         if (this.topLeft || this.topRight || this.botLeft || this.botRight) return true;
         else return false;
     }
     // toString() value for writing to the firebase
-    room.prototype.toString = function() {
+    Room.prototype.toString = function() {
         return String(this.type + ";" + this.x + ";" + this.y + ";" + this.width + ";" + this.height + ";" + this.capacity + ";" + this.roomname);
     }
-    return room;
+    return Room;
 })();
