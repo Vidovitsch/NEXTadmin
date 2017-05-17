@@ -28,8 +28,11 @@
                 </div>
             </div>
             <div class="rightpart">
+                <h3>Workshops</h3>
                 <ol id="eventlist" class="borderedlist" type="1">
                 </ol>
+                <label id="selectedWorkshop" class="selectedstudentlabel">Selected workshop: none</label></br>
+                <button class="button_base b01_simple_rollover" id="buttonaddstudent">Add student to workshop</button>
             </div>
         </div>
         <textarea readonly id="adminlog" class="adminlog" rows="10" cols="70">Log:&#13;&#10;</textarea>
@@ -57,7 +60,7 @@
                     /*global XLSX */
                     var clipboardstudents = "";
                     var selectedstudent = "";
-                    var selecteventname = "";
+                    var selectedventname = "";
                     var studentlist = [];
                     var eventlist = [];
                     function copyToClipboard() {
@@ -94,11 +97,23 @@
                         document.getElementById('selectedstudent').innerHTML = "Selected student: " + selectedstudent;
                         updatelog(studentmail + ' is now selected and ready for editing');
                     }
+                    
+                    function updateselectedworkshop(eventName) {
+                        selecteventname = eventName;
+                        document.getElementById('selectedWorkshop').innerHTML = "Selected workshop: " + selecteventname;
+                        updatelog(eventName + ' is now selected');
+                    }
 
                     var olstudents = document.getElementById('studentlist');
                     olstudents.onclick = function (event) {
                         var target = getEventTarget(event);
                         updateselectedstudent(target.innerHTML);
+                    };
+                    
+                    var olWorkshops = document.getElementById('eventlist');
+                    olWorkshops.onclick = function (event) {
+                        var target = getEventTarget(event);
+                        updateselectedworkshop(target.innerHTML);
                     };
 
                     function searchfunction() {
@@ -152,16 +167,16 @@
                     function seteventlist() {
                         var updatedrecords = 0;
                         var eventhtml;
-                        var event;
                         firebase.database().ref('/Event').once("value", function (snapshot) {
                             snapshot.forEach(function (childSnapshot) {
-                                var eventname = childSnapshot.val().EventName;
-                                event = {
-                                    Name: eventname
-                                };
-                                updatedrecords++;
-                                eventhtml = "<li><a href='#'>" + eventname + "</li>";
-                                document.getElementById('eventlist').innerHTML += eventhtml;
+                                var eventName = childSnapshot.val().EventName;
+                                var uid = childSnapshot.key.toString();
+                                var eventType = childSnapshot.val().EventType;
+                                if (eventType === 'Workshop') {
+                                    updatedrecords++;
+                                    eventhtml = "<li id=&quot;" + uid + "&quot;><a href='#'>" + eventName + "</li>";
+                                    document.getElementById('eventlist').innerHTML += eventhtml;
+                                }
                             });
                             var updatetext = updatedrecords + " events loaded";
                             updatelog(updatetext);
