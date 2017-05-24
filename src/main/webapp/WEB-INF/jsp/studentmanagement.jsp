@@ -43,7 +43,7 @@
         <script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-auth.js"></script>
         <script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-database.js"></script>
         <script src="https://www.gstatic.com/firebasejs/3.7.2/firebase.js"></script>
-        <script src="initfirebase.js"></script> <!-- initialize firebase -->t>
+        <script src="initfirebase.js"></script> <!-- initialize firebase -->
         <script src="dist/cpexcel.js"></script>
         <script src="shim.js"></script>
         <script src="jszip.js"></script>

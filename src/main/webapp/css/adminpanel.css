@@ -8,61 +8,45 @@ and open the template in the editor.
     Author     : Arno Dekkers Los
 */
 
-.body{
-    height: 90%;
-}
-
 .wrapper{
-    position: relative;
     width: 100%;
-    height: calc(100% - 81px);
+    height: 100%;
+    display: flex;
 }
 
-.information-list{
-    display: inline-block;
-    position: absolute;
-    width: 50%;
-    height: 90%;
-    left: 0;
+.information-list {
+    background-color: #222222;
+    width: 40%;
 }
 
-.create-modify-event{
-    display: inline-block;
-    position: absolute;
-    width: 45%;
-    right: 0;
-    padding-top: 10px;
+.create-modify-event {
+    flex: 1;
 }
 
-.fieldDiv{
-    padding-top: 15px;
-    width: 20%;
+.itemList div {
+    color: white;
+    padding-top: 3%;
+    padding-bottom: 3%;
+    font-size: 1.2em;
+    border-radius: 5px 0px 0px 5px;
 }
 
-.descriptionSpan{
-    padding-top: 15px;
-    padding-bottom: 10px;
-}
-
-.itemList{
-    overflow-y: auto;
-    width: 90%;
-    height: 90%;
+.itemList div span {
     padding-left: 5%;
 }
 
-.scheduledItemDiv{
-    padding-top: 2%;
-    padding-bottom: 2%;
-    height: auto;
-    padding-left: 5%;
-    padding-right: 5%;
-    width: 90%;
-    background: white;
-    border: black;
+.itemList {
+    padding-top: 5%;
+    padding-bottom: 5%;
+    padding-left: 10%;
+    height: 80%;
+    background-color: black;
+    overflow: auto;
 }
 
-.scheduledItemDiv:hover{
-    background: grey;
+.itemList div:hover {
+    background-color: gray;
+    opacity: 0.95;
+    cursor: pointer;
 }
 
