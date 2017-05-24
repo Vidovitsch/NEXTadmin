@@ -46,17 +46,7 @@
         <script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-auth.js"></script>
         <script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-database.js"></script>
         <script src="https://www.gstatic.com/firebasejs/3.7.2/firebase.js"></script>
-        <script>
-                    // Initialize Firebase
-                    var config = {
-                        apiKey: "AIzaSyCRi0Ma5ekQxhwg-BfQCa6684hMzvR3Z1o",
-                        authDomain: "nextweek-b9a58.firebaseapp.com",
-                        databaseURL: "https://nextweek-b9a58.firebaseio.com",
-                        storageBucket: "nextweek-b9a58.appspot.com",
-                        messagingSenderId: "488624254338"
-                    };
-                    firebase.initializeApp(config);
-        </script>
+        <script src="initfirebase.js"></script> <!-- initialize firebase -->
         <script src="dist/cpexcel.js"></script>
         <script src="shim.js"></script>
         <script src="jszip.js"></script>
