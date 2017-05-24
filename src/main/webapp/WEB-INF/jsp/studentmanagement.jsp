@@ -66,16 +66,23 @@
                     var selectedstudent = "";
                     var selectedeventname = "";
                     var studentlist = [];
-                    var groupfilter = false;
+                    var nogroupfilter = false;
                     var eventlist = [];
                     function copyToClipboard() {
                         var aux = document.createElement("input");
-                        aux.setAttribute("value", clipboardstudents);
+                        if (nogroupfilter)
+                        {
+                            aux.setAttribute("value", clipboardstudentsNoGroup);
+                            updatelog("Attending students with no group copied to clipboard");
+                        } else
+                        {
+                            aux.setAttribute("value", clipboardstudents);
+                            updatelog("All attending students copied to clipboard");
+                        }
                         document.body.appendChild(aux);
                         aux.select();
                         document.execCommand("copy");
                         document.body.removeChild(aux);
-                        updatelog("Attending students copied to clipboard");
                         updatelog("Ready to paste emails in your email-client");
                     }
 
@@ -102,7 +109,7 @@
                         document.getElementById('selectedstudent').innerHTML = "Selected student: " + selectedstudent;
                         updatelog(studentmail + ' is now selected and ready for editing');
                     }
-                    
+
                     function updateselectedworkshop(eventName) {
                         selectedeventname = eventName;
                         document.getElementById('selectedWorkshop').innerHTML = "Selected workshop: " + selectedeventname;
@@ -114,7 +121,7 @@
                         var target = getEventTarget(event);
                         updateselectedstudent(target.innerHTML);
                     };
-                    
+
                     var olWorkshops = document.getElementById('eventlist');
                     olWorkshops.onclick = function (event) {
                         var target = getEventTarget(event);
@@ -140,8 +147,8 @@
                     }
 
                     function setstudentlistNoGroup() {
-                        studentnogrouplist = [];
-                        groupfilter = true;
+                        clipboardstudentsNoGroup = "";
+                        nogroupfilter = true;
                         document.getElementById('studentlist').innerHTML = "";
                         var studentswithoutgroup = 0;
                         var arrayLength = studentlist.length;
@@ -149,7 +156,7 @@
                             if (parseFloat(studentlist[i].GroupID) === parseFloat(-1))
                             {
                                 studentswithoutgroup++;
-                                studentnogrouplist.push(studentlist[i]);
+                                clipboardstudentsNoGroup += studentlist[i].email + ";";
                                 document.getElementById('studentlist').innerHTML += studentlist[i].getlistitemhtml();
                             }
                         }
@@ -157,8 +164,9 @@
                     }
 
                     function setstudentlist() {
+                        clipboardstudents = "";
                         studentlist = [];
-                        groupfilter = false;
+                        nogroupfilter = false;
                         var updatedrecords = 0;
                         firebase.database().ref('/User').once("value", function (snapshot) {
                             snapshot.forEach(function (childSnapshot) {
@@ -237,29 +245,29 @@
                             updatelog(updatetext);
                         });
                     }
-                    
+
                     function addStudentToWorkshop() {
                         if (selectedstudent && selectedeventname) {
                             firebase.database().ref('/Event').once("value", function (snapshot) {
-                            snapshot.forEach(function (childSnapshot) {
-                                var wsName = childSnapshot.val().EventName;
-                                if (wsName === selectedeventname) {
-                                    var wsKey = childSnapshot.key.toString();
-                                    var uid = getStudentID(selectedstudent);
-                                    firebase.database().ref('/Event/'+wsKey+"/Attending/"+uid).set({
-                                        Status: 'Attending'
-                                    }).then(updatelog(selectedstudent + " added to " + selectedeventname));
-                                }
+                                snapshot.forEach(function (childSnapshot) {
+                                    var wsName = childSnapshot.val().EventName;
+                                    if (wsName === selectedeventname) {
+                                        var wsKey = childSnapshot.key.toString();
+                                        var uid = getStudentID(selectedstudent);
+                                        firebase.database().ref('/Event/' + wsKey + "/Attending/" + uid).set({
+                                            Status: 'Attending'
+                                        }).then(updatelog(selectedstudent + " added to " + selectedeventname));
+                                    }
+                                });
                             });
-                        });
                         } else {
                             alert("Select a student and a workshop");
                         }
                     }
-                    
+
                     function getStudentID(email) {
                         var uid;
-                        studentlist.forEach(function(student) {
+                        studentlist.forEach(function (student) {
                             if (student.email === email) {
                                 uid = student.id;
                             }
