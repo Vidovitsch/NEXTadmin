@@ -16,6 +16,9 @@
             <div class="leftpart">
                 <button class="button_base b01_simple_rollover copymailsbutton" id="buttoncopytoclipboard" onclick="copyToClipboard();">Copy student mails</button>
                 <input type="text" id="searchText" class="studentsearchbar" onkeyup="searchfunction()" placeholder="Search for students..">
+                <button class="button_base b01_simple_rollover middlepartitem middleparthalfbutton" id="buttonApplyNoGroupFilter" onclick="setstudentlistNoGroup()">No Group</button>
+                <button class="button_base b01_simple_rollover middlepartitem middleparthalfbutton" id="buttonAllStudents" onclick="setstudentlist()">All Students</button></br>
+
                 <ol id="studentlist" class="borderedlist" type="1">
                 </ol>
             </div>
@@ -119,14 +122,30 @@
                         }
                     }
 
+                    function setstudentlistNoGroup() {
+                        document.getElementById('studentlist').innerHTML = "";
+                        var studentswithoutgroup = 0;
+                        var arrayLength = studentlist.length;
+                        for (var i = 0; i < arrayLength; i++) {
+                            if (parseFloat(studentlist[i].GroupID) === parseFloat(-1))
+                            {
+                                studentswithoutgroup++;
+                                document.getElementById('studentlist').innerHTML += studentlist[i].getlistitemhtml();
+                            }
+                        }
+                        updatelog(studentswithoutgroup + ' student do not have a group assigned yet');
+                    }
+
                     function setstudentlist() {
+                        studentlist = [];
                         var updatedrecords = 0;
                         firebase.database().ref('/User').once("value", function (snapshot) {
                             snapshot.forEach(function (childSnapshot) {
                                 var mail = childSnapshot.val().Mail;
+                                var groupid = childSnapshot.val().GroupID;
                                 var student = {
                                     email: mail,
-                                    GroupID: childSnapshot.val().GroupID,
+                                    GroupID: groupid,
                                     executesearch: function (searchtext, htmlelement) {
                                         if (this.mail.indexOf(searchtext) !== -1)
                                         {
