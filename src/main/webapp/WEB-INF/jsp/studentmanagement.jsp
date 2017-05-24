@@ -21,9 +21,11 @@
                     </ol>
                 </div>
                 <div id='editaccountpart'>
-                    <h3>Edit account</h3>
-                    <label id="selectedstudent" class="selectedstudentlabel middlepartitem">Selected student: none</label>
-                    <button class="button_base b01_simple_rollover middlepartitem" id="buttonremovestudent">Remove selected student</button></br>    
+                    <h3 id="selectedstudent">Edit account</h3>
+                    <button class="button_base b01_simple_rollover " id="buttonremovestudent">Remove student</button>
+                    <button class="button_base b01_simple_rollover " id="buttonshowgroup" onclick="showgroup();">Show group</button><br>
+                    <button class="button_base b01_simple_rollover " id="buttondeletefromgroup" onclick="deletefromgroup();">Delete from</button>
+                    <button class="button_base b01_simple_rollover " id="buttonaddtogroup" onclick="addtogroup();">Add to</button>
                 </div>
             </div>
             <div class="middlepart">
@@ -81,6 +83,49 @@
                         updatelog("Attending students copied to clipboard");
                         updatelog("Ready to paste emails in your email-client");
                     }
+                    
+                    function showgroup()
+                    {
+                        var groupID;
+                        var email = document.getElementById('selectedstudent').innerHTML.toString();
+                        email = email.substring(5);
+                        var uid = getuid(email);
+                        if (uid != -1)
+                        {
+                            firebase.database().ref('/User/' + uid).once("value", function (snapshot) {
+                                groupID = snapshot.val().GroupID;
+                                if (groupID !== undefined)
+                                {
+                                    firebase.database().ref('/Group/' + groupID).once("value", function (snapshot) {
+                                        groupID = snapshot.val().Name + "(" + groupID + ")";
+                                        updateselectedgroup(groupID);
+                                    });
+                                }
+                            });
+                        }
+                    }
+                    
+                    function getuid(email)
+                    {
+                        for (var i = 0; i < studentlist.length; i++)
+                        {
+                            if (studentlist[i].email == email)
+                            {
+                                return studentlist[i].UID;
+                            }
+                        }
+                        return -1;
+                    }
+                    
+                    function deletefromgroup()
+                    {
+                        
+                    }
+                   
+                    function addtogroup()
+                    {
+                        
+                    }
 
                     function updatelog(logtext)
                     {
@@ -102,7 +147,7 @@
 
                     function updateselectedstudent(studentmail) {
                         selectedstudent = studentmail;
-                        document.getElementById('selectedstudent').innerHTML = "Selected student: " + selectedstudent;
+                        document.getElementById('selectedstudent').innerHTML = "Edit " + selectedstudent;
                         updatelog(studentmail + ' is now selected and ready for editing');
                     }
 
@@ -149,7 +194,6 @@
                     
                     document.getElementById('grouplist').onclick = function (event) {
                         var target = getEventTarget(event);
-                        console.log(target.innerHTML);
                         if (target.innerHTML.indexOf("<li>") > 0) {
                             return;
                         }
@@ -224,9 +268,11 @@
                         firebase.database().ref('/User').once("value", function (snapshot) {
                             snapshot.forEach(function (childSnapshot) {
                                 var mail = childSnapshot.val().Mail;
+                                var uid = childSnapshot.key;
                                 var student = {
                                     email: mail,
                                     GroupID: childSnapshot.val().GroupID,
+                                    UID: uid,
                                     executesearch: function (searchtext, htmlelement) {
                                         if (this.mail.indexOf(searchtext) !== -1)
                                         {
