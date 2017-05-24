@@ -85,7 +85,7 @@ function saveFloor(location, floor) {
     });
 }
 
-function loadLocations() {
+function loadMap() {
     //Search foor locations
     var locRef = database.ref('Map');
     locRef.once("value", function(snapshot) {
@@ -98,27 +98,22 @@ function loadLocations() {
             
             //Search for floors
             var floorRef = snapshot.child(v.id + "/Floors");
-            floorRef.once("value", function(snapshot) {
-                snapshot.forEach(function(floor) {
-                    var id = floor.key.toString();
-                    var level = loc.val().Level;
-                    var name = loc.val().Name;
-                    f = new Floor(id, name, level);
-                    
-                    //Search for elements
-                    var elemRef = snapshot.child(f.id + "/Elements");
-                    elemRef.once("value", function(snapshot) {
-                        snapshot.forEach(function(elem) {
-                            var e = loadElement(elem);
-                            f.addElement(e);
-                        });
-                        v.addFloor(f);
-                    });
+            floorRef.forEach(function(floor) {
+                var id = floor.key.toString();
+                var level = floor.val().Level;
+                var name = floor.val().Name;
+                f = new Floor(id, name, level);
+
+                //Search for elements
+                var elemRef = snapshot.child(f.id + "/Elements");
+                elemRef.forEach(function(elem) {
+                    var e = loadElement(elem);
+                    f.addElement(e);
                 });
-                locations.push(v);
+                v.addFloor(f);
             });
+            locations.push(v);
         });
-        //
     });
 }
 
