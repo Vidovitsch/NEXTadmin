@@ -17,6 +17,9 @@
             <div class="leftpart">
                 <button class="button_base b01_simple_rollover copymailsbutton" id="buttoncopytoclipboard" onclick="copyToClipboard();">Copy student mails</button>
                 <input type="text" id="searchText" class="studentsearchbar" onkeyup="searchfunction()" placeholder="Search for students..">
+                <button class="button_base b01_simple_rollover middlepartitem middleparthalfbutton" id="buttonApplyNoGroupFilter" onclick="setstudentlistNoGroup()">No Group</button>
+                <button class="button_base b01_simple_rollover middlepartitem middleparthalfbutton" id="buttonAllStudents" onclick="setstudentlist()">All Students</button></br>
+
                 <ol id="studentlist" class="borderedlist" type="1">
                 </ol>
             </div>
@@ -59,9 +62,11 @@
                     /*jshint browser:true */
                     /*global XLSX */
                     var clipboardstudents = "";
+                    var clipboardstudentsNoGroup = "";
                     var selectedstudent = "";
                     var selectedeventname = "";
                     var studentlist = [];
+                    var groupfilter = false;
                     var eventlist = [];
                     function copyToClipboard() {
                         var aux = document.createElement("input");
@@ -134,7 +139,26 @@
                         }
                     }
 
+                    function setstudentlistNoGroup() {
+                        studentnogrouplist = [];
+                        groupfilter = true;
+                        document.getElementById('studentlist').innerHTML = "";
+                        var studentswithoutgroup = 0;
+                        var arrayLength = studentlist.length;
+                        for (var i = 0; i < arrayLength; i++) {
+                            if (parseFloat(studentlist[i].GroupID) === parseFloat(-1))
+                            {
+                                studentswithoutgroup++;
+                                studentnogrouplist.push(studentlist[i]);
+                                document.getElementById('studentlist').innerHTML += studentlist[i].getlistitemhtml();
+                            }
+                        }
+                        updatelog(studentswithoutgroup + ' student do not have a group assigned yet');
+                    }
+
                     function setstudentlist() {
+                        studentlist = [];
+                        groupfilter = false;
                         var updatedrecords = 0;
                         firebase.database().ref('/User').once("value", function (snapshot) {
                             snapshot.forEach(function (childSnapshot) {
