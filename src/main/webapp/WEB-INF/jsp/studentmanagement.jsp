@@ -23,7 +23,8 @@
                 <div id='editaccountpart'>
                     <h3 id="selectedstudent">Edit account</h3>
                     <button class="button_base b01_simple_rollover " id="buttonremovestudent">Remove student</button>
-                    <button class="button_base b01_simple_rollover " id="buttonshowgroup" onclick="showgroup();">Show group</button><br>
+                    <button class="button_base b01_simple_rollover " id="buttonshowgroup" onclick="showgroup();">Show group</button>
+                    <br>
                     <button class="button_base b01_simple_rollover " id="buttondeletefromgroup" onclick="deletefromgroup();">Delete from</button>
                     <button class="button_base b01_simple_rollover " id="buttonaddtogroup" onclick="addtogroup();">Add to</button>
                 </div>
@@ -86,45 +87,54 @@
                     
                     function showgroup()
                     {
+                        var user = getuser();
                         var groupID;
-                        var email = document.getElementById('selectedstudent').innerHTML.toString();
-                        email = email.substring(5);
-                        var uid = getuid(email);
-                        if (uid != -1)
-                        {
-                            firebase.database().ref('/User/' + uid).once("value", function (snapshot) {
-                                groupID = snapshot.val().GroupID;
-                                if (groupID !== undefined)
-                                {
-                                    firebase.database().ref('/Group/' + groupID).once("value", function (snapshot) {
-                                        groupID = snapshot.val().Name + "(" + groupID + ")";
-                                        updateselectedgroup(groupID);
-                                    });
-                                }
-                            });
-                        }
-                    }
-                    
-                    function getuid(email)
-                    {
-                        for (var i = 0; i < studentlist.length; i++)
-                        {
-                            if (studentlist[i].email == email)
-                            {
-                                return studentlist[i].UID;
-                            }
-                        }
-                        return -1;
-                    }
+                        firebase.database().ref('/Group/' + user.GroupID).once("value", function (snapshot) {
+                            groupID = snapshot.val().Name + "(" + user.GroupID + ")";
+                            updateselectedgroup(groupID);
+                        });
+                    }                   
                     
                     function deletefromgroup()
                     {
-                        
+                        var user = getuser();
+                        if (user.UID != -1)
+                        {
+                            firebase.database().ref('/User/' + user.UID + '/GroupID').set("-1");
+                            firebase.database().ref('/Group/' + user.GroupID + '/Members/' + user.UID).remove();
+                            user.GroupID = "-1";
+                        }
+                        updateselectedstudent(user.email);
+                        updateselectedgroup(document.getElementById("selectedgroup").innerHTML);
                     }
                    
                     function addtogroup()
                     {
-                        
+                        var user = getuser();
+                        if (user.UID != -1)
+                        {
+                            var group = document.getElementById('selectedgroup').innerHTML;
+                            var groupID = group.substring(group.indexOf("(") + 1, group.indexOf(")"));
+                            firebase.database().ref('/User/' + user.UID + '/GroupID').set(groupID);
+                            firebase.database().ref('/Group/' + groupID + '/Members/' + user.UID).set("NS");
+                            user.GroupID = groupID;
+                        }
+                        updateselectedstudent(user.email);
+                        updateselectedgroup(user.GroupID);
+                    }
+                    
+                    function getuser()
+                    {
+                        var email = document.getElementById('selectedstudent').innerHTML.toString();
+                        email = email.substring(5);
+                        for (var i = 0; i < studentlist.length; i++)
+                        {
+                            if (studentlist[i].email == email)
+                            {
+                                return studentlist[i];
+                            }
+                        }
+                        return -1;
                     }
 
                     function updatelog(logtext)
@@ -147,10 +157,27 @@
 
                     function updateselectedstudent(studentmail) {
                         selectedstudent = studentmail;
+                        var groupname;
                         document.getElementById('selectedstudent').innerHTML = "Edit " + selectedstudent;
+                        groupID = getuser().GroupID;
+                        if (groupID == "-1") {
+                            document.getElementById("buttonshowgroup").style.display = "none";
+                            document.getElementById("buttondeletefromgroup").style.display = "none";
+                            document.getElementById("buttonaddtogroup").style.display = "";
+                        }
+                        else{
+                            firebase.database().ref('/Group/' + groupID).once("value", function (snapshot) {
+                                groupname = snapshot.val().Name;
+                                document.getElementById("buttonshowgroup").style.display = "";
+                                document.getElementById("buttonshowgroup").innerHTML = "Show " + groupname + "(" + groupID + ")";
+                                document.getElementById("buttondeletefromgroup").style.display = "";
+                                document.getElementById("buttondeletefromgroup").innerHTML = "Delete from " + groupname + "(" + groupID + ")";
+                                document.getElementById("buttonaddtogroup").style.display = "none";
+                            });
+                        }
                         updatelog(studentmail + ' is now selected and ready for editing');
                     }
-
+                    
                     var olstudents = document.getElementById('studentlist');
                     olstudents.onclick = function (event) {
                         var target = getEventTarget(event);
