@@ -59,9 +59,11 @@
                     /*jshint browser:true */
                     /*global XLSX */
                     var clipboardstudents = "";
+                    var clipboardstudentsNoGroup = "";
                     var selectedstudent = "";
                     var selecteventname = "";
                     var studentlist = [];
+                    var groupfilter = false;
                     var eventlist = [];
                     function copyToClipboard() {
                         var aux = document.createElement("input");
@@ -123,6 +125,8 @@
                     }
 
                     function setstudentlistNoGroup() {
+                        studentnogrouplist = [];
+                        groupfilter = true;
                         document.getElementById('studentlist').innerHTML = "";
                         var studentswithoutgroup = 0;
                         var arrayLength = studentlist.length;
@@ -130,6 +134,7 @@
                             if (parseFloat(studentlist[i].GroupID) === parseFloat(-1))
                             {
                                 studentswithoutgroup++;
+                                studentnogrouplist.push(studentlist[i]);
                                 document.getElementById('studentlist').innerHTML += studentlist[i].getlistitemhtml();
                             }
                         }
@@ -138,6 +143,7 @@
 
                     function setstudentlist() {
                         studentlist = [];
+                        groupfilter = false;
                         var updatedrecords = 0;
                         firebase.database().ref('/User').once("value", function (snapshot) {
                             snapshot.forEach(function (childSnapshot) {
