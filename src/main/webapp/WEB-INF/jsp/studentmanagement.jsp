@@ -177,6 +177,7 @@
                                     email: mail,
                                     GroupID: groupid,
                                     id: uid,
+
                                     executesearch: function (searchtext, htmlelement) {
                                         if (this.mail.indexOf(searchtext) !== -1)
                                         {
