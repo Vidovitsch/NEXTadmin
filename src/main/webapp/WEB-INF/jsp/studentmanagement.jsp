@@ -163,11 +163,13 @@
                         firebase.database().ref('/User').once("value", function (snapshot) {
                             snapshot.forEach(function (childSnapshot) {
                                 var mail = childSnapshot.val().Mail;
+                                var groupid = childSnapshot.val().GroupID;
                                 var uid = childSnapshot.key.toString();
                                 var student = {
                                     email: mail,
+                                    GroupID: groupid,
                                     id: uid,
-                                    GroupID: childSnapshot.val().GroupID,
+
                                     executesearch: function (searchtext, htmlelement) {
                                         if (this.mail.indexOf(searchtext) !== -1)
                                         {
