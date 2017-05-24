@@ -115,6 +115,14 @@ function loadMap() {
             locations.push(v);
         });
     });
+    if (locations.length > 0) {
+        selectedLoc = locations[0];
+        console.log("Selected Loc: " + selectedLoc);
+        loadLocationList();
+        console.log("Locations count: " + locations.length);
+        loadFloorList();
+        console.log("Floor count: " + selectedLoc.floors.length);
+    }
 }
 
 function loadElement(elem) {
@@ -164,3 +172,5 @@ function generateRandomId() {
     console.log("Newly generated id: " + text);
     return text;
 }
+
+loadMap();
