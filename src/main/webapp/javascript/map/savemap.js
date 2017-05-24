@@ -95,6 +95,7 @@ function loadMap() {
             var name = loc.val().Name;
             var postal = loc.val().Postal;
             v = new Venue(id, name, postal, address);
+            console.log("New venue? " + v);
             
             //Search for floors
             var floorRef = snapshot.child(v.id + "/Floors");
@@ -103,26 +104,29 @@ function loadMap() {
                 var level = floor.val().Level;
                 var name = floor.val().Name;
                 f = new Floor(id, name, level);
+                console.log("New floor? " + f);
 
                 //Search for elements
-                var elemRef = snapshot.child(f.id + "/Elements");
+                var elemRef = snapshot.child(v.id + "/Floors/" + f.id + "/Elements");
                 elemRef.forEach(function(elem) {
                     var e = loadElement(elem);
+                    console.log("New element? " + e);
                     f.addElement(e);
                 });
                 v.addFloor(f);
             });
             locations.push(v);
         });
+        if (locations.length > 0) {
+            selectedLoc = locations[0];
+            loadLocationList();
+            loadFloorList();
+            if (selectedLoc.floors.length > 0) {
+                selectedLoc.selectedFloor = selectedLoc.floors[0];
+            }
+            redrawAll();
+        }
     });
-    if (locations.length > 0) {
-        selectedLoc = locations[0];
-        console.log("Selected Loc: " + selectedLoc);
-        loadLocationList();
-        console.log("Locations count: " + locations.length);
-        loadFloorList();
-        console.log("Floor count: " + selectedLoc.floors.length);
-    }
 }
 
 function loadElement(elem) {
@@ -161,6 +165,126 @@ function loadElement(elem) {
         var y2 = elem.val().Y2;
         return new Wall(id, x, y, x2, y2);
     }
+}
+
+function editElement(location, floor, element) { 
+    var elemRef = database.ref('Map/' + location.id + '/Floors/' + floor.id + '/Elements/' + element.id);
+    elemRef.once('value', function(snapshot) {
+        if (snapshot.val() === null) {
+            /* does not exist */
+        } else {
+            if (element.type === 'rectangle') {
+                snapshot.ref.update({
+                    X: element.x,
+                    Y: element.y,
+                    Width: element.width,
+                    Height: element.height,
+                    Type: element.type 
+                });
+            } 
+            else if (element.type === 'room') {
+                snapshot.ref.update({
+                    X: element.x,
+                    Y: element.y,
+                    Width: element.width,
+                    Height: element.height,
+                    Name: element.roomname,
+                    Capacity: element.capacity,
+                    Type: element.type 
+                });
+            } 
+            else if (element.type === 'circle') {
+                snapshot.ref.update({
+                    X: element.x,
+                    Y: element.y,
+                    Radius: element.radius,
+                    Type: element.type
+                });
+            }
+            else if (element.type === 'table') {
+                snapshot.ref.update({
+                    X: element.x,
+                    Y: element.y,
+                    Width: element.width,
+                    Height: element.height,
+                    Number: element.number,
+                    Type: element.type
+                });
+            }
+            else {
+                snapshot.ref.update({
+                    X: element.x,
+                    Y: element.y,
+                    X2: element.x2,
+                    Y2: element.y2,
+                    Type: element.type 
+                });
+            }
+        }
+    });
+}
+
+function editFloor(location, floor) {
+    var floorRef = database.ref('Map/' + location.id + '/Floors/' + floor.id);
+    floorRef.once('value', function(snapshot) { 
+        if (snapshot.val() === null) {
+            /* does not exist */
+        } else {
+            snapshot.ref.update({
+               Name: floor.name,
+               Level: floor.level
+            });
+        }
+    });
+}
+
+function editLocation(location) {
+    var locRef = database.ref('Map/' + location.id);
+    locRef.once('value', function(snapshot) {
+        if( snapshot.val() === null ) {
+            /* does not exist */
+        } else {
+            snapshot.ref.update({
+                Name: location.name,
+                Address: location.address,
+                Postal: location.postal        
+            });
+        }
+    });
+}
+
+function removeElement(location, floor, element) {
+    var elemRef = database.ref('Map/' + location.id + '/Floors/' + floor.id + '/Elements/' + element.id);
+    elemRef.once('value', function(snapshot) {
+        if (snapshot.val() === null) {
+            /* does not exist */
+        } else {
+            snapshot.ref.remove();
+            console.log("Removed: " + snapshot.val());
+        }
+    });
+}
+
+function removeLocation(location) {
+    var locRef = database.ref('Map/' + location.id);
+    locRef.once('value', function(snapshot) {
+       if (snapshot.val() === null) {
+           /* does not exist */
+       } else {
+           snapshot.ref.remove();
+       }
+    });
+}
+
+function removeFloor(location, floor) {
+    var floorRef = database.ref('Map/' + location.id + '/Floors/' + floor.id + '/Elements/' + element.id);
+    floorRef.once('value', function(snapshot) {
+       if (snapshot.val() === null) {
+           /* does not exist */
+       } else {
+           snapshot.ref.remove();
+       } 
+    });
 }
 
 function generateRandomId() {

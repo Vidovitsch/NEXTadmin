@@ -51,33 +51,39 @@ function mapCreationOptions() {
     }*/
     else if (modify.checked) {
         // Open div container
+        if (selectedLoc == null || selectedLoc.selectedFloor == null) {
+            document.getElementById("dynamic-options").innerHTML = "Woops, you forgot to select a location and/or floor!";
+            return;
+        } 
+        
+        var selected = selectedLoc.selectedFloor.selected;
         if (selected == null) {
-            document.getElementById("dynamic-options").innerHTML = createNewModifications();
+            document.getElementById("dynamic-options").innerHTML = createNewModifications();   
         }
         else if (selected.type == "rectangle") {
-            document.getElementById("dynamic-options").innerHTML = createRectangleModifications();
+            document.getElementById("dynamic-options").innerHTML = createRectangleModifications(selected);
             document.getElementById("option-style").selectedIndex = 1;
         }
         else if (selected.type == "table") {
-            document.getElementById("dynamic-options").innerHTML = createTableModifications();
+            document.getElementById("dynamic-options").innerHTML = createTableModifications(selected);
             document.getElementById("option-style").selectedIndex = 2
         }
         else if (selected.type == "room") {
-            document.getElementById("dynamic-options").innerHTML = createRoomModifications();
+            document.getElementById("dynamic-options").innerHTML = createRoomModifications(selected);
             document.getElementById("option-style").selectedIndex = 3;
         }
         else if (selected.type == "circle") {
-            document.getElementById("dynamic-options").innerHTML = createCircleModifications();
+            document.getElementById("dynamic-options").innerHTML = createCircleModifications(selected);
             document.getElementById("option-style").selectedIndex = 4;
         }
         else if (selected.type == "line") {
-            document.getElementById("dynamic-options").innerHTML = createLineModifications();
+            document.getElementById("dynamic-options").innerHTML = createLineModifications(selected);
             document.getElementById("option-style").selectedIndex = 5;
-        }
+        } 
     }
-    else if (file.checked) {
+    /*else if (file.checked) {
         document.getElementById("dynamic-options").innerHTML = createFileOptions();
-    }
+    }*/
 }
 
 /*
@@ -182,28 +188,29 @@ function createNewModifications() {
 
 /**
  * This method creates the edit form for each specified element.
+ * @param {Object} element modifications from the possible elements (rectangle, circle, room, table, line)
  * @returns {String}
  */
-function createCircleModifications() {
+function createCircleModifications(element) {
     // Open div container
     var layout = '<div class="radio-wrapper-m">' +
     // Combobox Style selection - element is selected so parameter = true
     createComboboxStyleSelection(true) +
     // ID
     '<label class="label-visual" for="option-id">ID: ' +
-    '<input id="option-id" type="text" placeholder="id" value="' + selected.id + '"/>' +
+    '<input id="option-id" type="text" placeholder="id" value="' + element.id + '" disabled>' +
     '</label>' + 
     // X
     '<label class="label-visual" for="option-x">X: '+
-    '<input id="option-x" type="number" placeholder="x" min="0" step="1" value="' + selected.x + '" />' +
+    '<input id="option-x" type="number" placeholder="x" min="0" step="1" value="' + element.x + '" >' +
     '</label>' + 
     // Y
     '<label class="label-visual" for="option-y">Y: ' +
-    '<input id="option-y" type="number" placeholder="y" min="0" step="1" value="' + selected.y + '" />' +
+    '<input id="option-y" type="number" placeholder="y" min="0" step="1" value="' + element.y + '" >' +
     '</label>' +
     // Width
     '<label class="label-visual" for="option-radius">Radius: ' +
-    '<input id="option-radius" type="number" placeholder="radius" min="0" step="any" value="' + selected.radius + '" />' +
+    '<input id="option-radius" type="number" placeholder="radius" min="0" step="any" value="' + element.radius + '" >' +
     '</label>' + 
     // Update option
     createUpdateModification();
@@ -211,30 +218,30 @@ function createCircleModifications() {
     '</div>';
     return layout;
 }
-function createRectangleModifications() {
+function createRectangleModifications(element) {
     // Open div container
     var layout = '<div class="radio-wrapper-m">' +
     // Combox Style selection - element is selected so parameter = true
     createComboboxStyleSelection(true) +
     // ID
     '<label class="label-visual" for="option-id">ID: ' +
-    '<input id="option-id" type="text" placeholder="id" value="' + selected.id + '" />' +
+    '<input id="option-id" type="text" placeholder="id" value="' + element.id + '" disabled>' +
     '</label>' + 
     // X
     '<label class="label-visual" for="option-x">X: '+
-    '<input id="option-x" type="number" placeholder="x" min="0" step="1" value="' + selected.x + '" />' +
+    '<input id="option-x" type="number" placeholder="x" min="0" step="1" value="' + element.x + '">' +
     '</label>' + 
     // Y
     '<label class="label-visual" for="option-y">Y: ' +
-    '<input id="option-y" type="number" placeholder="y" min="0" step="1" value="' + selected.y + '" />' +
+    '<input id="option-y" type="number" placeholder="y" min="0" step="1" value="' + element.y + '">' +
     '</label>' +
     // Width
     '<label class="label-visual" for="option-width">Width: ' +
-    '<input id="option-width" type="number" placeholder="width" min="0" step="1" value="' + selected.width + '"/>' +
+    '<input id="option-width" type="number" placeholder="width" min="0" step="1" value="' + element.width + '">' +
     '</label>' + 
     // Height
     '<label class="label-visual" for="option-height">Height: ' + 
-    '<input id="option-height" type="number" placeholder="height" min="0" step="1" value="' + selected.height + '" />' +
+    '<input id="option-height" type="number" placeholder="height" min="0" step="1" value="' + element.height + '">' +
     '</label>' +
     // Update option
     createUpdateModification();
@@ -242,34 +249,34 @@ function createRectangleModifications() {
     '</div>';
     return layout;
 }
-function createTableModifications() {
+function createTableModifications(element) {
     // Open div container
     var layout = '<div class="radio-wrapper-m">' +
     // Combox Style selection - element is selected so parameter = true
     createComboboxStyleSelection(true) +
     // ID
     '<label class="label-visual" for="option-id">ID: ' +
-    '<input id="option-id" type="text" placeholder="id" value="' + selected.id + '" />' +
+    '<input id="option-id" type="text" placeholder="id" value="' + element.id + '" disabled>' +
     '</label>' + 
     // X
     '<label class="label-visual" for="option-x">X: '+
-    '<input id="option-x" type="number" placeholder="x" min="0" step="1" value="' + selected.x + '" />' +
+    '<input id="option-x" type="number" placeholder="x" min="0" step="1" value="' + element.x + '">' +
     '</label>' + 
     // Y
     '<label class="label-visual" for="option-y">Y: ' +
-    '<input id="option-y" type="number" placeholder="y" min="0" step="1" value="' + selected.y + '" />' +
+    '<input id="option-y" type="number" placeholder="y" min="0" step="1" value="' + element.y + '">' +
     '</label>' +
     // Width
     '<label class="label-visual" for="option-width">Width: ' +
-    '<input id="option-width" type="number" placeholder="width" min="0" step="1" value="' + selected.width + '"/>' +
+    '<input id="option-width" type="number" placeholder="width" min="0" step="1" value="' + element.width + '">' +
     '</label>' + 
     // Height
     '<label class="label-visual" for="option-height">Height: ' + 
-    '<input id="option-height" type="number" placeholder="height" min="0" step="1" value="' + selected.height + '" />' +
+    '<input id="option-height" type="number" placeholder="height" min="0" step="1" value="' + element.height + '">' +
     '</label>' +
     // Number
     '<label class="label-visual" for="option-number">Number: ' +
-    '<input id="option-number" type="number" placeholder="number" min="0" step="1" value="' + selected.number + '" />' +
+    '<input id="option-number" type="number" placeholder="number" min="0" step="1" value="' + element.number + '">' +
     '</label>' +
     // Update option
     createUpdateModification();
@@ -277,38 +284,38 @@ function createTableModifications() {
     '</div>';
     return layout;
 }
-function createRoomModifications() {
+function createRoomModifications(element) {
     // Open div container
     var layout = '<div class="radio-wrapper-m">' +
     // Combox Style selection - element is selected so parameter = true
     createComboboxStyleSelection(true) +
     // ID
     '<label class="label-visual" for="option-id">ID: ' +
-    '<input id="option-id" type="text" placeholder="id" value="' + selected.id + '" />' +
+    '<input id="option-id" type="text" placeholder="id" value="' + element.id + '" disabled>' +
     '</label>' + 
     // Name
     '<label class="label-visual" for="option-name">Name: ' + 
-    '<input id="option-name" type="text" placeholder="name" value="' + selected.roomname + '" />' +
+    '<input id="option-name" type="text" placeholder="name" value="' + element.roomname + '">' +
     '</label>' +
     // Capacity
     '<label class="label-visual" for="option-capacity">Capacity: ' +
-    '<input id="option-capacity" type="number" placeholder="capacity" min="0" step="1" value="' + selected.capacity + '" />' +
+    '<input id="option-capacity" type="number" placeholder="capacity" min="0" step="1" value="' + element.capacity + '">' +
     '</label>' +
     // X
     '<label class="label-visual" for="option-x">X: '+
-    '<input id="option-x" type="number" placeholder="x" min="0" step="1" value="' + selected.x + '" />' +
+    '<input id="option-x" type="number" placeholder="x" min="0" step="1" value="' + element.x + '">' +
     '</label>' + 
     // Y
     '<label class="label-visual" for="option-y">Y: ' +
-    '<input id="option-y" type="number" placeholder="y" min="0" step="1" value="' + selected.y + '" />' +
+    '<input id="option-y" type="number" placeholder="y" min="0" step="1" value="' + element.y + '">' +
     '</label>' +
     // Width
     '<label class="label-visual" for="option-width">Width: ' +
-    '<input id="option-width" type="number" placeholder="width" min="0" step="1" value="' + selected.width + '"/>' +
+    '<input id="option-width" type="number" placeholder="width" min="0" step="1" value="' + element.width + '>' +
     '</label>' + 
     // Height
     '<label class="label-visual" for="option-height">Height: ' + 
-    '<input id="option-height" type="number" placeholder="height" min="0" step="1" value="' + selected.height + '" />' +
+    '<input id="option-height" type="number" placeholder="height" min="0" step="1" value="' + element.height + '">' +
     '</label>' +
     // Update option
     createUpdateModification();
@@ -316,30 +323,30 @@ function createRoomModifications() {
     '</div>';
     return layout;
 }
-function createLineModifications() {
+function createLineModifications(element) {
 	// Open div container
 	var layout = '<div class="radio-wrapper-m">' +
 	// Combox Style selection - element is selected so parameter = true
 	createComboboxStyleSelection(true) +	
 	// ID
 	'<label class="label-visual" for="option-id">ID: ' +
-	'<input id="option-id" type="text" placeholder="id" value="' + selected.id + '" />' +
+	'<input id="option-id" type="text" placeholder="id" value="' + element.id + '" disabled>' +
 	'</label>' + 
 	// X
 	'<label class="label-visual" for="option-x">X: '+
-	'<input id="option-x" type="text" placeholder="x" value="' + selected.x + '" />' +
+	'<input id="option-x" type="text" placeholder="x" value="' + element.x + '">' +
 	'</label>' + 
 	// Y
 	'<label class="label-visual" for="option-y">Y: ' +
-	'<input id="option-y" type="text" placeholder="y" value="' + selected.y + '" />' +
+	'<input id="option-y" type="text" placeholder="y" value="' + element.y + '">' +
 	'</label>' +
 	// X2
 	'<label class="label-visual" for="option-x2">X2: ' +
-	'<input id="option-x2" type="text" placeholder="x2" value="' + selected.x2 + '" />' +
+	'<input id="option-x2" type="text" placeholder="x2" value="' + element.x2 + '">' +
 	'</label>' + 
 	// Y2
 	'<label class="label-visual" for="option-y2">Y2: ' +
-	'<input id="option-y2" type="text" placeholder="y2" value="' + selected.y2 + '" />' +
+	'<input id="option-y2" type="text" placeholder="y2" value="' + element.y2 + '">' +
 	'</label>' +
 	// Update option
 	createUpdateModification();
@@ -572,60 +579,67 @@ function createSpecifiedElementForm() {
  * @returns {undefined}
  */
 function updateElement() {
-    if (selected.type == "rectangle") {
-        selected.id = document.getElementById("option-id").value;
-        selected.x = parseInt(document.getElementById("option-x").value);
-        selected.y = parseInt(document.getElementById("option-y").value);
-        selected.width = (parseInt(document.getElementById("option-width").value) > selected.minWidth 
+    var element = selectedLoc.selectedFloor.selected;
+    if (!element) { 
+        console.log("Woops, something went wrong with the element update!");
+        return;
+    }
+    
+    if (element.type == "rectangle") {
+        element.id = document.getElementById("option-id").value;
+        element.x = parseInt(document.getElementById("option-x").value);
+        element.y = parseInt(document.getElementById("option-y").value);
+        element.width = (parseInt(document.getElementById("option-width").value) > element.minWidth 
                             ? parseInt(document.getElementById("option-width").value) 
-                            : selected.minWidth);
-        selected.height = (parseInt(document.getElementById("option-height").value) > selected.minHeight 
+                            : element.minWidth);
+        element.height = (parseInt(document.getElementById("option-height").value) > element.minHeight 
                             ? parseInt(document.getElementById("option-height").value) 
-                            : selected.minHeight);
+                            : element.minHeight);
         redrawAll();
     }
-    if (selected.type == "table") {
-        selected.id = document.getElementById("option-id").value;
-        selected.x = parseInt(document.getElementById("option-x").value);
-        selected.y = parseInt(document.getElementById("option-y").value);
-        selected.width = (parseInt(document.getElementById("option-width").value) > selected.minWidth 
+    if (element.type == "table") {
+        element.id = document.getElementById("option-id").value;
+        element.x = parseInt(document.getElementById("option-x").value);
+        element.y = parseInt(document.getElementById("option-y").value);
+        element.width = (parseInt(document.getElementById("option-width").value) > element.minWidth 
                             ? parseInt(document.getElementById("option-width").value) 
-                            : selected.minWidth);
-        selected.height = (parseInt(document.getElementById("option-height").value) > selected.minHeight 
+                            : element.minWidth);
+        element.height = (parseInt(document.getElementById("option-height").value) > element.minHeight 
                             ? parseInt(document.getElementById("option-height").value)
-                            : selected.minHeight);
-        selected.number = parseInt(document.getElementById("option-number").value);
+                            : element.minHeight);
+        element.number = parseInt(document.getElementById("option-number").value);
         redrawAll();
     }
-    if (selected.type == "room") {
-        selected.id = document.getElementById("option-id").value;
-        selected.roomname = document.getElementById("option-name").value;
-        selected.capacity = document.getElementById("option-capacity").value;
-        selected.x = parseInt(document.getElementById("option-x").value);
-        selected.y = parseInt(document.getElementById("option-y").value);
-        selected.width = (parseInt(document.getElementById("option-width").value) > selected.minWidth
+    if (element.type == "room") {
+        element.id = document.getElementById("option-id").value;
+        element.roomname = document.getElementById("option-name").value;
+        element.capacity = document.getElementById("option-capacity").value;
+        element.x = parseInt(document.getElementById("option-x").value);
+        element.y = parseInt(document.getElementById("option-y").value);
+        element.width = (parseInt(document.getElementById("option-width").value) > element.minWidth
                             ? parseInt(document.getElementById("option-width").value)
-                            : selected.minWidth);
-        selected.height = (parseInt(document.getElementById("option-height").value > selected.minHeight
+                            : element.minWidth);
+        element.height = (parseInt(document.getElementById("option-height").value > element.minHeight
                             ? parseInt(document.getElementById("option-height").value)
-                            : selected.minHeight));
+                            : element.minHeight));
         redrawAll();
     }
-    else if (selected.type == "circle") {
-        selected.id = document.getElementById("option-id").value;
-        selected.x = document.getElementById("option-x").value;
-        selected.y = document.getElementById("option-y").value;
-        selected.radius = document.getElementById("option-radius").value;
+    else if (element.type == "circle") {
+        element.id = document.getElementById("option-id").value;
+        element.x = document.getElementById("option-x").value;
+        element.y = document.getElementById("option-y").value;
+        element.radius = document.getElementById("option-radius").value;
         redrawAll();
     }
-    else if (selected.type == "line") {
-        selected.id = document.getElementById("option-id").value;
-        selected.x = document.getElementById("option-x").value;
-        selected.y = document.getElementById("option-y").value;
-        selected.x2 = document.getElementById("option-x2").value;
-        selected.y2 = document.getElementById("option-y2").value;
+    else if (element.type == "line") {
+        element.id = document.getElementById("option-id").value;
+        element.x = document.getElementById("option-x").value;
+        element.y = document.getElementById("option-y").value;
+        element.x2 = document.getElementById("option-x2").value;
+        element.y2 = document.getElementById("option-y2").value;
         redrawAll();
     }
+    editElement(selectedLoc, selectedLoc.selectedFloor, element);
 }
 
 
@@ -634,10 +648,15 @@ function updateElement() {
  * @returns {undefined}
  */
 function createNewElement() {
+    if (selectedLoc == null || selectedLoc.selectedFloor == null) {
+        alert("[CREATE] No location and/or floor selected!");
+        return;
+    }
+    
     var index = document.getElementById("option-style").selectedIndex;
     if (index == 1) {
         // Create rectangle: id, x, y, width, height
-        var id = document.getElementById("option-id").value;
+        //var id = document.getElementById("option-id").value;
         var x = document.getElementById("option-x").value;
         var y = document.getElementById("option-y").value;
         var width = document.getElementById("option-width").value;
@@ -647,7 +666,7 @@ function createNewElement() {
     }
     else if (index == 2) {
         // Create table: id, x, y, width, height
-        var id = document.getElementById("option-id").value;
+        //var id = document.getElementById("option-id").value;
         var x = document.getElementById("option-x").value;
         var y = document.getElementById("option-y").value;
         var width = document.getElementById("option-width").value;
@@ -658,7 +677,7 @@ function createNewElement() {
     }
     else if (index == 3) {
         // Create room: id, name, capacity, x, y, width, height
-        var id = document.getElementById("option-id").value;
+        //var id = document.getElementById("option-id").value;
         var roomname = document.getElementById("option-name").value;
         var capacity = document.getElementById("option-capacity").value;
         var x = document.getElementById("option-x").value;
@@ -670,7 +689,7 @@ function createNewElement() {
     }
     else if (index == 4) {
         // Create circle: id, x, y, radius
-        var id = document.getElementById("option-id").value;
+        //var id = document.getElementById("option-id").value;
         var x = document.getElementById("option-x").value;
         var y = document.getElementById("option-y").value;
         var radius = document.getElementById("option-radius").value;
@@ -679,7 +698,7 @@ function createNewElement() {
     }
     else if (index == 5) {
         // Create line: id, x, y, x2, y2
-        var id = document.getElementById("option-id").value;
+        //var id = document.getElementById("option-id").value;
         var x = document.getElementById("option-x").value;
         var y = document.getElementById("option-y").value;
         var x2 = document.getElementById("option-x2").value;
@@ -687,6 +706,7 @@ function createNewElement() {
         //components.push(new line(id, parseInt(x), parseInt(y), parseInt(x2), parseInt(y2)));
         selectedLoc.selectedFloor.addElement(new Wall(id, parseInt(x), parseInt(y), parseInt(x2), parseInt(y2)));
     }
+    saveElement(selectedLoc, selectedLoc.selectedFloor, element);
     redrawAll();
 }
 

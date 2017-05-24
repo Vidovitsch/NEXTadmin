@@ -31,7 +31,6 @@ var locations = [];
 
 // Selection
 var selectedLoc = null;
-var selected = null;
 var mouseDown = false;
 var clickDifX, clickDifY;
 
@@ -94,8 +93,7 @@ function newFloor() {
     // Create new floor
     var selectedFloor = new Floor(generateRandomId(), floorname, level);
     selectedLoc.addFloor(selectedFloor);
-    selectedLoc.selectFloor(selectedFloor.name);
-    saveFloor(selectedLoc, selectedLoc.selectedFloor);
+    saveFloor(selectedLoc, selectedFloor);
     console.log("Floor: " + selectedFloor.name + ", level: " + selectedFloor.level);
     
     // Add the new floor to the GUI
@@ -106,6 +104,7 @@ function newFloor() {
     menu.add(option);
     console.log("New floor has been added to " + selectedLoc.name + "!")
     createFloorForm();
+    onFloorChange();
 }
 
 function clearFloorList() { 
@@ -132,25 +131,26 @@ function createComponent(x, y) {
     
     var obj = document.getElementsByName("drawing-objects");
     redrawAll();
+    var element;
     if (obj[0].checked) {
         //alert("Rectangle selected.");
-        selected = new Rectangle(generateRandomId(), x, y, 50, 50);
+        element = new Rectangle(generateRandomId(), x, y, 50, 50);
     } else if (obj[1].checked) {
         //alert("Table selected.");
-        selected = new Table(generateRandomId(), x, y, 50, 50, 0);
+        element = new Table(generateRandomId(), x, y, 50, 50, 0);
     } else if (obj[2].checked) {
         //alert("Room selected.");
-        selected = new Room(generateRandomId(), x, y, 100, 100, 0, "new_room");
+        element = new Room(generateRandomId(), x, y, 100, 100, 0, "new_room");
     } else if (obj[3].checked) {
         //alert("Circle selected.");
-        selected = new Circle(generateRandomId(), x, y, 25);
+        element = new Circle(generateRandomId(), x, y, 25);
     } else if (obj[4].checked) {
         //alert("Line selected.");
-        selected = new Wall(generateRandomId(), x, y);
+        element = new Wall(generateRandomId(), x, y);
     }
-    selectedLoc.selectedFloor.addElement(selected);
-    selected.strokeStyle = '#ff0000';
-    saveElement(selectedLoc, selectedLoc.selectedFloor, selected);
+    selectedLoc.selectedFloor.addElement(element);
+    element.strokeStyle = '#ff0000';
+    saveElement(selectedLoc, selectedLoc.selectedFloor, element);
 }
 
 function getSelected() {
@@ -162,74 +162,59 @@ function getSelected() {
     var elements = selectedLoc.selectedFloor.elements;
     for (var i = 0; i < elements.length; i++) {
         if (elements[i].isPointInside(mouseX, mouseY)) {
-            selected = elements[i];
-            selected.strokeStyle = "#ff0000";
+            selectedLoc.selectedFloor.selectElement(elements[i]);
+            selectedLoc.selectedFloor.selected.strokeStyle = "#ff0000";
             redrawAll();
             mapCreationOptions();
             break;
         } else {
-            selected = null;
+            selectedLoc.selectedFloor.selectElement(null);
         }
     }
-    
-    /*for (var i = 0; i < components.length; i++) {
-        if (components[i].isPointInside(mouseX, mouseY)) {
-            selected = components[i];
-            selected.strokeStyle = '#ff0000';
-            redrawAll();
-            mapCreationOptions();
-            break;
-        } else {
-            selected = null;
-        }
-    }*/
 }
 
 // This function redraws all the components and rectangles
 function redrawAll() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (!selectedLoc || !selectedLoc.selectedFloor) { 
-        alert("No location/floor selected.");
         return;
     }
     
-    var elements = selectedLoc.selectedFloor.elements;
+    console.log("[redrawAll]");
+    /*var elements = selectedLoc.selectedFloor.elements;
     for (var i = 0; i < elements.length; i++) {
         if (selected == null) {
             elements[i].strokeStyle = "#000000";
         }
         elements[i].draw();
-    }
-    
-    /*for (var i = 0; i < components.length; i++)
-    {
-        if (selected == null) {
-            components[i].strokeStyle = "#000000";
-        }
-        components[i].draw();
     }*/
+    selectedLoc.selectedFloor.drawElements();
 }
 
 /*********************
  * Map-EventHandlers *
  *********************/
 function handleMouseDown(e) {
+    if (!selectedLoc || !selectedLoc.selectedFloor) {
+        alert("No location/floor selected.");
+        return;
+    }
+    
     mouseX = parseInt(e.clientX - offsetX);
     mouseY = parseInt(e.clientY - offsetY);
 
     mouseDown = true;
 
-    if (selected != null) {
+    if (selectedLoc.selectedFloor.selected != null) {
         // Measure the click difference between the mouseclick and the selected XY
         // This has to happen in the mousedown as this is the part where the dragging/resizing will start
-        clickDifX = mouseX - selected.x;
-        clickDifY = mouseY - selected.y;
-        if (selected.type == "line") {
-            selected.checkCloseEnough(mouseX, mouseY);
+        clickDifX = mouseX - selectedLoc.selectedFloor.selected.x;
+        clickDifY = mouseY - selectedLoc.selectedFloor.selected.y;
+        if (selectedLoc.selectedFloor.selected.type == "line") {
+            selectedLoc.selectedFloor.selected.checkCloseEnough(mouseX, mouseY);
         } else {
-            selected.checkCloseEnough(mouseX, mouseY);
+            selectedLoc.selectedFloor.selected.checkCloseEnough(mouseX, mouseY);
         }
-
     }
 }
 
@@ -257,25 +242,36 @@ function handleMouseMove(e) {
 }
 
 function handleMouseUp(e) {
+    if (!selectedLoc || !selectedLoc.selectedFloor) {
+        alert("No location/floor selected.");
+        return;
+    }
+    
     mouseX = parseInt(e.clientX - offsetX);
     mouseY = parseInt(e.clientY - offsetY);
 
     mouseDown = false;
-    if (selected != null) {
-        clickDifX = mouseX - selected.width;
-        clickDifY = mouseY - selected.height;
-        selected.stopResize();
-        selected.strokeStyle = "#000000";
+    if (selectedLoc.selectedFloor.selected != null) {
+        clickDifX = mouseX - selectedLoc.selectedFloor.selected.width;
+        clickDifY = mouseY - selectedLoc.selectedFloor.selected.height;
+        selectedLoc.selectedFloor.selected.stopResize();
+        selectedLoc.selectedFloor.selected.strokeStyle = "#000000";
     }
 }
 
 function handleMouseClick(e) {
+    if (!selectedLoc || !selectedLoc.selectedFloor) {
+        alert("No location/floor selected.");
+        return;
+    }
+    
     mouseX = parseInt(e.clientX - offsetX);
     mouseY = parseInt(e.clientY - offsetY);
 
     if (draw.checked) {
-        selected = null;
+        selectedLoc.selectedFloor.selectElement(null);
         createComponent(mouseX, mouseY);
+        console.log("Creating component");
     /*} else if (resize.checked) {
         getSelected();
         redrawAll();
@@ -298,19 +294,24 @@ $("#map").click(handleMouseClick);
  * HTML-EventHandlers *
  **********************/
 function onKeyup(e) {
+    if (!selectedLoc || !selectedLoc.selectedFloor) {
+        return;
+    }
+    
     if (e.keyCode == 46) {
-        if (selected != null) {
+        if (selectedLoc.selectedFloor.selected != null) {
             var elements = selectedLoc.selectedFloor.elements;
             var remove;
             for (var i = 0; i < elements.length; i++) {
-                if (elements[i] == selected) {
+                if (elements[i] == selectedLoc.selectedFloor.selected) {
                     remove = i;
                     break;
                 }
             }
             elements.splice(remove, 1);
+            removeElement(selectedLoc, selectedLoc.selectedFloor, selectedLoc.selectedFloor.selected);
             console.log("REMOVED " + remove + ", LEFT: " + elements.length);
-            selected = null;
+            selectedLoc.selectedFloor.selectElement(null);
             redrawAll();
         }
     }
@@ -333,7 +334,7 @@ function onLocationChange() {
     
     // Load the designated floors in the list
     loadFloorList();
-    
+    onFloorChange();    
     
     // Reset floor selection 
     selectedLoc.selectFloor(null);    
@@ -342,8 +343,10 @@ function onLocationChange() {
 function onFloorChange() {
     var result = document.getElementById("option-floor"); 
     
+    console.log("Floor change: " + result.value);
     //  Set the selected floor
-    selectedLoc.selectFloor(result.text);
+    selectedLoc.selectFloor(result.value);
+    console.log("Selected floor... " + selectedLoc.selectedFloor);
     
     // Redraw the current floor
     redrawAll();
