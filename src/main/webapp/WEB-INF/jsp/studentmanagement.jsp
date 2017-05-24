@@ -82,7 +82,7 @@
                         document.body.removeChild(aux);
                         updatelog("Ready to paste emails in your email-client");
                     }
-                    
+
                     function showgroup()
                     {
                         var user = getuser();
@@ -91,8 +91,8 @@
                             groupID = snapshot.val().Name + "(" + user.GroupID + ")";
                             updateselectedgroup(groupID);
                         });
-                    }                   
-                    
+                    }
+
                     function deletefromgroup()
                     {
                         var user = getuser();
@@ -103,9 +103,9 @@
                             user.GroupID = "-1";
                         }
                         updateselectedstudent(user.email);
-                        updateselectedgroup(document.getElementById("selectedgroup").innerHTML);
+                        updateselectedgroup(document.getElementById("selectedgroup").innerHTML.replace("Edit ", ""));
                     }
-                   
+
                     function addtogroup()
                     {
                         var user = getuser();
@@ -118,9 +118,9 @@
                             user.GroupID = groupID;
                         }
                         updateselectedstudent(user.email);
-                        updateselectedgroup(user.GroupID);
+                        updateselectedgroup(document.getElementById("selectedgroup").innerHTML.replace("Edit ", ""));
                     }
-                    
+
                     function getuser()
                     {
                         var email = document.getElementById('selectedstudent').innerHTML.toString();
@@ -162,8 +162,7 @@
                             document.getElementById("buttonshowgroup").style.display = "none";
                             document.getElementById("buttondeletefromgroup").style.display = "none";
                             document.getElementById("buttonaddtogroup").style.display = "";
-                        }
-                        else{
+                        } else {
                             firebase.database().ref('/Group/' + groupID).once("value", function (snapshot) {
                                 groupname = snapshot.val().Name;
                                 document.getElementById("buttonshowgroup").style.display = "";
@@ -191,11 +190,11 @@
                         updateselectedstudent(target.innerHTML);
                     };
 
-                    
+
                     function addstudent(student) {
                         document.getElementById('studentsingroup').innerHTML += "<li><a href='#'>" + student + "</li>";
                     }
-                    
+
                     function updateselectedgroup(groupID) {
                         var uids = [];
                         var groupname = groupID;
@@ -206,7 +205,7 @@
                                 uids.push(childSnapshot.key);
                             });
                             document.getElementById('selectedgroup').innerHTML = "Edit " + groupname;
-                            for(var i = 0; i < uids.length; i++)
+                            for (var i = 0; i < uids.length; i++)
                             {
                                 firebase.database().ref('/User/' + uids[i]).once("value", function (data) {
                                     addstudent(data.val().Mail);
@@ -215,20 +214,15 @@
                             updatelog(groupname + ' is now selected and ready for editing');
                         });
                     }
-                    
+
                     document.getElementById('studentsingroup').onclick = function (event) {
-
-
-                    var olWorkshops = document.getElementById('eventlist');
-                    olWorkshops.onclick = function (event) {
-
                         var target = getEventTarget(event);
                         if ((target.innerHTML.match(/@/g) || []).length > 2) {
                             return;
                         }
                         updateselectedstudent(target.innerHTML);
                     };
-                    
+
                     document.getElementById('grouplist').onclick = function (event) {
                         var target = getEventTarget(event);
                         if (target.innerHTML.indexOf("<li>") > 0) {
@@ -236,7 +230,7 @@
                         }
                         updateselectedgroup(target.innerHTML);
                     };
-                    
+
                     function searchfunctiongroups() {
                         // Declare variables
                         var input, filter, ul, li, a, i;
@@ -254,13 +248,13 @@
                             }
                         }
                     }
-                    
+
                     function setgrouplist() {
                         var updatedrecords = 0;
                         firebase.database().ref('/Group').once("value", function (snapshot) {
                             snapshot.forEach(function (childSnapshot) {
                                 var group = {
-                                    GroupID : childSnapshot.key,
+                                    GroupID: childSnapshot.key,
                                     Name: childSnapshot.val().Name,
                                     executesearch: function (searchtext, htmlelement) {
                                         if (this.Name.indexOf(searchtext) !== -1)
@@ -271,7 +265,7 @@
                                     getlistitemhtml: function () {
                                         return "<li><a href='#'>" + this.Name + " (" + this.GroupID + ")" + "</li>";
                                     }
-                                    
+
                                 };
                                 updatedrecords++;
                                 document.getElementById('grouplist').innerHTML += group.getlistitemhtml();
@@ -281,7 +275,7 @@
                         });
                     }
                     setgrouplist();
-                    
+
                     function searchfunctionstudents() {
                         // Declare variables
                         var input, filter, ul, li, a, i;
@@ -296,6 +290,9 @@
                                 li[i].style.display = "";
                             } else {
                                 li[i].style.display = "none";
+                            }
+                        }
+                    }
 
                     function setstudentlistNoGroup() {
                         clipboardstudentsNoGroup = "";
@@ -394,7 +391,7 @@
                             updatelog(updatetext);
                         });
                     }
-                    
+
                     function addStudentToWorkshop() {
                         if (selectedstudent && selectedeventname) {
                             firebase.database().ref('/Event').once("value", function (snapshot) {
