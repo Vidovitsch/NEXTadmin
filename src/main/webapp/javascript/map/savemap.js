@@ -11,6 +11,9 @@ function saveElement(location, floor, element) {
     if (!element.id) {
         element.id = generateRandomId();
     }
+    console.log("[saveElement] Location: " + location);
+    console.log("[saveElement] Floor: " + floor);
+    console.log("[saveElement] Element: " + element);
     //Check element and save it
     if (element.type === 'rectangle') {
         database.ref('Map/' + location.id + '/Floors/' + floor.id + "/Elements/" + element.id).set({
@@ -61,6 +64,7 @@ function saveLocation(location) {
     if (!location.id) {
         location.id = generateRandomId();
     }
+    console.log("Location: " + location);
     database.ref('Map/' + location.id).set({
         Name: location.name,
         Address: location.address,
@@ -72,7 +76,8 @@ function saveFloor(location, floor) {
     if (!floor.id) {
         floor.id = generateRandomId();
     }
-    database.ref('Map/' + location.id, "/Floors/" + floor.id).set({
+    console.log("Location: " + location + "Floor: " + floor);
+    database.ref('Map/' + location.id + "/Floors/" + floor.id).set({
         Name: floor.name,
         Level: floor.level
     });
@@ -84,5 +89,6 @@ function generateRandomId() {
     for (var i = 0; i < 10; i++) {
         text += possible.charAt(Math.floor(Math.random() * possible.length));
     }
+    console.log("Newly generated id: " + text);
     return text;
 }

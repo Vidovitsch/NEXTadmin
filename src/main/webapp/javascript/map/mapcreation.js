@@ -50,8 +50,9 @@ function newLocation() {
     }
     
     // Create a new location
-    selectedLoc = new Venue(generateNewId("location"), name, postal, address);
+    selectedLoc = new Venue(generateRandomId(), name, postal, address);
     locations.push(selectedLoc);
+    saveLocation(selectedLoc);
     
     // Add the new location to the GUI
     var menu = document.getElementById("option-location");
@@ -85,11 +86,11 @@ function newFloor() {
     }
     
     // Create new floor
-    var selectedFloor = new Floor(generateNewId("floor"), floorname, level);
+    var selectedFloor = new Floor(generateRandomId(), floorname, level);
     selectedLoc.addFloor(selectedFloor);
     selectedLoc.selectFloor(selectedFloor.name);
+    saveFloor(selectedLoc, selectedLoc.selectedFloor);
     console.log("Floor: " + selectedFloor.name + ", level: " + selectedFloor.level);
-
     
     // Add the new floor to the GUI
     var menu = document.getElementById("option-floor");
@@ -127,66 +128,23 @@ function createComponent(x, y) {
     redrawAll();
     if (obj[0].checked) {
         //alert("Rectangle selected.");
-        selected = new Rectangle(generateNewId("rect"), x, y, 50, 50);
+        selected = new Rectangle(generateRandomId(), x, y, 50, 50);
     } else if (obj[1].checked) {
         //alert("Table selected.");
-        selected = new Table(generateNewId("table"), x, y, 50, 50, 0);
+        selected = new Table(generateRandomId(), x, y, 50, 50, 0);
     } else if (obj[2].checked) {
         //alert("Room selected.");
-        selected = new Room(generateNewId("room"), x, y, 100, 100, 0, "new_room");
+        selected = new Room(generateRandomId(), x, y, 100, 100, 0, "new_room");
     } else if (obj[3].checked) {
         //alert("Circle selected.");
-        selected = new Circle(generateNewId("circle"), x, y, 25);
+        selected = new Circle(generateRandomId(), x, y, 25);
     } else if (obj[4].checked) {
         //alert("Line selected.");
-        selected = new Wall(generateNewId("wall"), x, y);
+        selected = new Wall(generateRandomId(), x, y);
     }
     selectedLoc.selectedFloor.addElement(selected);
     selected.strokeStyle = '#ff0000';
-}
-
-function generateNewId(type) {
-    var countup = 0;
-    var id = type + countup;
-    while (checkIfIdExists(id, type)) {
-        id = type + countup++;
-        console.log("New ID: " + id);
-    }
-    return id;
-}
-
-function checkIfIdExists(id, type) {
-    if (type == "location") {
-        for (var i = 0; i < locations.length; i++) {
-            if (String(id) === String(locations[i].id)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    else if (type == "floor") {
-        for (var i = 0; i < selectedLoc.floors.length; i++) {
-            if (String(id) === String(selectedLoc.floors[i].id)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    else {
-        for (var i = 0; i < selectedLoc.selectedFloor.elements.length; i++) {
-            if (String(id) === String(selectedLoc.selectedFloor.elements[i].id)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    /*for (var i = 0; i < components.length; i++) {
-        if (String(id) === String(components[i].id)) {
-            return true;
-        }
-    }*/
-    return false;
+    saveElement(selectedLoc, selectedLoc.selectedFloor, selected);
 }
 
 function getSelected() {
@@ -223,12 +181,11 @@ function getSelected() {
 
 // This function redraws all the components and rectangles
 function redrawAll() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (!selectedLoc || !selectedLoc.selectedFloor) { 
         alert("No location/floor selected.");
         return;
     }
-    
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
     
     var elements = selectedLoc.selectedFloor.elements;
     for (var i = 0; i < elements.length; i++) {
@@ -362,7 +319,7 @@ $("html").keyup(onKeyup);
  ******************************************/
 function onLocationChange() {
     var result = document.getElementById("option-location");
-    
+    redrawAll();
     // Find location by ID
     if (!findLocation(result.value)) {
         return;
