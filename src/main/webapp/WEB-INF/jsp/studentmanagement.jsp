@@ -5,7 +5,8 @@
     "http://www.w3.org/TR/html4/loose.dtd">
 <%! int fontSize;%> 
 <%! int maxfontSize = 3;%> 
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
     <head>
         <spring:url value="/css/index.css" var="mainCSS" />
@@ -28,11 +29,13 @@
                     <label id="selectedstudent" class="selectedstudentlabel middlepartitem">Selected student: none</label>
                     <button class="button_base b01_simple_rollover middlepartitem" id="buttonremovestudent">Remove selected student</button></br>    
                 </div>
-                <ol id="eventlist" class="borderedlist" type="1">
-                </ol>
             </div>
             <div class="rightpart">
-                <button class="button_base b01_simple_rollover buttonremovelog" type="button" id="buttonhidelog" name="buttonhidelog" value="Hide log" onclick="hidelog()"/>Hide log</button>
+                <h3>Workshops</h3>
+                <ol id="eventlist" class="borderedlist" type="1">
+                </ol>
+                <label id="selectedWorkshop" class="selectedstudentlabel">Selected workshop: none</label></br>
+                <button onclick='addStudentToWorkshop();' class="button_base b01_simple_rollover" id="buttonaddstudent">Add student to workshop</button>
             </div>
         </div>
         <textarea readonly id="adminlog" class="adminlog" rows="10" cols="70">Log:&#13;&#10;</textarea>
@@ -61,7 +64,7 @@
                     var clipboardstudents = "";
                     var clipboardstudentsNoGroup = "";
                     var selectedstudent = "";
-                    var selecteventname = "";
+                    var selectedeventname = "";
                     var studentlist = [];
                     var groupfilter = false;
                     var eventlist = [];
@@ -99,11 +102,23 @@
                         document.getElementById('selectedstudent').innerHTML = "Selected student: " + selectedstudent;
                         updatelog(studentmail + ' is now selected and ready for editing');
                     }
+                    
+                    function updateselectedworkshop(eventName) {
+                        selectedeventname = eventName;
+                        document.getElementById('selectedWorkshop').innerHTML = "Selected workshop: " + selectedeventname;
+                        updatelog(eventName + ' is now selected');
+                    }
 
                     var olstudents = document.getElementById('studentlist');
                     olstudents.onclick = function (event) {
                         var target = getEventTarget(event);
                         updateselectedstudent(target.innerHTML);
+                    };
+                    
+                    var olWorkshops = document.getElementById('eventlist');
+                    olWorkshops.onclick = function (event) {
+                        var target = getEventTarget(event);
+                        updateselectedworkshop(target.innerHTML);
                     };
 
                     function searchfunction() {
@@ -149,9 +164,11 @@
                             snapshot.forEach(function (childSnapshot) {
                                 var mail = childSnapshot.val().Mail;
                                 var groupid = childSnapshot.val().GroupID;
+                                var uid = childSnapshot.key.toString();
                                 var student = {
                                     email: mail,
                                     GroupID: groupid,
+                                    id: uid,
                                     executesearch: function (searchtext, htmlelement) {
                                         if (this.mail.indexOf(searchtext) !== -1)
                                         {
@@ -177,16 +194,16 @@
                     function seteventlist() {
                         var updatedrecords = 0;
                         var eventhtml;
-                        var event;
                         firebase.database().ref('/Event').once("value", function (snapshot) {
                             snapshot.forEach(function (childSnapshot) {
-                                var eventname = childSnapshot.val().EventName;
-                                event = {
-                                    Name: eventname
-                                };
-                                updatedrecords++;
-                                eventhtml = "<li><a href='#'>" + eventname + "</li>";
-                                document.getElementById('eventlist').innerHTML += eventhtml;
+                                var eventName = childSnapshot.val().EventName;
+                                var uid = childSnapshot.key.toString();
+                                var eventType = childSnapshot.val().EventType;
+                                if (eventType === 'Workshop') {
+                                    updatedrecords++;
+                                    eventhtml = "<li id=&quot;" + uid + "&quot;><a href='#'>" + eventName + "</li>";
+                                    document.getElementById('eventlist').innerHTML += eventhtml;
+                                }
                             });
                             var updatetext = updatedrecords + " events loaded";
                             updatelog(updatetext);
@@ -218,6 +235,35 @@
                             var updatetext = updatedrecords + " students loaded";
                             updatelog(updatetext);
                         });
+                    }
+                    
+                    function addStudentToWorkshop() {
+                        if (selectedstudent && selectedeventname) {
+                            firebase.database().ref('/Event').once("value", function (snapshot) {
+                            snapshot.forEach(function (childSnapshot) {
+                                var wsName = childSnapshot.val().EventName;
+                                if (wsName === selectedeventname) {
+                                    var wsKey = childSnapshot.key.toString();
+                                    var uid = getStudentID(selectedstudent);
+                                    firebase.database().ref('/Event/'+wsKey+"/Attending/"+uid).set({
+                                        Status: 'Attending'
+                                    }).then(updatelog(selectedstudent + " added to " + selectedeventname));
+                                }
+                            });
+                        });
+                        } else {
+                            alert("Select a student and a workshop");
+                        }
+                    }
+                    
+                    function getStudentID(email) {
+                        var uid;
+                        studentlist.forEach(function(student) {
+                            if (student.email === email) {
+                                uid = student.id;
+                            }
+                        });
+                        return uid;
                     }
         </script>
     </body>

@@ -32,14 +32,12 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class adminController
 {
-
     private DBEventModifier eventModifier;
     private DBDayModifier dayModifier;
 
     @RequestMapping(value = "/adminpanel", method = RequestMethod.GET)
     public ModelAndView initAdminEventScreen()
     {
-        System.out.println("admin");
         return createModelAndView(null);
     }
     
@@ -48,6 +46,57 @@ public class adminController
             ModelMap model)
     {
         return createModelAndView(scheduleableItemModel.getType());
+    }
+    
+    @RequestMapping(value = "/deleteEvent", method = RequestMethod.POST)
+    public ModelAndView deleteItem(@ModelAttribute("SpringWeb") ScheduledItemModel scheduledItemModel,
+            ModelMap model)
+    {
+        if(scheduledItemModel.getId() == null || "".equals(scheduledItemModel.getId())){
+            throw new IllegalArgumentException("tried to delete database entry with id null");
+        }
+        if(scheduledItemModel.getString().equals(EventType.None.toString())){
+            dayModifier = new DBDayModifier();
+            EventDay day = new EventDay("day to delete");
+            day.setId(scheduledItemModel.getId());
+            dayModifier.removeDay(day);
+        }else{
+            eventModifier = new DBEventModifier();
+            Workshop event = new Workshop("event to delete");
+            event.setId(scheduledItemModel.getId());
+            eventModifier.removeEvent(event);
+        }
+        return createModelAndView(null);
+    }
+    
+    @RequestMapping(value = "/editEvent", method = RequestMethod.POST)
+    public ModelAndView editEvent(@ModelAttribute("SpringWeb") ScheduleableItemModel scheduleableItemModel,
+            ModelMap model)
+    {
+        EventDate itemToEdit = null;
+        if(scheduleableItemModel.getType().equals(EventType.None.toString())){
+            itemToEdit = new EventDay(scheduleableItemModel.getEventName());
+            addEventDateValues(scheduleableItemModel, (EventDate) itemToEdit);
+            ((EventDay)itemToEdit).setId(scheduleableItemModel.getId());
+            dayModifier = new DBDayModifier();
+            dayModifier.updateDay((EventDay)itemToEdit);
+        }else{
+            eventModifier = new DBEventModifier();
+            if(scheduleableItemModel.getType().equals(EventType.Workshop.toString())){
+                itemToEdit = new Workshop(scheduleableItemModel.getEventName());
+                ((Workshop) itemToEdit).setPresenter(scheduleableItemModel.getPresenter());
+                ((Workshop) itemToEdit).setMaxUsers(Integer.parseInt(scheduleableItemModel.getMaxUsers()));
+            }else if(scheduleableItemModel.getType().equals(EventType.Lecture.toString())){
+                itemToEdit = new Lecture(scheduleableItemModel.getEventName());
+                ((Lecture) itemToEdit).setPresenter(scheduleableItemModel.getPresenter());
+            }else if(scheduleableItemModel.getType().equals(EventType.Performance.toString())){
+                itemToEdit = new Performance(scheduleableItemModel.getEventName());
+            }
+            addEventFieldValues(scheduleableItemModel, (Event)itemToEdit);
+            ((Event)itemToEdit).setId(scheduleableItemModel.getId());
+            eventModifier.updateEvent((Event)itemToEdit);
+        }
+        return createModelAndView(null);
     }
 
     @RequestMapping(value = "/createWorkshop", method = RequestMethod.POST)
@@ -92,6 +141,27 @@ public class adminController
         dayModifier.insertDay(newDay);
         return createModelAndView(null);
     }
+    
+    @RequestMapping(value = "/editItem", method = RequestMethod.POST)
+    public ModelAndView editItem(@ModelAttribute("SpringWeb") ScheduledItemModel itemToEdit,
+            ModelMap model)
+    {
+        ModelAndView thisView = createModelAndView(null);
+        ScheduleableItemModel selectedItem = new ScheduleableItemModel();
+        if(itemToEdit.getString().substring(0, 6).equals("School")){
+            dayModifier = new DBDayModifier();
+            EventDay selectedDay = dayModifier.getDay(itemToEdit.getId());
+            eventDateToScheduleableItemModel(selectedItem, (EventDate) selectedDay);
+            selectedItem.setType(EventType.None.toString());
+        }else{
+            eventModifier = new DBEventModifier();
+            Event selectedEvent = eventModifier.getEvent(itemToEdit.getId());
+            eventToScheduleableItemModel(selectedItem, selectedEvent);
+        }
+        selectedItem.setId(itemToEdit.getId());
+        thisView.addObject("selectedItem", selectedItem);
+        return thisView;
+    }
 
     private List<String> getEventTypes()
     {
@@ -111,6 +181,9 @@ public class adminController
         modelView.addObject("types", getEventTypes());
         modelView.addObject("fields", getPossibleFields());
         List<ScheduledItemModel> scheduledItems = getScheduledItems(day);
+        ScheduleableItemModel dummySelectedItem = new ScheduleableItemModel();
+        dummySelectedItem.setId("-1");
+        modelView.addObject("selectedItem", dummySelectedItem);
         modelView.addObject("scheduledItems", scheduledItems);
         return modelView;
     }
@@ -165,5 +238,29 @@ public class adminController
             }
         }
         return scheduledItems;
+    }
+
+    private void eventDateToScheduleableItemModel(ScheduleableItemModel selectedItem, EventDate selectedDay) {
+        selectedItem.setEventName(selectedDay.getEventName());
+        selectedItem.setDate(selectedDay.getDate());
+        selectedItem.setStartTime(selectedDay.getStartTime());
+        selectedItem.setEndTime(selectedDay.getEndTime());
+        selectedItem.setLocationName(selectedDay.getLocationName());
+        selectedItem.setDescription(selectedDay.getDescription());
+    }
+
+    private void eventToScheduleableItemModel(ScheduleableItemModel selectedItem, Event selectedEvent) {
+        eventDateToScheduleableItemModel(selectedItem, (EventDate)selectedEvent);
+        selectedItem.setImageURL(selectedEvent.getImageURL());
+        selectedItem.setType(selectedEvent.getEventType().toString());
+        switch(selectedEvent.getEventType()){
+            case Workshop:
+                selectedItem.setMaxUsers(Integer.toString(((Workshop)selectedEvent).getMaxUsers()));
+                selectedItem.setPresenter(((Workshop)selectedEvent).getPresenter());
+                break;
+            case Lecture:
+                selectedItem.setPresenter(((Lecture)selectedEvent).getPresenter());
+                break;
+        }
     }
 }

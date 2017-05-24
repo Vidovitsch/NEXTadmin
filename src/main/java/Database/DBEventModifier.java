@@ -54,19 +54,15 @@ public class DBEventModifier implements IModEvent {
     @Override
     public void insertEvent(Event event) {
         Map<String, String> data = new HashMap();
-        data.put("EventName", event.getEventName());
-        data.put("StartTime", event.getStartTime());
-        data.put("EndTime", event.getEndTime());
-        data.put("Date", event.getDate());
-        data.put("ImageURL", event.getImageURL());
-        System.out.println("image url: " + event.getImageURL());
-        data.put("LocationName", event.getLocationName());
-        data.put("Description", event.getDescription());
-        data = putEventTypeValues(event, data);
-        if(event.getEventType() == EventType.Workshop){
-            data.put("maxUsers", String.valueOf(((Workshop)event).getMaxUsers()));
-        }
+        putEventValues(event, data);
         Firebase ref = firebase.child("Event").push();
+        ref.setValue(data);
+    }
+    
+    public void updateEvent(Event event) {
+        Map<String, String> data = new HashMap();
+        putEventValues(event, data);
+        Firebase ref = firebase.child("Event/" + event.getId());
         ref.setValue(data);
     }
     
@@ -85,24 +81,7 @@ public class DBEventModifier implements IModEvent {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 for (DataSnapshot ds : snapshot.getChildren()) {
-                    String id = ds.getKey();
-                    String startTime = (String) ds.child("StartTime").getValue();
-                    String endTime = (String) ds.child("EndTime").getValue();
-                    String date = (String) ds.child("Date").getValue();
-                    String imageURL = (String) ds.child("ImageURL").getValue();
-                    String locationName = (String) ds.child("LocationName").getValue();
-                    String description = (String) ds.child("Description").getValue();
-                    
-                    Event event = specifyEvent(ds);
-                    event.setId(id);
-                    event.setStartTime(startTime);
-                    event.setEndTime(endTime);
-                    event.setDate(date);
-                    event.setImageURL(imageURL);
-                    event.setLocationName(locationName);
-                    event.setDescription(description);
-                    
-                    events.add(event);
+                    events.add(dsToEvent(ds));
                 }
                 unlockFXThread();
             }
@@ -115,6 +94,47 @@ public class DBEventModifier implements IModEvent {
         
         lockFXThread();
         return events;
+    }
+    
+    public Event getEvent(String id) {
+        final ArrayList<Event> events = new ArrayList();
+        Firebase ref = firebase.child("Event/" + id);
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                events.add(dsToEvent(snapshot));
+                unlockFXThread();
+            }
+            
+            @Override
+            public void onCancelled(FirebaseError fe) {
+                System.out.println(fe.toException().toString());
+            }
+        });
+        
+        lockFXThread();
+        return events.get(0);
+    }
+    
+    private Event dsToEvent(DataSnapshot ds){
+        String id = ds.getKey();
+        String startTime = (String) ds.child("StartTime").getValue();
+        String endTime = (String) ds.child("EndTime").getValue();
+        String date = (String) ds.child("Date").getValue();
+        String imageURL = (String) ds.child("ImageURL").getValue();
+        String locationName = (String) ds.child("LocationName").getValue();
+        String description = (String) ds.child("Description").getValue();
+
+        Event event = specifyEvent(ds);
+        event.setId(id);
+        event.setStartTime(startTime);
+        event.setEndTime(endTime);
+        event.setDate(date);
+        event.setImageURL(imageURL);
+        event.setLocationName(locationName);
+        event.setDescription(description);
+        return event;
     }
     
     private Event specifyEvent(DataSnapshot ds) {
@@ -140,6 +160,20 @@ public class DBEventModifier implements IModEvent {
             Performance event = new Performance((String) ds.child("EventName").getValue());
             
             return event;
+        }
+    }
+    
+    private void putEventValues(Event event, Map<String, String> data) {
+        data.put("EventName", event.getEventName());
+        data.put("StartTime", event.getStartTime());
+        data.put("EndTime", event.getEndTime());
+        data.put("Date", event.getDate());
+        data.put("ImageURL", event.getImageURL());
+        data.put("LocationName", event.getLocationName());
+        data.put("Description", event.getDescription());
+        data = putEventTypeValues(event, data);
+        if(event.getEventType() == EventType.Workshop){
+            data.put("maxUsers", String.valueOf(((Workshop)event).getMaxUsers()));
         }
     }
     
