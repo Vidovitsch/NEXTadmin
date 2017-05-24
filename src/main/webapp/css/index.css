@@ -21,34 +21,55 @@ span:hover {
     margin-top: 120px;
 }
 
+.grouplist {
+    max-height: 400px;
+}
+
 .leftpart{
-    float: left;
-    width: 33%;
-    max-height: 50%;
+    position: absolute;
+    width: 32%;
+    margin-left: 15px;
+}
+
+.studentsearch{
+    max-height: 600px;
 }
 
 .selectedstudentlabel{
     margin:10px;
 }
 
-.studentsearchbar{
+.searchText{
     width: 90%;
     padding: 10px;
     margin: 20px 20px 5px 20px;
 }
 
+.groupsearchbar{
+    width: 90%;
+    padding: 10px;
+    margin: 20px 20px 5px 20px;
+}
+
+#editaccountpart{
+    border: antiquewhite;
+    border-style: solid;
+    padding: 10px;
+}
+
 .borderedlist{
     border-style: solid;
-    margin-left: 15px;
     text-align: center;
     align-content: center;
     overflow-y: auto;
     padding-top: 10px;
     padding-bottom: 10px;
+    max-height: 600px;
 }
 
 .rightpart{
-    float: right;
+    position: absolute;
+    right: 0;
     width: 33%;
     text-align: center;
 }
@@ -80,10 +101,11 @@ ol li:hover{
     cursor: pointer;
 }
 .middlepart{
-    float: left;
-    width: 33%;
+    position: absolute;
+    width: 32%;
+    left: 33%;
     text-align: center;
-    margin-left: 10px;
+    margin-left: 15px;
 }
 
 #scroll{
@@ -294,7 +316,6 @@ h1,h2,h3,p,div,a, .headline{
     border: antiquewhite;
     border-style: solid;
     padding: 10px;
-    margin: 5px;
 }
 
 .buttonbrowseexcel{

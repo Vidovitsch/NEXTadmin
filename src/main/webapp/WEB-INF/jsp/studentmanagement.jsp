@@ -5,8 +5,7 @@
     "http://www.w3.org/TR/html4/loose.dtd">
 <%! int fontSize;%> 
 <%! int maxfontSize = 3;%> 
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <html>
     <head>
         <spring:url value="/css/index.css" var="mainCSS" />
@@ -15,27 +14,33 @@
     <body>
         <div class="wrapper">
             <div class="leftpart">
-                <button class="button_base b01_simple_rollover copymailsbutton" id="buttoncopytoclipboard" onclick="copyToClipboard();">Copy student mails</button>
-                <input type="text" id="searchText" class="studentsearchbar" onkeyup="searchfunction()" placeholder="Search for students..">
-                <button class="button_base b01_simple_rollover middlepartitem middleparthalfbutton" id="buttonApplyNoGroupFilter" onclick="setstudentlistNoGroup()">No Group</button>
-                <button class="button_base b01_simple_rollover middlepartitem middleparthalfbutton" id="buttonAllStudents" onclick="setstudentlist()">All Students</button></br>
-
-                <ol id="studentlist" class="borderedlist" type="1">
-                </ol>
-            </div>
-            <div class="middlepart">
-                <div id='editaccountpart' class='middlepartcontainer'>
+                <div class="studentsearch">
+                    <button class="button_base b01_simple_rollover copymailsbutton" id="buttoncopytoclipboard" onclick="copyToClipboard();">Copy student mails</button>
+                    <input type="text" id="studentsearchbar" class="searchText" onkeyup="searchfunctionstudents()" placeholder="Search for students..">
+                    <ol id="studentlist" class="borderedlist" type="1">
+                    </ol>
+                </div>
+                <div id='editaccountpart'>
                     <h3>Edit account</h3>
                     <label id="selectedstudent" class="selectedstudentlabel middlepartitem">Selected student: none</label>
                     <button class="button_base b01_simple_rollover middlepartitem" id="buttonremovestudent">Remove selected student</button></br>    
                 </div>
             </div>
-            <div class="rightpart">
-                <h3>Workshops</h3>
-                <ol id="eventlist" class="borderedlist" type="1">
+            <div class="middlepart">
+                <input type="text" id="groupsearchbar" class="searchText" onkeyup="searchfunctiongroups()" placeholder="Search for groups..">
+                <ol id="grouplist" class="borderedlist" type="1">
                 </ol>
-                <label id="selectedWorkshop" class="selectedstudentlabel">Selected workshop: none</label></br>
-                <button onclick='addStudentToWorkshop();' class="button_base b01_simple_rollover" id="buttonaddstudent">Add student to workshop</button>
+                <div id='editaccountpart'>
+                    <h3 id="selectedgroup">Edit group</h3>
+                    <ol id="studentsingroup" class="borderedlist" type="1">
+                    </ol>
+                </div>
+            </div>
+            <div class="rightpart">
+                <div class="groupsearchbar">
+                    <ol id="eventlist" class="borderedlist" type="1">
+                    </ol>
+                </div>
             </div>
         </div>
         <textarea readonly id="adminlog" class="adminlog" rows="10" cols="70">Log:&#13;&#10;</textarea>
@@ -62,11 +67,9 @@
                     /*jshint browser:true */
                     /*global XLSX */
                     var clipboardstudents = "";
-                    var clipboardstudentsNoGroup = "";
                     var selectedstudent = "";
-                    var selectedeventname = "";
+                    var selecteventname = "";
                     var studentlist = [];
-                    var groupfilter = false;
                     var eventlist = [];
                     function copyToClipboard() {
                         var aux = document.createElement("input");
@@ -102,29 +105,106 @@
                         document.getElementById('selectedstudent').innerHTML = "Selected student: " + selectedstudent;
                         updatelog(studentmail + ' is now selected and ready for editing');
                     }
-                    
-                    function updateselectedworkshop(eventName) {
-                        selectedeventname = eventName;
-                        document.getElementById('selectedWorkshop').innerHTML = "Selected workshop: " + selectedeventname;
-                        updatelog(eventName + ' is now selected');
-                    }
 
                     var olstudents = document.getElementById('studentlist');
                     olstudents.onclick = function (event) {
                         var target = getEventTarget(event);
+                        if ((target.innerHTML.match(/@/g) || []).length > 2) {
+                            return;
+                        }
                         updateselectedstudent(target.innerHTML);
                     };
                     
-                    var olWorkshops = document.getElementById('eventlist');
-                    olWorkshops.onclick = function (event) {
+                    function addstudent(student) {
+                        document.getElementById('studentsingroup').innerHTML += "<li><a href='#'>" + student + "</li>";
+                    }
+                    
+                    function updateselectedgroup(groupID) {
+                        var uids = [];
+                        var groupname = groupID;
+                        groupID = groupID.substring(groupID.indexOf("(") + 1, groupID.indexOf(")"));
+                        document.getElementById('studentsingroup').innerHTML = "";
+                        firebase.database().ref('/Group/' + groupID + '/Members').once("value", function (snapshot) {
+                            snapshot.forEach(function (childSnapshot) {
+                                uids.push(childSnapshot.key);
+                            });
+                            document.getElementById('selectedgroup').innerHTML = "Edit " + groupname;
+                            for(var i = 0; i < uids.length; i++)
+                            {
+                                firebase.database().ref('/User/' + uids[i]).once("value", function (data) {
+                                    addstudent(data.val().Mail);
+                                });
+                            }
+                            updatelog(groupname + ' is now selected and ready for editing');
+                        });
+                    }
+                    
+                    document.getElementById('studentsingroup').onclick = function (event) {
                         var target = getEventTarget(event);
-                        updateselectedworkshop(target.innerHTML);
+                        if ((target.innerHTML.match(/@/g) || []).length > 2) {
+                            return;
+                        }
+                        updateselectedstudent(target.innerHTML);
                     };
-
-                    function searchfunction() {
+                    
+                    document.getElementById('grouplist').onclick = function (event) {
+                        var target = getEventTarget(event);
+                        console.log(target.innerHTML);
+                        if (target.innerHTML.indexOf("<li>") > 0) {
+                            return;
+                        }
+                        updateselectedgroup(target.innerHTML);
+                    };
+                    
+                    function searchfunctiongroups() {
                         // Declare variables
                         var input, filter, ul, li, a, i;
-                        input = document.getElementById('searchText');
+                        input = document.getElementById('groupsearchbar');
+                        filter = input.value.toUpperCase();
+                        ul = document.getElementById("grouplist");
+                        li = ul.getElementsByTagName('li');
+                        // Loop through all list items, and hide those who don't match the search query
+                        for (i = 0; i < li.length; i++) {
+                            a = li[i].getElementsByTagName("a")[0];
+                            if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                                li[i].style.display = "";
+                            } else {
+                                li[i].style.display = "none";
+                            }
+                        }
+                    }
+                    
+                    function setgrouplist() {
+                        var updatedrecords = 0;
+                        firebase.database().ref('/Group').once("value", function (snapshot) {
+                            snapshot.forEach(function (childSnapshot) {
+                                var group = {
+                                    GroupID : childSnapshot.key,
+                                    Name: childSnapshot.val().Name,
+                                    executesearch: function (searchtext, htmlelement) {
+                                        if (this.Name.indexOf(searchtext) !== -1)
+                                        {
+                                            htmlelement.innerHTML += "<li>" + this.Name + " (" + this.GroupID + ")" + "</li>";
+                                        }
+                                    },
+                                    getlistitemhtml: function () {
+                                        return "<li><a href='#'>" + this.Name + " (" + this.GroupID + ")" + "</li>";
+                                    }
+                                    
+                                };
+                                updatedrecords++;
+                                document.getElementById('grouplist').innerHTML += group.getlistitemhtml();
+                            });
+                            var updatetext = updatedrecords + " groups loaded";
+                            updatelog(updatetext);
+                        });
+                    }
+                    setgrouplist();
+
+                    function searchfunctionstudents() {
+                        // Declare variables
+                        var input, filter, ul, li, a, i;
+                        input = document.getElementById('studentsearchbar');
                         filter = input.value.toUpperCase();
                         ul = document.getElementById("studentlist");
                         li = ul.getElementsByTagName('li');
@@ -139,37 +219,14 @@
                         }
                     }
 
-                    function setstudentlistNoGroup() {
-                        studentnogrouplist = [];
-                        groupfilter = true;
-                        document.getElementById('studentlist').innerHTML = "";
-                        var studentswithoutgroup = 0;
-                        var arrayLength = studentlist.length;
-                        for (var i = 0; i < arrayLength; i++) {
-                            if (parseFloat(studentlist[i].GroupID) === parseFloat(-1))
-                            {
-                                studentswithoutgroup++;
-                                studentnogrouplist.push(studentlist[i]);
-                                document.getElementById('studentlist').innerHTML += studentlist[i].getlistitemhtml();
-                            }
-                        }
-                        updatelog(studentswithoutgroup + ' student do not have a group assigned yet');
-                    }
-
                     function setstudentlist() {
-                        studentlist = [];
-                        groupfilter = false;
                         var updatedrecords = 0;
                         firebase.database().ref('/User').once("value", function (snapshot) {
                             snapshot.forEach(function (childSnapshot) {
                                 var mail = childSnapshot.val().Mail;
-                                var groupid = childSnapshot.val().GroupID;
-                                var uid = childSnapshot.key.toString();
                                 var student = {
                                     email: mail,
-                                    GroupID: groupid,
-                                    id: uid,
-
+                                    GroupID: childSnapshot.val().GroupID,
                                     executesearch: function (searchtext, htmlelement) {
                                         if (this.mail.indexOf(searchtext) !== -1)
                                         {
@@ -195,16 +252,16 @@
                     function seteventlist() {
                         var updatedrecords = 0;
                         var eventhtml;
+                        var event;
                         firebase.database().ref('/Event').once("value", function (snapshot) {
                             snapshot.forEach(function (childSnapshot) {
-                                var eventName = childSnapshot.val().EventName;
-                                var uid = childSnapshot.key.toString();
-                                var eventType = childSnapshot.val().EventType;
-                                if (eventType === 'Workshop') {
-                                    updatedrecords++;
-                                    eventhtml = "<li id=&quot;" + uid + "&quot;><a href='#'>" + eventName + "</li>";
-                                    document.getElementById('eventlist').innerHTML += eventhtml;
-                                }
+                                var eventname = childSnapshot.val().EventName;
+                                event = {
+                                    Name: eventname
+                                };
+                                updatedrecords++;
+                                eventhtml = "<li><a href='#'>" + eventname + "</li>";
+                                document.getElementById('eventlist').innerHTML += eventhtml;
                             });
                             var updatetext = updatedrecords + " events loaded";
                             updatelog(updatetext);
@@ -236,35 +293,6 @@
                             var updatetext = updatedrecords + " students loaded";
                             updatelog(updatetext);
                         });
-                    }
-                    
-                    function addStudentToWorkshop() {
-                        if (selectedstudent && selectedeventname) {
-                            firebase.database().ref('/Event').once("value", function (snapshot) {
-                            snapshot.forEach(function (childSnapshot) {
-                                var wsName = childSnapshot.val().EventName;
-                                if (wsName === selectedeventname) {
-                                    var wsKey = childSnapshot.key.toString();
-                                    var uid = getStudentID(selectedstudent);
-                                    firebase.database().ref('/Event/'+wsKey+"/Attending/"+uid).set({
-                                        Status: 'Attending'
-                                    }).then(updatelog(selectedstudent + " added to " + selectedeventname));
-                                }
-                            });
-                        });
-                        } else {
-                            alert("Select a student and a workshop");
-                        }
-                    }
-                    
-                    function getStudentID(email) {
-                        var uid;
-                        studentlist.forEach(function(student) {
-                            if (student.email === email) {
-                                uid = student.id;
-                            }
-                        });
-                        return uid;
                     }
         </script>
     </body>
