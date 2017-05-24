@@ -31,12 +31,12 @@
                 </c:when>    
                 <c:otherwise>
                     <div id="forms-default" />
-                        <form action="javascript:downloadCodes();" method="post" id="form-default">
-                            <input type="submit" value="Download Codes" name="Submit" class="btn-form-default" />
-                        </form>
-                    </div>
+                    <form action="javascript:downloadCodes();" method="post" id="form-default">
+                        <input type="submit" value="Download Codes" name="Submit" class="btn-form-default" />
+                    </form>
+                </div>
                 <br>
-               <c:forEach var="row" items="${vModel.codes}">
+                <c:forEach var="row" items="${vModel.codes}">
                     <img src="${row}" />
                 </c:forEach> 
             </c:otherwise>
@@ -44,15 +44,8 @@
     </div>
     <script src="jszip_1.js"></script>
     <script src="FileSaver.js"></script>
+    <script src="initfirebase.js"></script> <!-- initialize firebase -->
     <script>
-        var config = {
-            apiKey: "AIzaSyCRi0Ma5ekQxhwg-BfQCa6684hMzvR3Z1o",
-            authDomain: "nextweek-b9a58.firebaseapp.com",
-            databaseURL: "https://nextweek-b9a58.firebaseio.com",
-            storageBucket: "nextweek-b9a58.appspot.com",
-            messagingSenderId: "488624254338"
-        };
-        firebase.initializeApp(config);
         var database = firebase.database();
         var zip = new JSZip();
         var img = zip.folder("QR-codes");
