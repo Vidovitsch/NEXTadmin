@@ -54,14 +54,20 @@ function newLocation() {
     locations.push(selectedLoc);
     saveLocation(selectedLoc);
     
-    // Add the new location to the GUI
-    var menu = document.getElementById("option-location");
-    var option = document.createElement("option");
-    option.value = selectedLoc.id;
-    option.text = selectedLoc.name;
-    menu.add(option);
-    console.log("New location has been added!");
+    loadLocationList();
     createLocationForm();
+}
+
+function loadLocationList() {    
+    document.getElementById("option-location").options.length = 0;
+    var menu = document.getElementById("option-location");
+    for (var i = 0; i < locations.length; i++) {
+        var option = document.createElement("option");
+        option.value = locations[i].id;
+        option.text = locations[i].name;
+        menu.add(option);
+    }
+    console.log("All locations have been added to the list.");
 }
 
 function findLocation(id) { 
