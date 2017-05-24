@@ -6,6 +6,8 @@
 
 // Get a reference to the database service
 var database = firebase.database();
+var v;
+var f;
 
 function saveElement(location, floor, element) {
     if (!element.id) {
@@ -81,6 +83,80 @@ function saveFloor(location, floor) {
         Name: floor.name,
         Level: floor.level
     });
+}
+
+function loadLocations() {
+    //Search foor locations
+    var locRef = database.ref('Map');
+    locRef.once("value", function(snapshot) {
+        snapshot.forEach(function(loc) {
+            var id = loc.key.toString();
+            var address = loc.val().Address;
+            var name = loc.val().Name;
+            var postal = loc.val().Postal;
+            v = new Venue(id, name, postal, address);
+            
+            //Search for floors
+            var floorRef = database.ref('Map/' + id + '/Floors');
+            floorRef.once("value", function(snapshot) {
+                snapshot.forEach(function(floor) {
+                    var id = floor.key.toString();
+                    var level = loc.val().Level;
+                    var name = loc.val().Name;
+                    f = new Floor(id, name, level);
+                    
+                    //Search for elements
+                    var elemRef = database.ref('Map/' + id + '/Floors/' + id + '/Elements');
+                    elemRef.once("value", function(snapshot) {
+                        snapshot.forEach(function(elem) {
+                            var e = loadElement(elem);
+                            f.addElement(e);
+                        });
+                        v.addFloor(f);
+                    });
+                });
+            });
+            locations.push(v);
+        });
+    });
+}
+
+function loadElement(elem) {
+    var id = elem.key.toString();
+    var type = elem.val().Type;
+    if (type === 'rectangle') {
+        var x = elem.val().X;
+        var y = elem.val().Y;
+        var width = elem.val().Width;
+        var height = elem.val().Height;
+        return new Rectangle(id, x, y, width, height);
+    } else if (type === 'room') {
+        var x = elem.val().X;
+        var y = elem.val().Y;
+        var width = elem.val().Width;
+        var height = elem.val().Height;
+        var capacity = elem.val().Capacity;
+        var name = elem.val().Name;
+        return new Room(id, x, y, width, height, capacity, name);
+    } else if (type === 'circle') {
+        var x = elem.val().X;
+        var y = elem.val().Y;
+        var r = elem.val().Radius;
+        return new Circle(id, x, y, r);
+    } else if (type === 'table') {
+        var x = elem.val().X;
+        var y = elem.val().Y;
+        var width = elem.val().Width;
+        var height = elem.val().Height;
+        var number = elem.val().Number;
+        return new Table(id, x, y, width, height, number);
+    } else  {
+        var x = elem.val().X;
+        var y = elem.val().Y;
+        var x2 = elem.val().X2;
+        var y2 = elem.val().Y2;
+        return new Wall(id, x, y, x2, y2);
+    }
 }
 
 function generateRandomId() {
