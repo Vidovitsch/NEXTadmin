@@ -10,17 +10,30 @@ package Models;
  * @author Arno Dekkers Los
  */
 public class ScheduleableItemModel {
-    private String eventName;
-    private String startTime;
-    private String endTime;
-    private String date;
-    private String day;
-    private String locationName;
-    private String description;
-    private String presenter;
-    private String imageURL;
-    private String maxUsers;
-    private String type;
+    private String id;
+    private String eventName = "-1";
+    private String startTime = "-1";
+    private String endTime = "-1";
+    private String date = "-1";
+    private String day = "-1";
+    private String locationName = "-1";
+    private String description = "-1";
+    private String presenter = "-1";
+    private String imageURL = "-1";
+    private String maxUsers = "-1";
+    private String type = "-1";
+
+    public String getId() {
+        return id;
+    }
+    
+     public String AddSpecialChars(String s){
+        return "'" + s + "'";
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getEventName() {
         return eventName;
