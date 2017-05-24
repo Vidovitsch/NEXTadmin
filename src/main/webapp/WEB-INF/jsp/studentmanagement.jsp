@@ -51,17 +51,7 @@
         <script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-auth.js"></script>
         <script src="https://www.gstatic.com/firebasejs/3.7.1/firebase-database.js"></script>
         <script src="https://www.gstatic.com/firebasejs/3.7.2/firebase.js"></script>
-        <script>
-                    // Initialize Firebase
-                    var config = {
-                        apiKey: "AIzaSyCRi0Ma5ekQxhwg-BfQCa6684hMzvR3Z1o",
-                        authDomain: "nextweek-b9a58.firebaseapp.com",
-                        databaseURL: "https://nextweek-b9a58.firebaseio.com",
-                        storageBucket: "nextweek-b9a58.appspot.com",
-                        messagingSenderId: "488624254338"
-                    };
-                    firebase.initializeApp(config);
-        </script>
+        <script src="initfirebase.js"></script>
         <script src="dist/cpexcel.js"></script>
         <script src="shim.js"></script>
         <script src="jszip.js"></script>
@@ -73,15 +63,23 @@
                     var selectedstudent = "";
                     var selecteventname = "";
                     var studentlist = [];
+                    var nogroupfilter = false;
                     var eventlist = [];
                     function copyToClipboard() {
                         var aux = document.createElement("input");
-                        aux.setAttribute("value", clipboardstudents);
+                        if (nogroupfilter)
+                        {
+                            aux.setAttribute("value", clipboardstudentsNoGroup);
+                            updatelog("Attending students with no group copied to clipboard");
+                        } else
+                        {
+                            aux.setAttribute("value", clipboardstudents);
+                            updatelog("All attending students copied to clipboard");
+                        }
                         document.body.appendChild(aux);
                         aux.select();
                         document.execCommand("copy");
                         document.body.removeChild(aux);
-                        updatelog("Attending students copied to clipboard");
                         updatelog("Ready to paste emails in your email-client");
                     }
                     
@@ -177,7 +175,13 @@
                         }
                         updatelog(studentmail + ' is now selected and ready for editing');
                     }
-                    
+
+                    function updateselectedworkshop(eventName) {
+                        selectedeventname = eventName;
+                        document.getElementById('selectedWorkshop').innerHTML = "Selected workshop: " + selectedeventname;
+                        updatelog(eventName + ' is now selected');
+                    }
+
                     var olstudents = document.getElementById('studentlist');
                     olstudents.onclick = function (event) {
                         var target = getEventTarget(event);
@@ -186,6 +190,7 @@
                         }
                         updateselectedstudent(target.innerHTML);
                     };
+
                     
                     function addstudent(student) {
                         document.getElementById('studentsingroup').innerHTML += "<li><a href='#'>" + student + "</li>";
@@ -212,6 +217,11 @@
                     }
                     
                     document.getElementById('studentsingroup').onclick = function (event) {
+
+
+                    var olWorkshops = document.getElementById('eventlist');
+                    olWorkshops.onclick = function (event) {
+
                         var target = getEventTarget(event);
                         if ((target.innerHTML.match(/@/g) || []).length > 2) {
                             return;
@@ -271,7 +281,7 @@
                         });
                     }
                     setgrouplist();
-
+                    
                     function searchfunctionstudents() {
                         // Declare variables
                         var input, filter, ul, li, a, i;
@@ -286,11 +296,28 @@
                                 li[i].style.display = "";
                             } else {
                                 li[i].style.display = "none";
+
+                    function setstudentlistNoGroup() {
+                        clipboardstudentsNoGroup = "";
+                        nogroupfilter = true;
+                        document.getElementById('studentlist').innerHTML = "";
+                        var studentswithoutgroup = 0;
+                        var arrayLength = studentlist.length;
+                        for (var i = 0; i < arrayLength; i++) {
+                            if (parseFloat(studentlist[i].GroupID) === parseFloat(-1))
+                            {
+                                studentswithoutgroup++;
+                                clipboardstudentsNoGroup += studentlist[i].email + ";";
+                                document.getElementById('studentlist').innerHTML += studentlist[i].getlistitemhtml();
+
                             }
                         }
                     }
 
                     function setstudentlist() {
+                        clipboardstudents = "";
+                        studentlist = [];
+                        nogroupfilter = false;
                         var updatedrecords = 0;
                         firebase.database().ref('/User').once("value", function (snapshot) {
                             snapshot.forEach(function (childSnapshot) {
@@ -366,6 +393,35 @@
                             var updatetext = updatedrecords + " students loaded";
                             updatelog(updatetext);
                         });
+                    }
+                    
+                    function addStudentToWorkshop() {
+                        if (selectedstudent && selectedeventname) {
+                            firebase.database().ref('/Event').once("value", function (snapshot) {
+                                snapshot.forEach(function (childSnapshot) {
+                                    var wsName = childSnapshot.val().EventName;
+                                    if (wsName === selectedeventname) {
+                                        var wsKey = childSnapshot.key.toString();
+                                        var uid = getStudentID(selectedstudent);
+                                        firebase.database().ref('/Event/' + wsKey + "/Attending/" + uid).set({
+                                            Status: 'Attending'
+                                        }).then(updatelog(selectedstudent + " added to " + selectedeventname));
+                                    }
+                                });
+                            });
+                        } else {
+                            alert("Select a student and a workshop");
+                        }
+                    }
+
+                    function getStudentID(email) {
+                        var uid;
+                        studentlist.forEach(function (student) {
+                            if (student.email === email) {
+                                uid = student.id;
+                            }
+                        });
+                        return uid;
                     }
         </script>
     </body>
