@@ -24,12 +24,15 @@
                     <!-- show the locations and an option to add a new location -->
                     <span class="soflow-title">Locations</span>
                     <br>
-                    <select class="soflow" id="option-location" onchange="console.log('selected new location')">
+                    <select class="soflow" id="option-location" onchange="onLocationChange()">
+                        <!-- DUMMY
                         <option></option>
                         <option>Fontys Rachelsmolen</option>
                         <option>Klokgebouw</option>
+                        -->
                     </select>
                     <input type="button" class="soflow-btn" id="btn-add-location" value="+" onclick="createLocationForm()" />
+                    <input type="button" class="soflow-img-btn" id="btn-edit-location" onclick="editLocationForm()" />
                     
                     <div id="location-form" class="info-form">
                         <!-- Dynamic location adding when pressed on + -->
@@ -39,12 +42,15 @@
                     <!-- show the floors and an option to add a new floor -->
                     <span class="soflow-title">Floors</span>
                     <br>
-                    <select class="soflow" id="option-floor" onchange="console.log('selected new floor')">
+                    <select class="soflow" id="option-floor" onchange="onFloorChange()">
+                        <!-- DUMMY
                         <option></option>
                         <option>Begane grond</option>
                         <option>Verdieping 1</option>
+                        -->
                     </select>
                     <input type="button" class="soflow-btn" id="btn-add-floor" value="+" onclick="createFloorForm()" />
+                    <input type="button" class="soflow-img-btn" id="btn-edit-floor" onclick="editFloorForm()" />
                     
                     <div id="floor-form" class="info-form">
                         <!-- Dynamic floor adding when pressed on + -->
@@ -102,6 +108,8 @@
         <script src="/javascript/map/room.js"></script> <!-- room class -->
         <script src="/javascript/map/circle.js"></script> <!-- circle class -->
         <script src="/javascript/map/line.js"></script> <!-- line class -->
+        <script src="/javascript/map/location.js"></script> <!-- location class -->
+        <script src="/javascript/map/floor.js"></script> <!-- floor class -->
         <script src="/javascript/map/mapcreation.js"></script> <!-- mapcreation tool -->
         <script src="/javascript/map/mapoptions.js"></script> <!-- mapoptions creation tool -->
         <script src="/javascript/map/initfirebase.js"></script> <!-- initialize firebase -->

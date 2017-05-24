@@ -642,7 +642,8 @@ function createNewElement() {
         var y = document.getElementById("option-y").value;
         var width = document.getElementById("option-width").value;
         var height = document.getElementById("option-height").value;
-        components.push(new rectangle(id, parseInt(x), parseInt(y), parseInt(width), parseInt(height)));
+        //components.push(new rectangle(id, parseInt(x), parseInt(y), parseInt(width), parseInt(height)));
+        selectedLoc.selectedFloor.addElement(new Rectangle(id, parseInt(x), parseInt(y), parseInt(width), parseInt(height)))
     }
     else if (index == 2) {
         // Create table: id, x, y, width, height
@@ -652,7 +653,8 @@ function createNewElement() {
         var width = document.getElementById("option-width").value;
         var height = document.getElementById("option-height").value;
         var number = document.getElementById("option-number").value;
-        components.push(new table(id, parseInt(x), parseInt(y), parseInt(width), parseInt(height), parseInt(number)));
+        //components.push(new table(id, parseInt(x), parseInt(y), parseInt(width), parseInt(height), parseInt(number)));
+        selectedLoc.selectedFloor.addElement(new Table(id, parseInt(x), parseInt(y), parseInt(width), parseInt(height), parseInt(number)));
     }
     else if (index == 3) {
         // Create room: id, name, capacity, x, y, width, height
@@ -663,7 +665,8 @@ function createNewElement() {
         var y = document.getElementById("option-y").value;
         var width = document.getElementById("option-width").value;
         var height = document.getElementById("option-height").value;
-        components.push(new room(id, parseInt(x), parseInt(y), parseInt(width), parseInt(height), capacity, roomname));
+        //components.push(new room(id, parseInt(x), parseInt(y), parseInt(width), parseInt(height), capacity, roomname));
+        selectedLoc.selectedFloor.addElement(new Room(id, parseInt(x), parseInt(y), parseInt(width), parseInt(height), capacity, roomname));
     }
     else if (index == 4) {
         // Create circle: id, x, y, radius
@@ -671,7 +674,8 @@ function createNewElement() {
         var x = document.getElementById("option-x").value;
         var y = document.getElementById("option-y").value;
         var radius = document.getElementById("option-radius").value;
-        components.push(new circle(id, parseInt(x), parseInt(y), parseInt(radius)));
+        //components.push(new circle(id, parseInt(x), parseInt(y), parseInt(radius)));
+        selectedLoc.selectedFloor.addElement(new Circle(id, parseInt(x), parseInt(y), parseInt(radius)));
     }
     else if (index == 5) {
         // Create line: id, x, y, x2, y2
@@ -680,7 +684,8 @@ function createNewElement() {
         var y = document.getElementById("option-y").value;
         var x2 = document.getElementById("option-x2").value;
         var y2 = document.getElementById("option-y2").value;
-        components.push(new line(id, parseInt(x), parseInt(y), parseInt(x2), parseInt(y2)));
+        //components.push(new line(id, parseInt(x), parseInt(y), parseInt(x2), parseInt(y2)));
+        selectedLoc.selectedFloor.addElement(new Wall(id, parseInt(x), parseInt(y), parseInt(x2), parseInt(y2)));
     }
     redrawAll();
 }
@@ -710,10 +715,17 @@ function createLocationForm() {
     document.getElementById("location-form").innerHTML = layout;
 }
 function createFloorForm() {
+    if (selectedLoc == null) {
+        alert("Please select or create a location first.");
+        return;
+    }
+    
     var layout = "";
     if (document.getElementById("btn-add-floor").value == "+") {
         layout = '<div><span class="soflow-regular-txt">FLOORNAME</span>' + 
         '<input class="soflow-input-txt" type="text" id="floorform-floorname" placeholder="floorname" /></div><br>' + 
+        '<div><span class="soflow-regular-txt">LEVEL</span>' +
+        '<input class="soflow-input-txt" type="text" id="floorform-level" placeholder="level" /></div><br>' +
         '<div><input type="button" class="soflow-btn" value="SAVE" onclick="newFloor()" /></div>';
         // Set button from + to -
         document.getElementById("btn-add-floor").value = "-";
@@ -723,42 +735,6 @@ function createFloorForm() {
         document.getElementById("btn-add-floor").value = "+";	
     }
     document.getElementById("floor-form").innerHTML = layout;
-}
-
-
-function newLocation() {
-    var name = document.getElementById("locationform-name").value;
-    var address = document.getElementById("locationform-address").value;
-    var postal = document.getElementById("locationform-postal").value;
-    if (!name || !address || !postal) {
-        console.log("[LOCATION] Not all required info has been filled in.");
-        return;
-    }
-    
-    // TO DO: Write To Firebase
-    
-    var menu = document.getElementById("option-location");
-    var option = document.createElement("option");
-    option.text = name;
-    menu.add(option);
-    alert("New location successfully added!");
-    createLocationForm();
-}
-function newFloor() {
-    var floorname = document.getElementById("floorform-floorname").value;
-    if (!floorname) {
-        console.log("[FLOOR] Not all required info has been filled in.");
-        return;
-    }
-    
-    // TO DO: Write To Firebase
-    
-    var menu = document.getElementById("option-floor");
-    var option = document.createElement("option");
-    option.text = floorname;
-    menu.add(option);
-    alert("New floor successfully added!");
-    createFloorForm();
 }
 
 mapCreationOptions();
