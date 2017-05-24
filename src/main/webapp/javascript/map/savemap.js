@@ -97,7 +97,7 @@ function loadLocations() {
             v = new Venue(id, name, postal, address);
             
             //Search for floors
-            var floorRef = database.ref('Map/' + id + '/Floors');
+            var floorRef = snapshot.child(v.id + "/Floors");
             floorRef.once("value", function(snapshot) {
                 snapshot.forEach(function(floor) {
                     var id = floor.key.toString();
@@ -106,7 +106,7 @@ function loadLocations() {
                     f = new Floor(id, name, level);
                     
                     //Search for elements
-                    var elemRef = database.ref('Map/' + id + '/Floors/' + id + '/Elements');
+                    var elemRef = snapshot.child(f.id + "/Elements");
                     elemRef.once("value", function(snapshot) {
                         snapshot.forEach(function(elem) {
                             var e = loadElement(elem);
@@ -115,9 +115,10 @@ function loadLocations() {
                         v.addFloor(f);
                     });
                 });
+                locations.push(v);
             });
-            locations.push(v);
         });
+        //
     });
 }
 
