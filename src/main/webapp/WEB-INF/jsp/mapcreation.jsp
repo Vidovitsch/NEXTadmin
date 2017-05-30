@@ -51,7 +51,7 @@
         <script src="/javascript/map/line.js"></script> <!-- line class -->
         <script src="/javascript/map/mapcreation.js"></script> <!-- mapcreation tool -->
         <script src="/javascript/map/mapoptions.js"></script> <!-- mapoptions creation tool -->
-        <script src="/javascript/map/initfirebase.js"></script> <!-- initialize firebase -->
+        <script src="initfirebase.js"></script> <!-- initialize firebase -->
         <script src="/javascript/map/savemap.js"></script> <!-- save & load the map - firebase -->
     </body>
 </html>
