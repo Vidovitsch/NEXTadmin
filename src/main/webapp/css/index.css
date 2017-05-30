@@ -64,7 +64,7 @@ span:hover {
     overflow-y: auto;
     padding-top: 10px;
     padding-bottom: 10px;
-    max-height: 600px;
+    max-height: 300px;
 }
 
 .rightpart{
@@ -85,6 +85,17 @@ span:hover {
 .b01_simple_rollover:hover {
     color: #ffffff;
     background-color: #000000;
+}
+
+.b01_simple_rollover:disabled + hover {
+    color: white;
+    background-color: red;
+}
+
+.b01_simple_rollover:disabled {
+    color: white;
+    background-color: red;
+    cursor: default;
 }
 
 .adminlog{
