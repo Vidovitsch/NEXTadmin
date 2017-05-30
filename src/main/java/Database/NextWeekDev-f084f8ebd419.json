@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "nextweekdev",
+  "private_key_id": "f084f8ebd419d1455301df52731d8c9fff109569",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDaAJ9ECwnCCWfx\nParAQenkSSsRf1trXQ5gLyGZLl5JtKgg5YQ3L3G/VwmXzn1odGToSJbtDolM/TeY\nuxRRqRqq6Yx+MfZaqcQZoBinW+0AmZkKurMx+akpUbel9EgCLQLPvhoF8Efz/+s2\nulaVtgPZWepExPW6K9CkXwtv4+96GRO3CqTLdlokMIJgnAYoh3PbQag1+WaAerCx\njL0EAJkhcz3sSMWpQGubcdQB/1Od20OnNzRFqwJDq6NRYH1+T/q4XehCIvFHyYXl\nWAoKVrIaxZs++RxcHm1ANxW+Yt3FUCXWllmcTtIVD5axmILUnfwDouqo8CiaT37/\ntGoZlU3NAgMBAAECggEAGUYlMNBOy04n3NIXb760jSDme1rWkHXzardMH+Q+TjFB\npL63O2amu1Yt6ImqBGgqIrv3s3gR9vkMbwqRan4+dz4oaaEFPLGd6JKlCRIhQgaM\nta+7grm9IOs2bWkKyCXLw6X4gmO/E8zBylCEJUs62wIPpPVov7LAt63FN62nX/I9\nigYVoc7ESa48DPuvWs+CRx+7Dt/13rJegT3dHS8xblB5PhDAe1BkonXPu8FUC5S6\ntBMplT8NqSKuSsnon/1z4GNORF1Fdmkz3Kl13C1iBfQcr/xCWJlLtiLj5C1FMMXc\nXnmthD5CVYYRHiphRwc2KIWEecYvLa8ZqaufxtpeyQKBgQDx4LTyyKvhckOD/i8k\n2PxevXYcky42nORoCXcEgAHlOw6vL06An+vcSRGc+ZsZWx7XqLG+tVYetnw6gjTU\ny4by5eZwH5f3CvtWNC0TQCDDXsU//KJLSGVFifD7fFrZB+p0YoMmA2eoK7zXDiiR\n/6dSLWvaounAaKAKdCPLcJsdiwKBgQDmuw5YUtUMQXDPYBNhQqS4TeiVLzEvQqkt\nyFmzj6RzspN5KA3tkSa9LtkqpfjSHlJHcZ8T1xDMXUMa/wIIuiC0VggxUr1SHqlR\nHsKzNrpW74wYASUTFilGdZAXdYrnW6bibow6NCsRy2PpErVvRKxdKQspHXQDHonO\n85DXLlRdBwKBgQCs0TlYEkrEbKiSoUU71ZETe9js97fYK2cCcmjIHVG9X+HRB0LW\noeyaWtaryqeniTRTL+O3d8bNcOL3xtpKhBSqbdqkl94zE3SalfLywynljUvvuOiY\nU2SQN8unU6VxVbeNaml7+ojQXlexbBtOnVQGYg+iii3rXJWkgnCkxZL+mwKBgQCS\nnNIktZ3DR+ITJA2sg9h/dKISCgbK7STrfp/hRalOC29CUX1oNA/Vrus3+nb9rV7D\nHyPiS4rVEX4OrXPxb7RQY0qZbOX4RJt6fH1ju6b0jwsKRc/1LOPVbea9wWceVFLb\nFzvr0DJ+ACvgco7vwUd1exsoaRrK0KDo7ERhN4NMCQKBgDXGR67TBkcvJzqi3Nhh\ntcMyA3Anry6kGvOL5PzK/Low7nTBYpJ9xZ0ziY89R3mH1CRAYPjFw9Ceaj6JL2Ux\n8kVH0igIjjUju9R/zz+qJrYeVZDuDflTdIZZT3C8iKdzGy9fUdJEW06SymA53D9k\n8YJdZ3A6S/l6sxX6bb9UTE86\n-----END PRIVATE KEY-----\n",
+  "client_email": "nextweekadmin@nextweekdev.iam.gserviceaccount.com",
+  "client_id": "115866274073559504650",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/nextweekadmin%40nextweekdev.iam.gserviceaccount.com"
+}

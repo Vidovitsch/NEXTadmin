@@ -2,10 +2,10 @@ package Models;
 
 import Database.DBEventModifier;
 import Database.FBConnector;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
@@ -39,22 +39,26 @@ public class QRManager extends HttpServlet {
     private boolean done = false;
     private boolean generated;
     
-    private static Firebase firebase;
+    private static DatabaseReference firebase;
     
     public QRManager() {
+        System.out.println("in qrmanager constructor");
         FBConnector connector = FBConnector.getInstance();
         connector.connect();
-        firebase = (Firebase) connector.getConnectionObject();
+                System.out.println("retrieving connection object");
+        firebase = (DatabaseReference) connector.getConnectionObject();
     }
     
     /**
      * Generates a random QR-code for eacht group location on the event
      */
     public void generate() {
-        Firebase ref = firebase.child("GroupLocation");
+        System.out.println("generating qrcodes");
+        DatabaseReference ref = firebase.child("GroupLocation");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot ds) {
+                System.out.println("listening to qrcode ondatachange method");
                 for (int i = 0; i < ds.getChildrenCount(); i++) {
                     try {
                         generateQRCode();
@@ -66,7 +70,7 @@ public class QRManager extends HttpServlet {
             }
 
             @Override
-            public void onCancelled(FirebaseError fe) {
+            public void onCancelled(DatabaseError fe) {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
         });
@@ -76,7 +80,7 @@ public class QRManager extends HttpServlet {
     
     public ArrayList<String> getQRCodes() {
         final ArrayList<String> qrCodes = new ArrayList();
-        Firebase ref = firebase.child("QRCode");
+        DatabaseReference ref = firebase.child("QRCode");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot ds) {
@@ -88,7 +92,7 @@ public class QRManager extends HttpServlet {
             }
 
             @Override
-            public void onCancelled(FirebaseError fe) {
+            public void onCancelled(DatabaseError fe) {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
         });
@@ -98,7 +102,7 @@ public class QRManager extends HttpServlet {
     }
     
     public boolean checkGenerated() {
-        Firebase ref = firebase.child("QRCode");
+        DatabaseReference ref = firebase.child("QRCode");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot ds) {
@@ -107,7 +111,7 @@ public class QRManager extends HttpServlet {
             }
 
             @Override
-            public void onCancelled(FirebaseError fe) {
+            public void onCancelled(DatabaseError fe) {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
         });
@@ -159,7 +163,7 @@ public class QRManager extends HttpServlet {
      */
     private void saveQRCode(String text, BufferedImage bImage) {
         try {
-            Firebase ref = firebase.child("QRCode").child(text);
+            DatabaseReference ref = firebase.child("QRCode").child(text);
             ref.setValue(toBase64(bImage));
         } catch (IOException ex) {
             Logger.getLogger(QRManager.class.getName()).log(Level.SEVERE, null, ex);
