@@ -6,63 +6,294 @@
 
 // Get a reference to the database service
 var database = firebase.database();
+var v;
+var f;
 
-// FireBase
-function saveMapToDB() {
-    clearMapFromDB();
-    for (var i = 0; i < components.length; i++) {
-        database.ref('Map/' + components[i].id).set({
-            Object: components[i].toString()
+/* Saving */
+function saveElement(location, floor, element) {
+    if (!element.id) {
+        element.id = generateRandomId();
+    }
+    console.log("[saveElement] Location: " + location);
+    console.log("[saveElement] Floor: " + floor);
+    console.log("[saveElement] Element: " + element);
+    //Check element and save it
+    if (element.type === 'rectangle') {
+        database.ref('Map/' + location.id + '/Floors/' + floor.id + "/Elements/" + element.id).set({
+            X: element.x,
+            Y: element.y,
+            Width: element.width,
+            Height: element.height,
+            Type: element.type
+        });
+    } else if (element.type === 'room') {
+        database.ref('Map/' + location.id + '/Floors/' + floor.id + "/Elements/" + element.id).set({
+            X: element.x,
+            Y: element.y,
+            Width: element.width,
+            Height: element.height,
+            Name: element.roomname,
+            Capacity: element.capacity,
+            Type: element.type
+        });
+    } else if (element.type === 'circle') {
+        database.ref('Map/' + location.id + '/Floors/' + floor.id + "/Elements/" + element.id).set({
+            X: element.x,
+            Y: element.y,
+            Radius: element.radius,
+            Type: element.type
+        });
+    } else if (element.type === 'table') {
+        database.ref('Map/' + location.id + '/Floors/' + floor.id + "/Elements/" + element.id).set({
+            X: element.x,
+            Y: element.y,
+            Width: element.width,
+            Height: element.height,
+            Number: element.number,
+            Type: element.type
+        });
+    } else  {
+        database.ref('Map/' + location.id + '/Floors/' + floor.id + "/Elements/" + element.id).set({
+            X: element.x,
+            Y: element.y,
+            X2: element.x2,
+            Y2: element.y2,
+            Type: element.type
         });
     }
 }
-
-// FireBase
-function loadMapFromDB() {
-    var mapRef = database.ref('Map');
-    components = [];
-
-    mapRef.on("child_added", function(snapshot) {
-        var reference = snapshot.val();
-        var object = reference.Object; // type;x;y;dependantOnType
-        var values = object.replace("\"", "");
-        var values = values.split(";");
-
-        var key = snapshot.key; // id
-        console.log("Key value: " + key + " & Object: " + object);
-        console.log("Values: " + values);
-        console.log("Values[0]: " + values[0]);
-        if (values[0] == "circle") {
-            console.log("is circle");
-            // values[0] = type, values[1] = x, values[2] = y, values[3] = radius
-            components.push(new circle(String(key), parseInt(values[1]), parseInt(values[2]), parseInt(values[3])));
-        }
-        else if (values[0] == "rectangle") {
-            console.log("is rectangle");
-            // values[0] = type, values[1] = x, values[2] = y, values[3] = width, values[4] = height
-            components.push(new rectangle(String(key), parseInt(values[1]), parseInt(values[2]), parseInt(values[3]), parseInt(values[4])));
-        }
-        else if (values[0] == "table") {
-            console.log("is table");
-            // values[0] = type, values[1] = x, values[2] = y, values[3] = width, values[4] = height, values[5] = number
-            components.push(new table(String(key), parseInt(values[1]), parseInt(values[2]), parseInt(values[3]), parseInt(values[4]), parseInt(values[5])));
-        }
-        else if (values[0] == "line") {
-            console.log("is line");
-            // values[0] = type, values[1] = x, values[2] = y, values[3] = x2, values[4] = y2
-            components.push(new line(String(key), parseInt(values[1]), parseInt(values[2]), parseInt(values[3]), parseInt(values[4])));
-        }
-        else if (values[0] == "text") {
-            // Not implemented yet/
-        }
-        console.log("Components size: " + components.length);
-        redrawAll();
+function saveLocation(location) {
+    if (!location.id) {
+        location.id = generateRandomId();
+    }
+    console.log("Location: " + location);
+    database.ref('Map/' + location.id).set({
+        Name: location.name,
+        Address: location.address,
+        Postal: location.postal
+    });
+}
+function saveFloor(location, floor) {
+    if (!floor.id) {
+        floor.id = generateRandomId();
+    }
+    console.log("Location: " + location + "Floor: " + floor);
+    database.ref('Map/' + location.id + "/Floors/" + floor.id).set({
+        Name: floor.name,
+        Level: floor.level
     });
 }
 
-// FireBase
-function clearMapFromDB() {
-    // Remove the Map reference in firebase
-    var mapRef = database.ref('Map');
-    mapRef.remove();
+/* Loading */
+function loadMap() {
+    //Search foor locations
+    var locRef = database.ref('Map');
+    locRef.once("value", function(snapshot) {
+        snapshot.forEach(function(loc) {
+            var id = loc.key.toString();
+            var address = loc.val().Address;
+            var name = loc.val().Name;
+            var postal = loc.val().Postal;
+            v = new Venue(id, name, postal, address);
+            console.log("New venue? " + v);
+            
+            //Search for floors
+            var floorRef = snapshot.child(v.id + "/Floors");
+            floorRef.forEach(function(floor) {
+                var id = floor.key.toString();
+                var level = floor.val().Level;
+                var name = floor.val().Name;
+                f = new Floor(id, name, level);
+                console.log("New floor? " + f);
+
+                //Search for elements
+                var elemRef = snapshot.child(v.id + "/Floors/" + f.id + "/Elements");
+                elemRef.forEach(function(elem) {
+                    var e = loadElement(elem);
+                    console.log("New element? " + e);
+                    f.addElement(e);
+                });
+                v.addFloor(f);
+            });
+            locations.push(v);
+        });
+        if (locations.length > 0) {
+            selectedLoc = locations[0];
+            loadLocationList();
+            loadFloorList();
+            if (selectedLoc.floors.length > 0) {
+                selectedLoc.selectedFloor = selectedLoc.floors[0];
+                reloadItemMenu(createItemMenu(selectedLoc.selectedFloor));
+            }
+            redrawAll();
+        }
+    });
 }
+function loadElement(elem) {
+    var id = elem.key.toString();
+    var type = elem.val().Type;
+    if (type === 'rectangle') {
+        var x = elem.val().X;
+        var y = elem.val().Y;
+        var width = elem.val().Width;
+        var height = elem.val().Height;
+        return new Rectangle(id, x, y, width, height);
+    } else if (type === 'room') {
+        var x = elem.val().X;
+        var y = elem.val().Y;
+        var width = elem.val().Width;
+        var height = elem.val().Height;
+        var capacity = elem.val().Capacity;
+        var name = elem.val().Name;
+        return new Room(id, x, y, width, height, capacity, name);
+    } else if (type === 'circle') {
+        var x = elem.val().X;
+        var y = elem.val().Y;
+        var r = elem.val().Radius;
+        return new Circle(id, x, y, r);
+    } else if (type === 'table') {
+        var x = elem.val().X;
+        var y = elem.val().Y;
+        var width = elem.val().Width;
+        var height = elem.val().Height;
+        var number = elem.val().Number;
+        return new Table(id, x, y, width, height, number);
+    } else  {
+        var x = elem.val().X;
+        var y = elem.val().Y;
+        var x2 = elem.val().X2;
+        var y2 = elem.val().Y2;
+        return new Wall(id, x, y, x2, y2);
+    }
+}
+
+/* Editting */
+function editElement(location, floor, element) { 
+    var elemRef = database.ref('Map/' + location.id + '/Floors/' + floor.id + '/Elements/' + element.id);
+    elemRef.once('value', function(snapshot) {
+        if (snapshot.val() === null) {
+            /* does not exist */
+        } else {
+            if (element.type === 'rectangle') {
+                snapshot.ref.update({
+                    X: element.x,
+                    Y: element.y,
+                    Width: element.width,
+                    Height: element.height,
+                    Type: element.type 
+                });
+            } 
+            else if (element.type === 'room') {
+                snapshot.ref.update({
+                    X: element.x,
+                    Y: element.y,
+                    Width: element.width,
+                    Height: element.height,
+                    Name: element.roomname,
+                    Capacity: element.capacity,
+                    Type: element.type 
+                });
+            } 
+            else if (element.type === 'circle') {
+                snapshot.ref.update({
+                    X: element.x,
+                    Y: element.y,
+                    Radius: element.radius,
+                    Type: element.type
+                });
+            }
+            else if (element.type === 'table') {
+                snapshot.ref.update({
+                    X: element.x,
+                    Y: element.y,
+                    Width: element.width,
+                    Height: element.height,
+                    Number: element.number,
+                    Type: element.type
+                });
+            }
+            else {
+                snapshot.ref.update({
+                    X: element.x,
+                    Y: element.y,
+                    X2: element.x2,
+                    Y2: element.y2,
+                    Type: element.type 
+                });
+            }
+        }
+    });
+}
+function editFloor(location, floor) {
+    var floorRef = database.ref('Map/' + location.id + '/Floors/' + floor.id);
+    floorRef.once('value', function(snapshot) { 
+        if (snapshot.val() === null) {
+            /* does not exist */
+        } else {
+            snapshot.ref.update({
+               Name: floor.name,
+               Level: floor.level
+            });
+        }
+    });
+}
+function editLocation(location) {
+    var locRef = database.ref('Map/' + location.id);
+    locRef.once('value', function(snapshot) {
+        if( snapshot.val() === null ) {
+            /* does not exist */
+        } else {
+            snapshot.ref.update({
+                Name: location.name,
+                Address: location.address,
+                Postal: location.postal        
+            });
+        }
+    });
+}
+
+/* Removing */
+function removeElement(location, floor, element) {
+    var elemRef = database.ref('Map/' + location.id + '/Floors/' + floor.id + '/Elements/' + element.id);
+    elemRef.once('value', function(snapshot) {
+        if (snapshot.val() === null) {
+            /* does not exist */
+        } else {
+            snapshot.ref.remove();
+            console.log("Removed: " + snapshot.val());
+        }
+    });
+}
+function removeLocation(location) {
+    var locRef = database.ref('Map/' + location.id);
+    locRef.once('value', function(snapshot) {
+       if (snapshot.val() === null) {
+           /* does not exist */
+       } else {
+           snapshot.ref.remove();
+       }
+    });
+}
+function removeFloor(location, floor) {
+    var floorRef = database.ref('Map/' + location.id + '/Floors/' + floor.id);
+    floorRef.once('value', function(snapshot) {
+       if (snapshot.val() === null) {
+           /* does not exist */
+       } else {
+           snapshot.ref.remove();
+       } 
+    });
+}
+
+/* Other */
+function generateRandomId() {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for (var i = 0; i < 10; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    console.log("Newly generated id: " + text);
+    return text;
+}
+
+loadMap();

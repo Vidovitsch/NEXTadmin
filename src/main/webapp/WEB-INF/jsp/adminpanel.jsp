@@ -21,7 +21,7 @@
     <body>
         <div class="wrapper">
             <div class="information-list">
-                <span class="fieldSpan" style="padding-left: 5%;">Apply Filter:</span>
+                <span class="fieldSpan">Apply Filter:</span>
                 <select name="cbSearchType" id="cbSearchType">
                     <option></option>
                     <option value="all">all</option>
@@ -29,9 +29,9 @@
                         <option value="${id}">${id}</option>
                     </c:forEach>
                 </select>
-                <div class="itemList" >
+                <div class="itemList">
                     <c:forEach var="ScheduledItem" items="${scheduledItems}">
-                        <div onclick="post('editItem', {id: ${ScheduledItem.AddSpecialChars(ScheduledItem.getId())}, string: ${ScheduledItem.AddSpecialChars(ScheduledItem.getString())}});" class="scheduledItemDiv">${ScheduledItem.getString()}</div>
+                        <div onclick="post('editItem', {id: ${ScheduledItem.AddSpecialChars(ScheduledItem.getId())}, string: ${ScheduledItem.AddSpecialChars(ScheduledItem.getString())}});" class="scheduledItemDiv"><span>${ScheduledItem.getString()}</span></div>
                     </c:forEach>
                 </div>
             </div>    
