@@ -56,7 +56,6 @@ function newLocation() {
     loadLocationList();
     createLocationForm();
 }
-
 function loadLocationList() {    
     document.getElementById("option-location").options.length = 0;
     var menu = document.getElementById("option-location");
@@ -68,7 +67,6 @@ function loadLocationList() {
     }
     console.log("All locations have been added to the list.");
 }
-
 function findLocation(id) { 
     for (var i = 0; i < locations.length; i++) {
         if (String(locations[i].id) == String(id)) {
@@ -78,12 +76,63 @@ function findLocation(id) {
     }
     return false;
 }
+function updateLocation() {
+    if (!selectedLoc) {
+        alert("No location selected.");
+        return;
+    }
+    
+    var name = document.getElementById("locationform-name").value;
+    var address = document.getElementById("locationform-address").value;
+    var postal = document.getElementById("locationform-postal").value;
+    if (!name || !address || !postal) {
+        alert("[LOCATION] Not all required info has been filled in.");
+        return;
+    }
+    
+    // Update the location
+    selectedLoc.name = name;
+    selectedLoc.address = address;
+    selectedLoc.postal = postal;
+    editLocation(selectedLoc);
+    
+    // Close the form
+    editLocationForm();
+    
+    // Modify the updated location in the GUI (name change)
+    var options = document.getElementById("option-location").options;
+    var index = options.selectedIndex;
+    options[index].text = selectedLoc.name; 
+}
+function deleteLocation() {
+    if (!selectedLoc) {
+        alert("No location/floor selected.");
+        return;
+    }
+    // Remove the location
+    removeLocation(selectedLoc);
+    
+    // Close the form
+    editLocationForm();
+    
+    // Remove the no longer existing location from the GUI
+    var options = document.getElementById("option-location").options;
+    var index = options.selectedIndex;
+    options.remove(index);
+    
+    if (options.length > 0) {
+        onLocationChange();
+    } else {
+        selectedLoc = null;
+        reloadItemMenu(createItemMenu(null));
+    }
+    redrawAll();
+}
 
 function newFloor() {
     // Check the filled in values
     var floorname = document.getElementById("floorform-floorname").value;
     var level = document.getElementById("floorform-level").value;
-    console.log("Floor: " + floorname + ", level: " + level);
     // If not everything is filled in, don't continue
     if (!floorname || !level) {
         console.log("[FLOOR] Not all required info has been filled in.");
@@ -106,13 +155,11 @@ function newFloor() {
     createFloorForm();
     onFloorChange();
 }
-
 function clearFloorList() { 
-    var menu = document.getElementById("option-floor").options.length = 0;
-}
-
-function loadFloorList() { 
     document.getElementById("option-floor").options.length = 0;
+}
+function loadFloorList() { 
+    clearFloorList();
     var menu = document.getElementById("option-floor");
     for (var i = 0; i < selectedLoc.floors.length; i++) {
         var option = document.createElement("option");
@@ -121,6 +168,63 @@ function loadFloorList() {
         menu.add(option);
     }
     console.log("All floors have been added to the list related to the selected location.");
+}
+function updateFloor() {
+    if (!selectedLoc || !selectedLoc.selectedFloor) {
+        alert("No location/floor selected.");
+        return;
+    }
+    
+    var name = document.getElementById("floorform-name").value;
+    var level = document.getElementById("floorform-level").value;
+    if (!name || !level) {
+        alert("[FLOOR] Not all required info has been filled in.");
+        return;
+    }
+    
+    selectedLoc.selectedFloor.name = name;
+    selectedLoc.selectedFloor.level = level;
+    editFloor(selectedLoc, selectedLoc.selectedFloor);
+    
+    // Close the form
+    editFloorForm();
+    
+    // Modify the updated floor in the GUI (name change)
+    var options = document.getElementById("option-floor").options;
+    var index = options.selectedIndex;
+    options[index].text = selectedLoc.selectedFloor.name; 
+}
+function deleteFloor() {
+    if (!selectedLoc || !selectedLoc.selectedFloor) {
+        alert("No location/floor selected.");
+        return;
+    }
+    
+    removeFloor(selectedLoc, selectedLoc.selectedFloor);
+    
+    // Close the form
+    editFloorForm();
+    
+    // Remove the no longer existing floor from the GUI
+    var options = document.getElementById("option-floor").options;
+    var index = options.selectedIndex;
+    options.remove(index);
+    
+    // The selected floor will be changed to the first floor in the list
+    // This will only happen if you still have floors left, else no floor will be selected
+    if (options.length > 0) {
+        onFloorChange();
+        //selectedLoc.selectFloor(options[0].id);
+        //reloadItemMenu(createItemMenu(selectedLoc.selectedFloor));
+    } else {
+        selectedLoc.selectFloor(null);
+        reloadItemMenu(createItemMenu(null));
+    }
+    redrawAll();
+}
+
+function reloadItemMenu(layout) {
+    document.getElementById("dynamic-items").innerHTML = layout;
 }
 
 function createComponent(x, y) {   
@@ -150,10 +254,14 @@ function createComponent(x, y) {
     }
     selectedLoc.selectedFloor.addElement(element);
     element.strokeStyle = '#ff0000';
+    reloadItemMenu(createItemMenu(selectedLoc.selectedFloor));
+
     saveElement(selectedLoc, selectedLoc.selectedFloor, element);
+    clearElementSelection();
 }
 
-function getSelected() {
+// This function selects an element based on mouseX and mouseY coordinates
+function selectElement(x, y) {
     if (!selectedLoc || !selectedLoc.selectedFloor) {
         alert("No location/floor selected.");
         return;
@@ -161,21 +269,48 @@ function getSelected() {
     
     var elements = selectedLoc.selectedFloor.elements;
     for (var i = 0; i < elements.length; i++) {
-        if (elements[i].isPointInside(mouseX, mouseY)) {
+        if (elements[i].isPointInside(x, y)) {
             selectedLoc.selectedFloor.selectElement(elements[i]);
-            selectedLoc.selectedFloor.selected.strokeStyle = "#ff0000";
-            redrawAll();
+            //selectedLoc.selectedFloor.selected.strokeStyle = "#ff0000";
+            document.getElementById(elements[i].id).checked = true;
+            //redrawAll();
             mapCreationOptions();
             break;
         } else {
-            selectedLoc.selectedFloor.selectElement(null);
+            clearElementSelection();
         }
     }
 }
 
+function selectElementById(id) {
+    if (!selectedLoc || !selectedLoc.selectedFloor) {
+        alert("No location/floor selected.");
+        return;
+    }
+    
+    var elements = selectedLoc.selectedFloor.elements;
+    for (var i = 0; i < elements.length; i++) {
+        if (elements[i].id == id) {
+            selectedLoc.selectedFloor.selectElement(elements[i]);
+            mapCreationOptions();
+            break;
+        }
+    }
+}
+
+function clearElementSelection() {
+    if (!selectedLoc || !selectedLoc.selectedFloor) return; 
+    
+    selectedLoc.selectedFloor.selectElement(null);
+    document.getElementById("none").checked = true;
+}
+
+function clearCanvas() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
 // This function redraws all the components and rectangles
 function redrawAll() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    clearCanvas();
     if (!selectedLoc || !selectedLoc.selectedFloor) { 
         return;
     }
@@ -204,41 +339,51 @@ function handleMouseDown(e) {
     mouseY = parseInt(e.clientY - offsetY);
 
     mouseDown = true;
-
-    if (selectedLoc.selectedFloor.selected != null) {
+    
+    var selected = selectedLoc.selectedFloor.selected;
+    if (selected != null && modify.checked) {
         // Measure the click difference between the mouseclick and the selected XY
         // This has to happen in the mousedown as this is the part where the dragging/resizing will start
-        clickDifX = mouseX - selectedLoc.selectedFloor.selected.x;
-        clickDifY = mouseY - selectedLoc.selectedFloor.selected.y;
-        if (selectedLoc.selectedFloor.selected.type == "line") {
-            selectedLoc.selectedFloor.selected.checkCloseEnough(mouseX, mouseY);
+        clickDifX = mouseX - selected.x;
+        clickDifY = mouseY - selected.y;
+        if (selected.type == "line") {
+            selected.checkCloseEnough(mouseX, mouseY);
         } else {
-            selectedLoc.selectedFloor.selected.checkCloseEnough(mouseX, mouseY);
+            selected.checkCloseEnough(mouseX, mouseY);
         }
     }
 }
 
-function handleMouseMove(e) {
+function handleMouseMove(e) {    
     mouseX = parseInt(e.clientX - offsetX);
     mouseY = parseInt(e.clientY - offsetY);
 
     document.getElementById("coordinates").innerHTML = "<b>X:</b> " + mouseX + ", <b>Y:</b> " + mouseY;
 
-    /*if (resize.checked && mouseDown) {
-        if (selected != null) {
-            var newX = mouseX - clickDifX;
-            var newY = mouseY - clickDifY;
-
-            if (selected.isResizing()) {
-                selected.resizeTo(mouseX, mouseY);
-                mapCreationOptions();
-            } else {
-                selected.moveTo(newX, newY);
-                mapCreationOptions();
-            }
-            redrawAll();
+    if (!selectedLoc || !selectedLoc.selectedFloor) {
+        mouseDown = false;
+        return;
+    }
+    
+    if (mouseDown && modify.checked) {
+        var selected = selectedLoc.selectedFloor.selected;
+        if (selected == null) {
+            mouseDown = false;
+            return;
         }
-    }*/
+        
+        var newX = mouseX - clickDifX;
+        var newY = mouseY - clickDifY;
+        
+        if (selected.isResizing()) {
+            selected.resizeTo(mouseX, mouseY);
+            mapCreationOptions();
+        } else {
+            selected.moveTo(newX, newY);
+            mapCreationOptions();
+        }
+        redrawAll();
+    }
 }
 
 function handleMouseUp(e) {
@@ -251,11 +396,16 @@ function handleMouseUp(e) {
     mouseY = parseInt(e.clientY - offsetY);
 
     mouseDown = false;
-    if (selectedLoc.selectedFloor.selected != null) {
-        clickDifX = mouseX - selectedLoc.selectedFloor.selected.width;
-        clickDifY = mouseY - selectedLoc.selectedFloor.selected.height;
-        selectedLoc.selectedFloor.selected.stopResize();
-        selectedLoc.selectedFloor.selected.strokeStyle = "#000000";
+    var selected = selectedLoc.selectedFloor.selected;
+    if (selected != null) {
+        clickDifX = mouseX - selected.width;
+        clickDifY = mouseY - selected.height;
+        
+        if (selected.isResizing()) {
+            selected.stopResize();
+        } 
+        selected.strokeStyle = "#000000";
+        saveElement(selectedLoc, selectedLoc.selectedFloor, selected);
     }
 }
 
@@ -272,12 +422,8 @@ function handleMouseClick(e) {
         selectedLoc.selectedFloor.selectElement(null);
         createComponent(mouseX, mouseY);
         console.log("Creating component");
-    /*} else if (resize.checked) {
-        getSelected();
-        redrawAll();
-        mapCreationOptions();*/
     } else if (modify.checked) {
-        getSelected();
+        selectElement(mouseX, mouseY);
         redrawAll();
         mapCreationOptions();
     }
@@ -298,22 +444,12 @@ function onKeyup(e) {
         return;
     }
     
+    // Keycode 46 = delete (Del)
     if (e.keyCode == 46) {
-        if (selectedLoc.selectedFloor.selected != null) {
-            var elements = selectedLoc.selectedFloor.elements;
-            var remove;
-            for (var i = 0; i < elements.length; i++) {
-                if (elements[i] == selectedLoc.selectedFloor.selected) {
-                    remove = i;
-                    break;
-                }
-            }
-            elements.splice(remove, 1);
-            removeElement(selectedLoc, selectedLoc.selectedFloor, selectedLoc.selectedFloor.selected);
-            console.log("REMOVED " + remove + ", LEFT: " + elements.length);
-            selectedLoc.selectedFloor.selectElement(null);
-            redrawAll();
-        }
+        selectedLoc.selectedFloor.removeSelectedElement();
+        removeElement(selectedLoc, selectedLoc.selectedFloor, selectedLoc.selectedFloor.selected);
+        reloadItemMenu(createItemMenu(selectedLoc.selectedFloor));
+        clearElementSelection();
     }
 }
 
@@ -347,7 +483,21 @@ function onFloorChange() {
     //  Set the selected floor
     selectedLoc.selectFloor(result.value);
     console.log("Selected floor... " + selectedLoc.selectedFloor);
+
+    reloadItemMenu(createItemMenu(selectedLoc.selectedFloor));
     
+    clearElementSelection();
+
     // Redraw the current floor
     redrawAll();
+}
+
+function onItemListSelectionChange(e) {
+    var id = e.id;
+    console.log("ItemList selection: " + id);
+    if (id == "none") {
+        clearElementSelection();
+    } else {
+        selectElementById(id);
+    }
 }

@@ -1,7 +1,8 @@
 var draw = document.getElementById("option-create");
-//var resize = document.getElementById("option-resize");
 var modify = document.getElementById("option-edit");
-//var file = document.getElementById("option-file");
+
+var editCountLocation = 0;
+var editCountFloor = 0;
 
 /**
  * This method generates the dynamic possible options belonging to the Create selection option
@@ -29,26 +30,6 @@ function mapCreationOptions() {
         // Close div container
         '</div>';
     }
-    /*else if (resize.checked) {
-        if (selected == null) {
-            document.getElementById("dynamic-options").innerHTML = "Nothing to see here, move on..";
-        }
-        else if (selected.type == "rectangle") {
-            document.getElementById("dynamic-options").innerHTML = createRectangleResize();
-        }
-        else if(selected.type == "table") {
-            document.getElementById("dynamic-options").innerHTML = createTableResize();
-        }
-        else if (selected.type == "circle") {
-            document.getElementById("dynamic-options").innerHTML = createCircleResize();
-        }
-        else if (selected.type == "line") {
-            document.getElementById("dynamic-options").innerHTML = createLineResize();
-        }
-        else if (selected.type == "text") {
-            // TO DO
-        }
-    }*/
     else if (modify.checked) {
         // Open div container
         if (selectedLoc == null || selectedLoc.selectedFloor == null) {
@@ -81,87 +62,7 @@ function mapCreationOptions() {
             document.getElementById("option-style").selectedIndex = 5;
         } 
     }
-    /*else if (file.checked) {
-        document.getElementById("dynamic-options").innerHTML = createFileOptions();
-    }*/
 }
-
-/*
- * This is old code which is currently not being used but might be usable.
- * 
-function createCircleResize() {
-    var layout = '<div class="radio-wrapper-m">' +
-    // Type
-    '<label class="label-visual">Type: <br>' + selected.type + '</label>' +  
-    // ID
-    '<label class="label-visual">ID: <br>' + selected.id + '</label>' +
-    // X
-    '<label class="label-visual">X: <br>' + selected.x + '</label>' +
-    // Y
-    '<label class="label-visual">Y: <br>' + selected.y + '</label>' +
-    // Radius
-    '<label class="label-visual">Radius: <br>' + selected.radius + '</label>' +
-    // Close container
-    '</div>';
-    return layout;
-}
-function createRectangleResize() {
-    var layout = '<div class="radio-wrapper-m">' +
-    // Type
-    '<label class="label-visual">Type: <br>' + selected.type + '</label>' +  
-    // ID
-    '<label class="label-visual">ID: <br>' + selected.id + '</label>' +
-    // X
-    '<label class="label-visual">X: <br>' + selected.x + '</label>' +
-    // Y
-    '<label class="label-visual">Y: <br>' + selected.y + '</label>' +
-    // Width
-    '<label class="label-visual">Width: <br>' + selected.width + '</label>' +
-    // Height
-    '<label class="label-visual">Height: <br>' + selected.height + '</label>' +
-    // Close container
-    '</div>';
-    return layout;
-}
-function createLineResize() {
-    var layout = '<div class="radio-wrapper-m">' +
-    // Type
-    '<label class="label-visual">Type: <br>' + selected.type + '</label>' +  
-    // ID
-    '<label class="label-visual">ID: <br>' + selected.id + '</label>' +
-    // X
-    '<label class="label-visual">X: <br>' + selected.x + '</label>' +
-    // Y
-    '<label class="label-visual">Y: <br>' + selected.y + '</label>' +
-    // X2
-    '<label class="label-visual">X2: <br>' + selected.x2 + '</label>' +
-    // Y2
-    '<label class="label-visual">Y2: <br>' + selected.y2 + '</label>' +
-    // Close container
-    '</div>';
-    return layout;
-}
-function createTableResize() {
-    var layout = '<div class="radio-wrapper-m">' + 
-    // Type
-    '<label class="label-visual">Type: <br>' + selected.type + '</label>' +  
-    // ID
-    '<label class="label-visual">ID: <br>' + selected.id + '</label>' +
-    // X
-    '<label class="label-visual">X: <br>' + selected.x + '</label>' +
-    // Y
-    '<label class="label-visual">Y: <br>' + selected.y + '</label>' +
-    // Width
-    '<label class="label-visual">Width: <br>' + selected.width + '</label>' +
-    // Height
-    '<label class="label-visual">Height: <br>' + selected.height + '</label>' +
-    // Number
-    '<label class="label-visual">Number: <br>' + selected.number + '</label>' +
-    // Close container
-    '</div>';
-    return layout;
-}
-*/
 
 function createComboboxStyleSelection(isElementSelected) {
     var layout = '<label class="label-visual" for="option-style">Style: ' +
@@ -311,7 +212,7 @@ function createRoomModifications(element) {
     '</label>' +
     // Width
     '<label class="label-visual" for="option-width">Width: ' +
-    '<input id="option-width" type="number" placeholder="width" min="0" step="1" value="' + element.width + '>' +
+    '<input id="option-width" type="number" placeholder="width" min="0" step="1" value="' + element.width + '">' +
     '</label>' + 
     // Height
     '<label class="label-visual" for="option-height">Height: ' + 
@@ -353,6 +254,27 @@ function createLineModifications(element) {
 	// Close div container
 	'</div>';
 	return layout;
+}
+
+/**
+ * This method creates the menu of items based on the floor.
+ * @param floor - the floor which holds all the elements placed on the floor
+ * @returns {String}
+ */
+function createItemMenu(floor) {   
+    var layout = '';
+
+    if (!floor || floor.elements.length == 0) return layout;
+
+    for (var i = 0; i < floor.elements.length; i++) {
+        var id = floor.elements[i].id;
+        console.log("createItemMenu(floor): " + id);
+        layout += '<div class="floor-item">';
+        layout += '<input id="' + id + '" type="radio" name="floor-items" value="' + id + '" onchange="onItemListSelectionChange(this)">';
+        layout += '<label class="label-default" for="' + id + '">' + id + '</label>';
+        layout += '</div>';
+    }
+    return layout;
 }
 
 /**
@@ -573,7 +495,6 @@ function createSpecifiedElementForm() {
     document.getElementById("modify-div").innerHTML = layout;
 }
 
-
 /**
  * This method updates an existing element's properties (the element which is currently selected) 
  * @returns {undefined}
@@ -642,7 +563,6 @@ function updateElement() {
     editElement(selectedLoc, selectedLoc.selectedFloor, element);
 }
 
-
 /**
  * This method creates a new rectangle, table, room, circle or line based on the selected element type
  * @returns {undefined}
@@ -710,13 +630,12 @@ function createNewElement() {
     redrawAll();
 }
 
-
 /**
  * Below 2 methods create the forms for adding a new location or adding a new floor.
  * @returns {undefined}
  */
 function createLocationForm() {
-    var layout = "";
+    var layout = '';
     if (document.getElementById("btn-add-location").value == "+") {
         layout = '<div><span class="soflow-regular-txt">NAME</span>' +
         '<input class="soflow-input-txt" type="text" id="locationform-name" placeholder="name" /></div><br>' +
@@ -727,10 +646,30 @@ function createLocationForm() {
         '<div><input type="button" class="soflow-btn" value="SAVE" onclick="newLocation()" /></div>';
         // Set button from + to -
         document.getElementById("btn-add-location").value = "-";
+        
+        // Disable the button for creating an edit location form
+        document.getElementById("btn-edit-location").disabled = true;
+        // Disable the location selection menu
+        document.getElementById("option-location").disabled = true;
+        // Disable the floor selection menu
+        document.getElementById("option-floor").disabled = true;
+        // Disable the floor form options (add + edit)
+        document.getElementById("btn-add-floor").disabled = true;
+        document.getElementById("btn-edit-floor").disabled = true;
     }
     else {
         // Set button from - to +
         document.getElementById("btn-add-location").value = "+";
+        
+        // Disable the button for creating an edit location form
+        document.getElementById("btn-edit-location").disabled = false;
+        // Disable the location selection menu
+        document.getElementById("option-location").disabled = false;
+        // Disable the floor selection menu
+        document.getElementById("option-floor").disabled = false;
+        // Disable the floor form options (add + edit)
+        document.getElementById("btn-add-floor").disabled = false;
+        document.getElementById("btn-edit-floor").disabled = false;
     }	
     document.getElementById("location-form").innerHTML = layout;
 }
@@ -740,7 +679,7 @@ function createFloorForm() {
         return;
     }
     
-    var layout = "";
+    var layout = '';
     if (document.getElementById("btn-add-floor").value == "+") {
         layout = '<div><span class="soflow-regular-txt">FLOORNAME</span>' + 
         '<input class="soflow-input-txt" type="text" id="floorform-floorname" placeholder="floorname" /></div><br>' + 
@@ -749,10 +688,128 @@ function createFloorForm() {
         '<div><input type="button" class="soflow-btn" value="SAVE" onclick="newFloor()" /></div>';
         // Set button from + to -
         document.getElementById("btn-add-floor").value = "-";
+        
+        // Disable the button for creating an edit floor form
+        document.getElementById("btn-edit-floor").disabled = true;
+        // Disable the floor selection menu
+        document.getElementById("option-floor").disabled = true;
+        // Disable the location selection menu
+        document.getElementById("option-location").disabled = true;
+        // Disable the location related buttons (add + edit)
+        document.getElementById("btn-add-location").disabled = true;
+        document.getElementById("btn-edit-location").disabled = true;
     }
     else {
         // Set button from + to -
         document.getElementById("btn-add-floor").value = "+";	
+        
+        // Enable the button for creating an edit floor form
+        document.getElementById("btn-edit-floor").disabled = false;
+        // Enable the floor selection menu
+        document.getElementById("option-floor").disabled = false;
+        // Enable the location selection menu
+        document.getElementById("option-location").disabled = false;
+        // Enable the location related buttons (add + edit)
+        document.getElementById("btn-add-location").disabled = false;
+        document.getElementById("btn-edit-location").disabled = false;
+    }
+    document.getElementById("floor-form").innerHTML = layout;
+}
+
+/**
+ * Below 2 methods create the forms for editting an existing location or editting an existing floor.
+ */
+function editLocationForm() {
+    var layout = '';
+    if (!selectedLoc) {
+        alert("Please select a location first.");
+        return;
+    }
+    
+    if (editCountLocation == 0) {
+        // NAME
+        layout = '<div><span class="soflow-regular-txt">NAME</span>' +
+        '<input class="soflow-input-txt" type="text" id="locationform-name" placeholder="name" value="' + selectedLoc.name + '" /></div><br>' +
+        // ADDRESS
+        '<div><span class="soflow-regular-txt">ADDRESS</span>' +
+        '<input class="soflow-input-txt" type="text" id="locationform-address" placeholder="address" value="' + selectedLoc.address + '" /></div><br>' + 		
+        // POSTAL
+        '<div><span class="soflow-regular-txt">POSTAL</span>' +
+        '<input class="soflow-input-txt" type="text" id="locationform-postal" placeholder="postal" value="' + selectedLoc.postal + '"/></div><br>' + 		
+        // Buttons
+        '<div><input type="button" class="soflow-btn" value="UPDATE" onclick="updateLocation()" />'+ 
+        '<input type="button" class="soflow-btn" value="DELETE" onclick="deleteLocation()" /></div>';
+        // Set editCountLocation to 1
+        editCountLocation = 1;
+        
+        // Disable the button for creating a new location form
+        document.getElementById("btn-add-location").disabled = true;
+        // Disable the location selection menu
+        document.getElementById("option-location").disabled = true;
+        // Disable the floor selection menu
+        document.getElementById("option-floor").disabled = true;
+        // Disable the floor form options (add + edit)
+        document.getElementById("btn-add-floor").disabled = true;
+        document.getElementById("btn-edit-floor").disabled = true;
+    } else {
+        // Set editCountLocation to 0
+        editCountLocation = 0;
+        
+        // Disable the button for creating a new location form
+        document.getElementById("btn-add-location").disabled = false;
+        // Disable the location selection menu
+        document.getElementById("option-location").disabled = false;
+        // Disable the floor selection menu
+        document.getElementById("option-floor").disabled = false;
+        // Disable the floor form options (add + edit)
+        document.getElementById("btn-add-floor").disabled = false;
+        document.getElementById("btn-edit-floor").disabled = false;
+    }
+    document.getElementById("location-form").innerHTML = layout;
+}
+function editFloorForm() {
+    var layout = '';
+    if (!selectedLoc || !selectedLoc.selectedFloor) {
+        alert("Please select a location and floor first.");
+        return;
+    }
+    
+    var floor = selectedLoc.selectedFloor;
+    if (editCountFloor == 0) {
+        // NAME
+        layout = '<div><span class="soflow-regular-txt">NAME</span>' +
+        '<input class="soflow-input-txt" type="text" id="floorform-name" placeholder="name" value="' + floor.name + '" /></div><br>' +
+        // LEVEL
+        '<div><span class="soflow-regular-txt">LEVEL</span>' + 
+        '<input class="soflow-input-txt" type="text" id="floorform-level" placeholder="level" value="' + floor.level + '" /></div><br>' + 
+        // BUTTONS
+        '<div><input type="button" class="soflow-btn" value="UPDATE" onclick="updateFloor()" />'+ 
+        '<input type="button" class="soflow-btn" value="DELETE" onclick="deleteFloor()" /></div>';
+        // Set editCountFloor to 1
+        editCountFloor = 1;
+        
+        // Disable the button for creating a new floor form
+        document.getElementById("btn-add-floor").disabled = true;
+        // Disable the floor selection menu
+        document.getElementById("option-floor").disabled = true;
+        // Disable the location selection menu
+        document.getElementById("option-location").disabled = true;
+        // Disable the location related buttons (add + edit)
+        document.getElementById("btn-add-location").disabled = true;
+        document.getElementById("btn-edit-location").disabled = true;
+    } else {
+        // Set editCountFloor to 0
+        editCountFloor = 0;
+        
+        // Enable the button for creating a new floor form
+        document.getElementById("btn-add-floor").disabled = false;
+        // Enable the floor selection menu
+        document.getElementById("option-floor").disabled = false;
+        // Enable the location selection menu
+        document.getElementById("option-location").disabled = false;
+        // Enable the location related buttons (add + edit)
+        document.getElementById("btn-add-location").disabled = false;
+        document.getElementById("btn-edit-location").disabled = false;
     }
     document.getElementById("floor-form").innerHTML = layout;
 }

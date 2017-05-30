@@ -62,18 +62,13 @@
                 <div id="menu-items" class="menu-item">
                     <!-- show selectable rooms, tables, walls, etc. -->
                     <!-- dynamic divs being added called "floor-item" -->
-                    <div class="radio-wrapper-s">
+                    <div id="default-items" class="radio-wrapper-s">
                         <div class="floor-item">
-                            <input id="none" type="radio" name="floor-items" value="none" checked>
+                            <input id="none" type="radio" name="floor-items" value="none" onchange="onItemListSelectionChange(this)" checked>
                             <label class="label-default" for="none">none</label>
                         </div>
-                        <div class="floor-item">
-                            <input id="wall1" type="radio" name="floor-items" value="wall_north">
-                            <label class="label-default" for="wall1">wall_north</label>
-                        </div>
-                        <div class="floor-item">
-                            <input id="wall2" type="radio" name="floor-items" value="wall_south">
-                            <label class="label-default" for="wall2">wall_south</label>
+                        <div id="dynamic-items">
+                            <!-- Dynamic divs being added to this wrapper -->
                         </div>
                     </div>
                 </div>

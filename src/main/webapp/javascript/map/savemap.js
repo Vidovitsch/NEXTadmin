@@ -9,6 +9,7 @@ var database = firebase.database();
 var v;
 var f;
 
+/* Saving */
 function saveElement(location, floor, element) {
     if (!element.id) {
         element.id = generateRandomId();
@@ -61,7 +62,6 @@ function saveElement(location, floor, element) {
         });
     }
 }
-
 function saveLocation(location) {
     if (!location.id) {
         location.id = generateRandomId();
@@ -73,7 +73,6 @@ function saveLocation(location) {
         Postal: location.postal
     });
 }
-
 function saveFloor(location, floor) {
     if (!floor.id) {
         floor.id = generateRandomId();
@@ -85,6 +84,7 @@ function saveFloor(location, floor) {
     });
 }
 
+/* Loading */
 function loadMap() {
     //Search foor locations
     var locRef = database.ref('Map');
@@ -123,12 +123,12 @@ function loadMap() {
             loadFloorList();
             if (selectedLoc.floors.length > 0) {
                 selectedLoc.selectedFloor = selectedLoc.floors[0];
+                reloadItemMenu(createItemMenu(selectedLoc.selectedFloor));
             }
             redrawAll();
         }
     });
 }
-
 function loadElement(elem) {
     var id = elem.key.toString();
     var type = elem.val().Type;
@@ -167,6 +167,7 @@ function loadElement(elem) {
     }
 }
 
+/* Editting */
 function editElement(location, floor, element) { 
     var elemRef = database.ref('Map/' + location.id + '/Floors/' + floor.id + '/Elements/' + element.id);
     elemRef.once('value', function(snapshot) {
@@ -223,7 +224,6 @@ function editElement(location, floor, element) {
         }
     });
 }
-
 function editFloor(location, floor) {
     var floorRef = database.ref('Map/' + location.id + '/Floors/' + floor.id);
     floorRef.once('value', function(snapshot) { 
@@ -237,7 +237,6 @@ function editFloor(location, floor) {
         }
     });
 }
-
 function editLocation(location) {
     var locRef = database.ref('Map/' + location.id);
     locRef.once('value', function(snapshot) {
@@ -253,6 +252,7 @@ function editLocation(location) {
     });
 }
 
+/* Removing */
 function removeElement(location, floor, element) {
     var elemRef = database.ref('Map/' + location.id + '/Floors/' + floor.id + '/Elements/' + element.id);
     elemRef.once('value', function(snapshot) {
@@ -264,7 +264,6 @@ function removeElement(location, floor, element) {
         }
     });
 }
-
 function removeLocation(location) {
     var locRef = database.ref('Map/' + location.id);
     locRef.once('value', function(snapshot) {
@@ -275,9 +274,8 @@ function removeLocation(location) {
        }
     });
 }
-
 function removeFloor(location, floor) {
-    var floorRef = database.ref('Map/' + location.id + '/Floors/' + floor.id + '/Elements/' + element.id);
+    var floorRef = database.ref('Map/' + location.id + '/Floors/' + floor.id);
     floorRef.once('value', function(snapshot) {
        if (snapshot.val() === null) {
            /* does not exist */
@@ -287,6 +285,7 @@ function removeFloor(location, floor) {
     });
 }
 
+/* Other */
 function generateRandomId() {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
