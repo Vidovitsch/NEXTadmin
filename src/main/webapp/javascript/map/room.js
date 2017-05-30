@@ -1,20 +1,21 @@
-/***************
- * Table Class *
- ***************/
-var Table = (function () {
+/**************
+ * Room Class *
+ **************/
+var Room = (function () {
     // constructor
-    function Table(id, x, y, width, height, number) {
+    function Room(id, x, y, width, height, capacity, name) {
         this.id = id;
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-        this.number = number;
-        this.type = "table";
+        this.capacity = capacity;
+        this.roomname = name;
+        this.type = "room";
 
         this.strokeStyle = '#000000';
-        this.minWidth = 24;
-        this.minHeight = 24;
+        this.minWidth = 96;
+        this.minHeight = 96;
 
         this.topLeft = false;
         this.topRight = false;
@@ -24,27 +25,28 @@ var Table = (function () {
         this.redraw(this.x, this.y);
         return (this);
     }
-    // Redraw the table - makes use of Draw
-    Table.prototype.redraw = function (x, y) {
+    // Redraw the room - makes use of Draw
+    Room.prototype.redraw = function (x, y) {
         this.x = x || this.x;
         this.y = y || this.y;
         this.draw();
         return (this);
     }
-    // Draw the table
-    Table.prototype.draw = function () {
+    // Draw the room
+    Room.prototype.draw = function () {
         ctx.save();
         ctx.beginPath();
         ctx.rect(this.x, this.y, this.width, this.height);
         ctx.font = "18px Arial";
-        ctx.fillText(this.number, (this.x + this.width / 2) - 6, (this.y + this.height / 2) + 6);
+        ctx.fillText(this.roomname, (this.x + 5), (this.y + 20));
+        ctx.fillText("Cap.: " + this.capacity, (this.x + 5), (this.y + 40));
         ctx.strokeStyle = this.strokeStyle;
         ctx.lineWidth = 5;
         ctx.stroke();
         ctx.restore();
     }
     // Check if the click is close enough
-    Table.prototype.checkCloseEnough = function(mouseX, mouseY) {
+    Room.prototype.checkCloseEnough = function(mouseX, mouseY) {
         console.log("Check close enough Rect");
         // Top left corner check
         if (Math.abs(mouseX - this.x) < 2 && Math.abs(mouseY - this.y) < 2) {
@@ -67,20 +69,20 @@ var Table = (function () {
             console.log("Rect: botRight true");
         }
     }
-    // Move the table
-    Table.prototype.moveTo = function(mouseX, mouseY) {
+    // Move the room
+    Room.prototype.moveTo = function(mouseX, mouseY) {
         this.x = mouseX; 
         this.y = mouseY; 
 
         this.draw();
         return (this);
     }
-    // Check if a point is inside the table
-    Table.prototype.isPointInside = function (x, y) {
+    // Check if a point is inside the room
+    Room.prototype.isPointInside = function (x, y) {
         return (x >= this.x && x <= this.x + this.width && y >= this.y && y <= this.y + this.height);
     }
-    // Resize the table
-    Table.prototype.resizeTo = function (mouseX, mouseY) {
+    // Resize the room
+    Room.prototype.resizeTo = function (mouseX, mouseY) {
         if (this.topLeft) {
             this.width += this.x - mouseX;
             this.height += this.y - mouseY;
@@ -113,20 +115,20 @@ var Table = (function () {
         return (this);
     }
     // Set the resizing values on false again
-    Table.prototype.stopResize = function() {
+    Room.prototype.stopResize = function() {
         this.topLeft = false;
         this.topRight = false;
         this.botLeft = false;
         this.botRight = false;
     }
     // 
-    Table.prototype.isResizing = function() {
+    Room.prototype.isResizing = function() {
         if (this.topLeft || this.topRight || this.botLeft || this.botRight) return true;
         else return false;
     }
     // toString() value for writing to the firebase
-    Table.prototype.toString = function() {
-        return String(this.type + ";" + this.x + ";" + this.y + ";" + this.width + ";" + this.height + ";" + this.number);
+    Room.prototype.toString = function() {
+        return String(this.type + ";" + this.x + ";" + this.y + ";" + this.width + ";" + this.height + ";" + this.capacity + ";" + this.roomname);
     }
-    return Table;
+    return Room;
 })();
