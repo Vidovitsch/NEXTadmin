@@ -1,88 +1,282 @@
+/* menu (left) & options (right) */
+body {
+    background-color: black;
+}
+
+.map-wrapper {
+    border-top: 1px solid white;
+    overflow-y: hidden;
+    margin-top: 81px;
+}
+
+.menu {
+    float: left;
+    border: 1px solid black;
+    max-height: 75%;
+}
+
+.map-options {
+    overflow: hidden;
+    background-color: black;
+    border: 1px solid black;
+    overflow-y: no-content;
+}
+
+.menu-item {
+    background-color: black;
+    min-width: 250px;
+    max-width: 300px;
+    position: relative;
+}
+
+.menu-item-title {
+    background-color: black;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.menu-item#menu-items {
+    background-color: #DCDCDC;
+    max-height: 779px;
+    min-height: 600px;
+    overflow-y: auto;
+}
+
+.info-form { 
+    border-bottom: 1px solid white;
+    border-top: 1px solid white;
+    padding: 5px;
+}
+
+/*.map-container {
+	max-height: 80vh;
+	overflow-y: auto;
+}*/
+
+.coordinates-display {
+    padding: 5px;
+}
+
+.dynamic-options {
+    height: 100px;
+}
+.dynamic-options#nothing-selected {
+    padding: 5px;
+}
+
+#map {
+    background-color: #F0F0F0;
+    width: 1600px;
+    height: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
+    display: block;
+}
+
 /* div wrappers for radio buttons  */
 .radio-wrapper-s {
-	display: table; /* act like a table */
-	height: 50px;	
+    display: table; /* act like a table */
+    height: 50px;	
 }
 
 .radio-wrapper-m {
-	display: table;
-	height: 75px;
+    display: table;
+    height: 75px;
 }
 
 .radio-wrapper-l {
-	display: table;
-	height: 100px;
+    display: table;
+    height: 100px;
 }
 
 /* main-radio button blocks based on radio wrappers */
 .radio-wrapper-s label,
 .radio-wrapper-m label,
 .radio-wrapper-l label {
-  display: table-cell; /* act like a table cell */
-  width: 100px;
-  text-align: center; /* put the text horizontally in the middle */
-  vertical-align: middle; /* put the text vertically in the middle */
-  background-color: #B0C4DE;
-  color: #ffffff !important;
-  font-weight: bold !important;
-  border: 1px solid black;
+    display: table-cell; /* act like a table cell */
+    width: 100px;
+    text-align: center; /* put the text horizontally in the middle */
+    vertical-align: middle; /* put the text vertically in the middle */
+    background-color: #808080;
+    color: #ffffff !important;
+    font-weight: bold !important;
+    border: 1px solid black;
 }
 
 .radio-wrapper-s input[type="radio"],
 .radio-wrapper-m input[type="radio"],
 .radio-wrapper-l input[type="radio"] {
-  display: none;
+    display: none;
 }
 
 .radio-wrapper-s input[type="radio"]:checked + label,
 .radio-wrapper-m input[type="radio"]:checked + label,
 .radio-wrapper-l input[type="radio"]:checked + label {
-  background-color: #A9A9A9;
+    background-color: #2F4F4F;
 }
 
 .radio-wrapper-s .label-default:hover,
 .radio-wrapper-m .label-default:hover,
 .radio-wrapper-l .label-default:hover {
-  background-color: #A9A9A9;
-  color: #ffffff !important;
+    background-color: #2F4F4F;
+    color: #ffffff !important;
 }
 
 /* option-radio button blocks */
 .radio-wrapper-s .label-option,
 .radio-wrapper-m .label-option,
 .radio-wrapper-l .label-option {
-  display: table-cell;
-  width: 100px;
-  background-color: blue;
-  border: 1px solid black;
+    display: table-cell;
+    width: 100px;
+    background-color: #808080;
+    border: 1px solid black;
 }
 
 .radio-wrapper-s input[type="radio"]:checked + .label-option,
 .radio-wrapper-m input[type="radio"]:checked + .label-option,
 .radio-wrapper-l input[type="radio"]:checked + .label-option {
-	background-color: purple;
+    background-color: #2F4F4F;
 }
 
 .radio-wrapper-s .label-option:hover,
 .radio-wrapper-m .label-option:hover,
 .radio-wrapper-l .label-option:hover {
-  background-color: green;
+    background-color: #2F4F4F;
 }
 
 /* option-text and input based blocks */
 .radio-wrapper-s .label-visual,
 .radio-wrapper-m .label-visual,
 .radio-wrapper-l .label-visual {
-	display: table-cell;
-	width: 100px;
-	background-color: red;
-	border: 1px solid black;
+    display: table-cell;
+    width: 100px;
+    background-color: #2F4F4F;
+    border: 1px solid black;
 }
 
 .radio-wrapper-s .label-visual input[type="text"],
 .radio-wrapper-m .label-visual input[type="text"],
 .radio-wrapper-l .label-visual input[type="text"] {
-	width: 90%;
+    width: 90%;
+}
+
+.menu-item#menu-items .radio-wrapper-s { 
+    width: 100%;
+}
+
+.radio-wrapper-s .floor-item {
+    width: 100%;
+}
+
+.radio-wrapper-s .floor-item label,
+.radio-wrapper-m .floor-item label,
+.radio-wrapper-l .floor-item label {
+    display: block;
+    width: 100%;
+    text-align: center;
+    vertical-align: middle;
+    background-color: #808080;
+    color: #ffffff !important;
+    font-weight: bold !important;
+    border: 1px solid black;
+}
+
+.radio-wrapper-s .floor-item .label-default:hover,
+.radio-wrapper-m .floor-item .label-default:hover,
+.radio-wrapper-l .floor-item .label-default:hover {
+    background-color: #2F4F4F;
+    color: #ffffff !important;
+}
+
+.radio-wrapper-s .floor-item input[type="radio"]:checked + label,
+.radio-wrapper-m .floor-item input[type="radio"]:checked + label,
+.radio-wrapper-l .floor-item input[type="radio"]:checked + label {
+    background-color: #2F4F4F;
 }
 
 /* other */
+/* .soflow is for a fancy select menu */
+.soflow {
+    -webkit-appearance: button;
+    -webkit-border-radius: 2px;
+    background-image: url(http://i62.tinypic.com/15xvbd5.png), -webkit-linear-gradient(#FAFAFA, #F4F4F4 40%, #E5E5E5);
+    background-position: 97% center;
+    background-repeat: no-repeat;
+    border: 1px solid #AAA;
+    color: #555;
+    margin: 5px;
+    overflow: hidden;
+    padding: 5px 10px;
+    width: 200px;
+    display: inline-block;
+}
+/* .soflow-btn is for a fancy button */
+.soflow-btn {
+    -webkit-appearance: button;
+    -webkit-border-radius: 5px;
+    -webkit-padding-start: 1px;
+    color: #555;
+    background-color: silver;
+    margin: 0 5px 0 0;
+    overflow: hidden;
+    padding: 4px 8px;
+    font-weight: bold !important;
+    font-size: 14px;
+    display: inline-block;
+    /*width: 28px;
+    height: 28px;*/
+}
+.soflow-btn-l {
+    -webkit-appearance: button;
+    -webkit-border-radius: 5px;
+    -webkit-padding-start: 1px;
+    color: #555;
+    margin: 0 5px 0 0;
+    overflow: hidden;
+    padding: 4px 8px;
+    width: 100px;
+    height: 75px;
+    font-weight: bold !important;
+    font-size: 14px;
+}
+.soflow-img-btn {
+    -webkit-appearance: button;
+    -webkit-border-radius: 5px;
+    -webkit-padding-start: 1px;
+    background-color: silver !important;
+    margin: 0 5px 0 0;
+    overflow: hidden;
+    padding: 7px 8px;
+    width: 28px;
+    height: 28px;
+    background: url("/images/map/cogwheel.png") no-repeat;
+    background-size: 24px 24px;
+    display: inline-block;
+}
+/* title to be shown above the soflow select menu */
+.soflow-title {
+    color: #ffffff !important;
+    font-weight: bold !important;
+    font-size: 16px;
+    padding: 5px;
+}
+.soflow-regular-txt {
+    color: #ffffff !important;
+    font-weight: bold !important;
+    font-size: 12px;
+    padding: 5px;
+}
+.soflow-input-txt {
+    border: 2px solid rgb(173, 204, 204);
+    width: 60px;
+    box-shadow: 0px 0px 27px rgb(204, 204, 204) inset;
+    transition:500ms all ease;
+    padding:3px 3px 3px 3px;
+    float:right;
+}
+.soflow-input-txt:focus {
+    width: 100px;
+    transition:500ms all ease;
+    padding:3px 32px 3px 3px;
+}

@@ -1,9 +1,9 @@
 /*******************
  * Rectangle Class *
  *******************/
-var rectangle = (function () {
+var Rectangle = (function () {
     // constructor
-    function rectangle(id, x, y, width, height) {
+    function Rectangle(id, x, y, width, height) {
         this.id = id;
         this.x = x;
         this.y = y;
@@ -23,15 +23,15 @@ var rectangle = (function () {
         this.redraw(this.x, this.y);
         return (this);
     }
-	// Redraw the rectangle - makes use of Draw
-    rectangle.prototype.redraw = function (x, y) {
+    // Redraw the rectangle - makes use of Draw
+    Rectangle.prototype.redraw = function (x, y) {
         this.x = x || this.x;
         this.y = y || this.y;
         this.draw();
         return (this);
     }
     // Draw the rectangle
-    rectangle.prototype.draw = function () {
+    Rectangle.prototype.draw = function () {
         ctx.save();
         ctx.beginPath();
         ctx.rect(this.x, this.y, this.width, this.height);
@@ -41,7 +41,7 @@ var rectangle = (function () {
         ctx.restore();
     }
     // Check if the click is close enough
-    rectangle.prototype.checkCloseEnough = function(mouseX, mouseY) {
+    Rectangle.prototype.checkCloseEnough = function(mouseX, mouseY) {
         console.log("Check close enough Rect");
         // Top left corner check
         if (Math.abs(mouseX - this.x) < 2 && Math.abs(mouseY - this.y) < 2) {
@@ -65,7 +65,7 @@ var rectangle = (function () {
         }
     }
     // Move the rectangle
-    rectangle.prototype.moveTo = function(mouseX, mouseY) {
+    Rectangle.prototype.moveTo = function(mouseX, mouseY) {
         this.x = mouseX; 
         this.y = mouseY; 
 
@@ -73,11 +73,11 @@ var rectangle = (function () {
         return (this);
     }
     // Check if a point is inside the rectangle
-    rectangle.prototype.isPointInside = function (x, y) {
+    Rectangle.prototype.isPointInside = function (x, y) {
         return (x >= this.x && x <= this.x + this.width && y >= this.y && y <= this.y + this.height);
     }
     // Resize the rectangle
-    rectangle.prototype.resizeTo = function (mouseX, mouseY) {
+    Rectangle.prototype.resizeTo = function (mouseX, mouseY) {
         if (this.topLeft) {
             this.width += this.x - mouseX;
             this.height += this.y - mouseY;
@@ -110,20 +110,20 @@ var rectangle = (function () {
         return (this);
     }
     // Set the resizing values on false again
-    rectangle.prototype.stopResize = function() {
+    Rectangle.prototype.stopResize = function() {
         this.topLeft = false;
         this.topRight = false;
         this.botLeft = false;
         this.botRight = false;
     }
     // 
-    rectangle.prototype.isResizing = function() {
+    Rectangle.prototype.isResizing = function() {
         if (this.topLeft || this.topRight || this.botLeft || this.botRight) return true;
         else return false;
     }
     // toString() value for writing to the firebase
-    rectangle.prototype.toString = function() {
+    Rectangle.prototype.toString = function() {
         return String(this.type + ";" + this.x + ";" + this.y + ";" + this.width + ";" + this.height);
     }
-    return rectangle;
+    return Rectangle;
 })();
