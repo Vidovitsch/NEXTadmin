@@ -29,7 +29,7 @@ public class FBConnector implements IDatabase {
     private DatabaseReference databaseReference;
 
     public static FBConnector getInstance() {
-                System.out.println("in FBConnector getinstance");
+        System.out.println("in FBConnector getinstance");
         if (instance == null) {
             instance = new FBConnector();
         }
@@ -42,24 +42,24 @@ public class FBConnector implements IDatabase {
 
     @Override
     public void connect() {
-                System.out.println("trying to connnect in FBConnector");
+        System.out.println("trying to connnect in FBConnector");
         if (databaseReference == null) {
             FileInputStream serviceAccount = null;
             try {
                 serviceAccount = new FileInputStream("src/main/java/Database/NextWeekDev-f084f8ebd419.json");
-                        System.out.println("setting FirebaseOptions");
+                System.out.println("setting FirebaseOptions");
                 FirebaseOptions options = new FirebaseOptions.Builder()
                         .setCredential(FirebaseCredentials.fromCertificate(serviceAccount))
                         .setDatabaseUrl("https://nextweekdev.firebaseio.com/")
                         .build();
-                        System.out.println("initializing FirebaseApp");
+                System.out.println("initializing FirebaseApp");
                 FirebaseApp.initializeApp(options);
-                        System.out.println("Getting FirebaseDatabaseInstance");
+                System.out.println("Getting FirebaseDatabaseInstance");
                 FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-                        System.out.println("Getting FirebaseDatabaseReference");
+                System.out.println("Getting FirebaseDatabaseReference");
                 databaseReference = firebaseDatabase.getReference();
             } catch (FileNotFoundException ex) {
-                        System.out.println(ex.getMessage());
+                System.out.println(ex.getMessage());
                 Logger.getLogger(FBConnector.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
                 System.out.println(ex.getMessage());
@@ -72,9 +72,8 @@ public class FBConnector implements IDatabase {
                     Logger.getLogger(FBConnector.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-        }
-        else{
-                    System.out.println("DatabaseReference Exists");
+        } else {
+            System.out.println("DatabaseReference Exists");
         }
     }
 

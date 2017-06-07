@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package Database;
 
 import Models.EventDay;
@@ -22,6 +21,7 @@ import java.util.logging.Logger;
  * @author Arno Dekkers Los
  */
 public class DBDayModifier implements IModDay {
+
     private static DatabaseReference firebase;
     private boolean done = false;
     private Object lock;
@@ -39,8 +39,8 @@ public class DBDayModifier implements IModDay {
         DatabaseReference ref = firebase.child("Days").push();
         ref.setValue(data);
     }
-    
-    public void updateDay(EventDay day){
+
+    public void updateDay(EventDay day) {
         Map<String, String> data = new HashMap();
         putDayValues(data, day);
         //data.put("id", day.getId());
@@ -48,7 +48,7 @@ public class DBDayModifier implements IModDay {
         ref.setValue(data);
     }
 
-    public void putDayValues(Map<String, String> data, EventDay day){
+    public void putDayValues(Map<String, String> data, EventDay day) {
         data.put("EventName", day.getEventName());
         data.put("StartTime", day.getStartTime());
         data.put("EndTime", day.getEndTime());
@@ -56,7 +56,7 @@ public class DBDayModifier implements IModDay {
         data.put("LocationName", day.getLocationName());
         data.put("Description", day.getDescription());
     }
-    
+
     @Override
     public void removeDay(EventDay day) {
         DatabaseReference ref = firebase.child("Days").child(day.getId());
@@ -65,27 +65,27 @@ public class DBDayModifier implements IModDay {
 
     @Override
     public ArrayList<EventDay> getDays() {
-                System.out.println("in getdays()");
+        System.out.println("in getdays()");
         final ArrayList<EventDay> days = new ArrayList();
-                System.out.println("creating daysRef");
+        System.out.println("creating daysRef");
         DatabaseReference ref = firebase.child("Days");
-                System.out.println(ref.getRoot().toString());
-                System.out.println("adding Listernerforsinglevalueevnt");
-                ref.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot ds) {
-                                        System.out.println("in ondatachange");
-                    }
+        System.out.println(ref.getRoot().toString());
+        System.out.println("adding Listernerforsinglevalueevnt");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot ds) {
+                System.out.println("in ondatachange");
+            }
 
-                    @Override
-                    public void onCancelled(DatabaseError de) {
-                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                    }
-                });
+            @Override
+            public void onCancelled(DatabaseError de) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+        });
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                        System.out.println("in onDataChange");
+                System.out.println("in onDataChange");
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     days.add(dsToEventDay(ds));
                 }
@@ -94,16 +94,16 @@ public class DBDayModifier implements IModDay {
 
             @Override
             public void onCancelled(DatabaseError fe) {
-                        System.out.println("in oncancelled");
+                System.out.println("in oncancelled");
                 System.out.println(fe.toException().toString());
             }
         });
-                System.out.println("locking fxthread");
+        System.out.println("locking fxthread");
         lockFXThread();
-                System.out.println("returning days");
+        System.out.println("returning days");
         return days;
     }
-    
+
     public EventDay getDay(final String id) {
         System.out.println("in db method");
         final ArrayList<EventDay> days = new ArrayList();
@@ -111,7 +111,7 @@ public class DBDayModifier implements IModDay {
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-              System.out.println("found my match");
+                System.out.println("found my match");
                 EventDay day = dsToEventDay(snapshot);
                 day.setId(id);
                 days.add(day);
@@ -126,8 +126,8 @@ public class DBDayModifier implements IModDay {
         lockFXThread();
         return days.get(0);
     }
-    
-    private EventDay dsToEventDay(DataSnapshot ds){
+
+    private EventDay dsToEventDay(DataSnapshot ds) {
         String date = (String) ds.child("Date").getValue();
         String startTime = (String) ds.child("StartTime").getValue();
         String endTime = (String) ds.child("EndTime").getValue();
@@ -145,10 +145,10 @@ public class DBDayModifier implements IModDay {
         day.setId(id);
         return day;
     }
-    
+
     /**
-     * Tells a random object to wait while in a loop.
-     * The loop stops, and won't cause any unnecessary cpu use.
+     * Tells a random object to wait while in a loop. The loop stops, and won't
+     * cause any unnecessary cpu use.
      */
     private void lockFXThread() {
         lock = new Object();
@@ -158,14 +158,15 @@ public class DBDayModifier implements IModDay {
                     lock.wait();
                 } catch (InterruptedException ex) {
                     Logger.getLogger(DBEventModifier.class.getName()).log(Level.SEVERE, null, ex);
-                } 
+                }
             }
         }
         done = false;
     }
-    
+
     /**
-     * Wakes the lock. The while loop in the method 'lockFXThread' will proceed and break free.
+     * Wakes the lock. The while loop in the method 'lockFXThread' will proceed
+     * and break free.
      */
     private void unlockFXThread() {
         synchronized (lock) {
