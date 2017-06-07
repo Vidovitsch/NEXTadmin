@@ -45,7 +45,7 @@ public class DBDayModifier implements IModDay {
     @Override
     public void insertDay(EventDay day) {
         if(day == null){
-            throw new IllegalArgumentException("DBDayModifier.insertDay tried to add EventDay null to firebase");
+            throw new IllegalArgumentException(getClass().getName() + Thread.currentThread().getStackTrace()[1].getMethodName() + " tried to add EventDay null to firebase");
         }
         Map<String, String> data = new HashMap();
         putDayValues(data, day);
@@ -61,7 +61,7 @@ public class DBDayModifier implements IModDay {
      */
     public void updateDay(EventDay day){
         if(day == null){
-            throw new IllegalArgumentException("DBDayModifier.updateDay tried to call updateDay method with an null instance as day");
+            throw new IllegalArgumentException(getClass().getName() + " tried to call updateDay method with an null instance as day");
         }
         Map<String, String> data = new HashMap();
         putDayValues(data, day);
@@ -79,9 +79,9 @@ public class DBDayModifier implements IModDay {
      */
     private void putDayValues(Map<String, String> data, EventDay day){
         if(data == null){
-            throw new IllegalArgumentException("DBDayModifier.putDayValues the data instance was null");
+            throw new IllegalArgumentException(getClass().getName() + " the data instance was null");
         }else if(day == null){
-            throw new IllegalArgumentException("DBDayModifier.putDayValues the day instance was nully");
+            throw new IllegalArgumentException(getClass().getName() + " the day instance was nully");
         }
         data.put("EventName", day.getEventName());
         data.put("StartTime", day.getStartTime());
@@ -99,9 +99,9 @@ public class DBDayModifier implements IModDay {
     @Override
     public void removeDay(EventDay day) {
         if(day == null){
-            throw new IllegalArgumentException("DBDayModifier.removeDay the day instance was null");
+            throw new IllegalArgumentException(getClass().getName() + " the day instance was null");
         }else if(day.getId() == null){
-            throw new IllegalArgumentException("DBDayModifier.removeDay the day instance did not contain an ID");
+            throw new IllegalArgumentException(getClass().getName() + " the day instance did not contain an ID");
         }
         Firebase ref = firebase.child("Days").child(day.getId());
         ref.removeValue();
@@ -146,7 +146,7 @@ public class DBDayModifier implements IModDay {
      */
     public EventDay getDay(final String id) {
         if(id == null || "".equals(id)){
-            throw new IllegalArgumentException("DBDayModifier.getDay the ID of the object that has to be retrieved is null");
+            throw new IllegalArgumentException(getClass().getName() + " the ID of the object that has to be retrieved is null");
         }
         final ArrayList<EventDay> days = new ArrayList();
         Firebase ref = firebase.child("Days/" + id);
@@ -177,7 +177,7 @@ public class DBDayModifier implements IModDay {
      */
     private EventDay dsToEventDay(DataSnapshot ds){
         if(ds == null){
-            throw new IllegalArgumentException("DBDayModifier.dsToEventDay the ds that had to be converted equaled null");
+            throw new IllegalArgumentException(getClass().getName() + " the ds that had to be converted equaled null");
         }
         String date = (String) ds.child("Date").getValue();
         String startTime = (String) ds.child("StartTime").getValue();
