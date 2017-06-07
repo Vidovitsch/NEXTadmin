@@ -20,7 +20,7 @@
                     <textarea rows="4" cols="50" name="createassignmentdescription" class="createassignmentdescription middlepartitem" id="createassignmentdescription" placeholder="Description"></textarea>
                     <button class="button_base b01_simple_rollover middlepartitem middleparthalfbutton" id="buttoncreateassignment" onclick="updateassignment()">Submit</button>
                     <button class="button_base b01_simple_rollover middlepartitem middleparthalfbutton" id="buttonremoveassignment" onclick="removeselectedassignment()">Remove</button>
-                    <button class="button_base b01_simple_rollover middlepartitem middleparthalfbutton" id="buttonshowsubmissions" onclick="showsubmissionsassignment()">Show submissions</button></br>
+                    </br>
                     <ol id="assignmentlist" class="borderedlist" type="1">
                     </ol>
                 </div>
@@ -53,13 +53,13 @@
         <script src="jszip.js"></script>
         <script src="xlsx.js"></script>
         <script>
-                        /*jshint browser:true */
-                        /*global XLSX */
-                        var clipboardstudents = "";
-                        var selectedstudent = "";
-                        var selectedassignmentname = "";
-                        var studentlist = [];
-                        var assignmentlist = [];
+                    /*jshint browser:true */
+                    /*global XLSX */
+                    var clipboardstudents = "";
+                    var selectedstudent = "";
+                    var selectedassignmentname = "";
+                    var studentlist = [];
+                    var assignmentlist = [];
 
                     function updatelog(logtext)
                     {
@@ -162,7 +162,14 @@
 
                     function removeselectedassignment() {
                         var assignmentname = document.getElementsByName("createassignmentname")[0].value;
-                        firebase.database().ref('Assignment/' + assignmentname).remove().then(finishassigmentremoval(assignmentname));
+                        if (assignmentname.length > 0)
+                        {
+                            firebase.database().ref('Assignment/' + assignmentname).remove().then(finishassigmentremoval(assignmentname));
+                        }
+                        else
+                        {
+                            alert("No assignment selected");
+                        }
                     }
 
                     function finishassigmentremoval(assignmentname) {
