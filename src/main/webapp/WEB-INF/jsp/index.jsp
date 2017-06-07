@@ -20,8 +20,11 @@
                     <textarea rows="4" cols="50" name="createassignmentdescription" class="createassignmentdescription middlepartitem" id="createassignmentdescription" placeholder="Description"></textarea>
                     <button class="button_base b01_simple_rollover middlepartitem middleparthalfbutton" id="buttoncreateassignment" onclick="updateassignment()">Submit</button>
                     <button class="button_base b01_simple_rollover middlepartitem middleparthalfbutton" id="buttonremoveassignment" onclick="removeselectedassignment()">Remove</button>
-                    </br>
+                    <span class="assignments">Assignments</span>
                     <ol id="assignmentlist" class="borderedlist" type="1">
+                    </ol>
+                    <span class="assignmentname">Submissions</span>
+                    <ol id="submissionlist" class="borderedlist" type="1">
                     </ol>
                 </div>
             </div>
@@ -60,14 +63,19 @@
                     var selectedassignmentname = "";
                     var studentlist = [];
                     var assignmentlist = [];
-
                     function updatelog(logtext)
                     {
                         document.getElementById('adminlog').innerHTML += logtext + "&#13;&#10;";
                     }
 
                     function hidelog() {
-                        document.getElementById("adminlog").style.visibility = "hidden";
+                        if (document.getElementById("adminlog").style.visibility == "hidden")
+                        {
+                            showlog();
+                        } else
+                        {
+                            document.getElementById("adminlog").style.visibility = "hidden";
+                        }
                     }
 
                     function showlog() {
@@ -83,8 +91,8 @@
                     olassignments.onclick = function (event) {
                         var target = getEventTarget(event);
                         updateselectedassignment(target.innerHTML);
+                        showsubmissionsassignment();
                     };
-
                     function updateselectedassignment(assignmentname) {
                         selectedassignmentname = assignmentname;
                         var arrayLength = assignmentlist.length;
@@ -147,7 +155,6 @@
                         });
                     }
                     setassignmentlist();
-
                     function updateassignment() {
                         var assignment;
                         var assignmentname = document.getElementsByName("createassignmentname")[0].value;
@@ -165,12 +172,51 @@
                         if (assignmentname.length > 0)
                         {
                             firebase.database().ref('Assignment/' + assignmentname).remove().then(finishassigmentremoval(assignmentname));
-                        }
-                        else
+                        } else
                         {
                             alert("No assignment selected");
                         }
                     }
+
+                    function showsubmissionsassignment() {
+                        var assignmentname = document.getElementsByName("createassignmentname")[0].value;
+                        if (assignmentname.length > 0)
+                        {
+                            showPopup(assignmentname);
+                        } else
+                        {
+                            alert("No assignment selected");
+                        }
+                    }
+
+
+                    function showPopup(assignmentname)
+                    {
+                        document.getElementById('submissionlist').innerHTML = ""
+                        document.getElementById('submissionlist').innerHTML +=
+                                '<div id="event" class="overlay"> \
+                                <div class="popup"> \
+                                        <div id="popup-wrapper-assignment"> \
+                                            <div class="content">';
+
+                        var dataref = '/Assignment/' + assignmentname + '/Submissions';
+                        firebase.database().ref(dataref).once("value", function (snapshot) {
+                            snapshot.forEach(function (childSnapshot) {
+                                var submissionLink = childSnapshot.val().Link;
+                                var submissionName = childSnapshot.val().Name;
+                                assigmenthtml = "<li><a href='#'>" + submissionName + " : " + submissionLink + "</li>";
+                                document.getElementById('submissionlist').innerHTML += assigmenthtml;
+                            })
+
+                        });
+                        document.getElementById('submissionlist').innerHTML +=
+                                '</div> \
+                                        </div> \
+                                </div> \
+                            </div>';
+                    }
+
+
 
                     function finishassigmentremoval(assignmentname) {
                         updatelog(assignmentname + " has been removed");
@@ -199,7 +245,6 @@
                     var use_worker = typeof Worker !== 'undefined';
                     var transferable = use_worker;
                     var wtf_mode = false;
-
                     function parsejson() {
                         setdatabasedata();
                     }
@@ -318,7 +363,6 @@
                     }
 
                     var global_wb;
-
                     function process_wb(wb) {
                         global_wb = wb;
                         jsondata = to_json(wb);
