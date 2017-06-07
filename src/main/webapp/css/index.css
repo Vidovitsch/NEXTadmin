@@ -57,6 +57,12 @@ span:hover {
     padding: 10px;
 }
 
+#editannouncementpart{
+    border: antiquewhite;
+    border-style: solid;
+    padding: 10px;
+}
+
 .borderedlist{
     border-style: solid;
     text-align: center;
@@ -336,3 +342,4 @@ h1,h2,h3,p,div,a, .headline{
 .middleparthalfbutton{
     width: 38%;
 }
+
