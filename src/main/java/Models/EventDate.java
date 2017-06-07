@@ -24,6 +24,10 @@ public abstract class EventDate {
     private String locationName;
     private String description;
     
+    /**
+     * constructor of EventDate, this assigns the given parameter to the eventName field
+     * @param eventName
+     */
     public EventDate(String eventName){
         this.eventName = eventName;
     }
@@ -62,7 +66,8 @@ public abstract class EventDate {
             this.date = date;
             setDay();
         } catch (ParseException ex){
-            throw new IllegalArgumentException("the date string had an invallid format. format should be dd-MM-yyyy");
+            throw new IllegalArgumentException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
+                    " The date string had an invallid format. format should be dd-MM-yyyy");
         }
     }
 
@@ -82,7 +87,8 @@ public abstract class EventDate {
         if(testTimeFormat(endTime)){
             this.endTime = endTime;
         } else {
-            throw new IllegalArgumentException("The given time was not of a valid format, format should be HH:mm");
+            throw new IllegalArgumentException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
+                    " The given time was not of a valid format, format should be HH:mm");
         }
     }
 
@@ -102,7 +108,8 @@ public abstract class EventDate {
         if(testTimeFormat(startTime)){
             this.startTime = startTime;
         } else {
-            throw new IllegalArgumentException("The given time was not of a valid format, format should be HH:mm");
+            throw new IllegalArgumentException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
+                    " The given time was not of a valid format, format should be HH:mm");
         }
     }
 
@@ -131,7 +138,8 @@ public abstract class EventDate {
             Date dateEvent = new SimpleDateFormat("dd-MM-yyyy").parse(date);
             day = simpleDateFormat.format(dateEvent);
         } catch (ParseException ex){
-            throw new IllegalArgumentException("Failed to get the day from the date, is the format dd-MM-yyyy");
+            throw new IllegalArgumentException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
+                    " Failed to get the day from the date, is the format dd-MM-yyyy");
         }
     }
     

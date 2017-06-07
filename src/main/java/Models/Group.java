@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 
 /**
- *
+ * this is the class used to keep track of the student groups
  * @author David
  */
 public class Group {
@@ -21,6 +21,11 @@ public class Group {
     private ArrayList<Message> messages;
     private int location = 0;
         
+    /**
+     * This is the constructor of the Group class as argument it takes a groupNumber
+     * which is then set to the groupNumber field. It also initiates the users ArrayList
+     * @param groupNumber 
+     */
     public Group(String groupNumber) {
         this.groupNumber = groupNumber;
         users = new ArrayList();
