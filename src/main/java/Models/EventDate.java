@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- *
+ * parent class for all the scheduleable objects in our application
  * @author Arno Dekkers Los
  */
 public abstract class EventDate {
@@ -135,10 +135,19 @@ public abstract class EventDate {
         }
     }
     
+    /**
+     * Get the value of day
+     * @return the value of day
+     */
     public String getDay(){
         return day;
     }
     
+    /**
+     * This method checks weather or not the given String is of the HH:mm time format
+     * @param time
+     * @return boolean whether or not the string has a valid fromat
+     */
     private boolean testTimeFormat(String time){
         try {
             SimpleDateFormat result = new SimpleDateFormat("HH:mm");
@@ -149,12 +158,24 @@ public abstract class EventDate {
         } 
     }
     
+    /**
+     * upon implimentation this method gives the type of child of the instance
+     * @return EventType
+     */
     public abstract EventType getEventType();
     
+    /**
+     * Get the value of description
+     * @return the value of description
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * Set the value of description
+     * @param description new value of description
+     */
     public void setDescription(String description) {
         this.description = description;
     }
