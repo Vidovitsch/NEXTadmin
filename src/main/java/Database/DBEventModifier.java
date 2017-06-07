@@ -138,7 +138,7 @@ public class DBEventModifier implements IModEvent {
      * the data is loaded in an ArrayList<Event> events and returned with the method dsToEvent. 
      * to stop the FXThread until the method is finished loading loading the method uses 
      * the lockFXThread and unlockFXThread methods
-     * @return days
+     * @return events
      */
     @Override
     public ArrayList<Event> getEvents() {
