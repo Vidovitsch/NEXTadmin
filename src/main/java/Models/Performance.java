@@ -10,7 +10,7 @@ import Enums.EventType;
 
 
 /**
- *
+ * This class is used to save the data for scheduled performances in
  * @author David
  */
 public class Performance extends Event {
@@ -20,6 +20,10 @@ public class Performance extends Event {
     //For visual aspects
     private String hexColor = "#A2B9B2";
     
+    /**
+     * The constructor of Performance, it takes a String eventName which it passes on to the parent
+     * @param eventName 
+     */
     public Performance(String eventName) {
         super(eventName);
     }
@@ -43,11 +47,22 @@ public class Performance extends Event {
         this.eventType = eventType;
     }
     
+    
+    /**
+     * Get the value of hexColor
+     *
+     * @return the value of hexColor
+     */
     @Override
     public String getHexColor() {
         return hexColor;
     }
 
+    /**
+     * Set the value of hexColor
+     *
+     * @param hexColor new value of hexColor
+     */
     @Override
     public void setHexColor(String hexColor) {
         this.hexColor = hexColor;

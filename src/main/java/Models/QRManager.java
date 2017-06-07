@@ -28,7 +28,8 @@ import javax.servlet.http.HttpServlet;
 import org.apache.commons.codec.binary.Base64;
 
 /**
- *
+ * This class is used to generate new QR code, retrieve existing QR codes and 
+ * to control whether or not generation of codes was successfull
  * @author David
  */
 public class QRManager extends HttpServlet {
@@ -41,6 +42,10 @@ public class QRManager extends HttpServlet {
     
     private static Firebase firebase;
     
+    /**
+     * this is the constructor of QRManager, it initiates a firebase connection
+     * and saves this in the field firebase
+     */
     public QRManager() {
         FBConnector connector = FBConnector.getInstance();
         connector.connect();
@@ -67,13 +72,21 @@ public class QRManager extends HttpServlet {
 
             @Override
             public void onCancelled(FirebaseError fe) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                throw new UnsupportedOperationException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
+                        " Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
         });
         lockFXThread();
     }
     
     
+    /**
+     * retrieves all the QR codes that currently exist in the firebase,
+     * puts these codes in an ArrayList<String> and returns this. 
+     * It uses the methods lockFXThread and unlockFXThread to stop the UI thread
+     * until the method has finished loading data
+     * @return qrCodes
+     */
     public ArrayList<String> getQRCodes() {
         final ArrayList<String> qrCodes = new ArrayList();
         Firebase ref = firebase.child("QRCode");
@@ -89,7 +102,8 @@ public class QRManager extends HttpServlet {
 
             @Override
             public void onCancelled(FirebaseError fe) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                throw new UnsupportedOperationException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
+                        " Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
         });
         lockFXThread();
@@ -97,6 +111,12 @@ public class QRManager extends HttpServlet {
         return qrCodes;
     }
     
+    /**
+     * this method checks whether or not there are any existing QRcodes in the database
+     * It uses the methods lockFXThread and unlockFXThread to stop the UI thread
+     * it returns a boolean which is true if any childs were found in the firebase branch QRCode
+     * @return generated
+     */
     public boolean checkGenerated() {
         Firebase ref = firebase.child("QRCode");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -108,7 +128,8 @@ public class QRManager extends HttpServlet {
 
             @Override
             public void onCancelled(FirebaseError fe) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                throw new UnsupportedOperationException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
+                        " Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
         });
         lockFXThread();
@@ -118,7 +139,7 @@ public class QRManager extends HttpServlet {
     
     /**
      * Generates the QR-code image with a random generated key as content
-     * @throws WriterException 
+     * @throws WriterException
      */
     private void generateQRCode() throws WriterException {
         //Generating a random text
