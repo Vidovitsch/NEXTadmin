@@ -19,7 +19,8 @@
                     <input type='text' id='createassignmentname' class='createassignmentname middlepartitem' name='createassignmentname' placeholder='Specify assignment name...'>
                     <textarea rows="4" cols="50" name="createassignmentdescription" class="createassignmentdescription middlepartitem" id="createassignmentdescription" placeholder="Description"></textarea>
                     <button class="button_base b01_simple_rollover middlepartitem middleparthalfbutton" id="buttoncreateassignment" onclick="updateassignment()">Submit</button>
-                    <button class="button_base b01_simple_rollover middlepartitem middleparthalfbutton" id="buttonremoveassignment" onclick="removeselectedassignment()">Remove</button></br>
+                    <button class="button_base b01_simple_rollover middlepartitem middleparthalfbutton" id="buttonremoveassignment" onclick="removeselectedassignment()">Remove</button>
+                    <button class="button_base b01_simple_rollover middlepartitem middleparthalfbutton" id="buttonshowsubmissions" onclick="showsubmissionsassignment()">Show submissions</button></br>
                     <ol id="assignmentlist" class="borderedlist" type="1">
                     </ol>
                 </div>
