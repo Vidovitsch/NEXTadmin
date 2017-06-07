@@ -107,7 +107,6 @@ public class DBDayModifier implements IModDay {
                 System.out.println(fe.toException().toString());
             }
         });
-        
         lockFXThread();
         return days.get(0);
     }
