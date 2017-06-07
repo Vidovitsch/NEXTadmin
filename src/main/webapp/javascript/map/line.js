@@ -40,20 +40,17 @@ var Wall = (function() {
         ctx.restore();
     }
     // Check if the click is close enough
-    Wall.prototype.checkCloseEnough = function(mouseX, mouseY) {       
+    Wall.prototype.checkCloseEnough = function(mouseX, mouseY, doSelect) {       
         if (mouseX <= this.x + 5 && mouseX >= this.x -5 && 
             mouseY <= this.y + 5 && mouseY >= this.y -5) {
-            this.startLine = true;
-            console.log("Startline selected");
+            if (doSelect) this.startLine = true;
             return true;
         } 
         else if (mouseX >= this.x2 - 5 && mouseX <= this.x2 +5 &&
             mouseY >= this.y2 - 5 && mouseY <= this.y2 +5) {
-            this.endLine = true;
-            console.log("Endline selected");
+            if (doSelect) this.endLine = true;
             return true;
         }
-        console.log("Not close enough");
         return false;
     }
     // Move the line

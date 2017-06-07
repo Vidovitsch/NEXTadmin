@@ -87,6 +87,7 @@ function saveFloor(location, floor) {
 /* Loading */
 function loadMap() {
     //Search foor locations
+    console.log("Loading map!");
     var locRef = database.ref('Map');
     locRef.once("value", function(snapshot) {
         snapshot.forEach(function(loc) {
@@ -296,4 +297,4 @@ function generateRandomId() {
     return text;
 }
 
-loadMap();
+$(document).ready(loadMap());
