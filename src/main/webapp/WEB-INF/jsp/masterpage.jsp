@@ -33,6 +33,7 @@
                 <li class="nav-item"><a href="/qrcodes">QR-Codes</a></li>
                 <li class="nav-item"><a href="/mapcreation">Map Tool</a></li>
                 <li class="nav-item"><a href="/adminpanel">Activity panel</a></li>
+                <li class="nav-item"><a href="/announcements">Announcement board</a></li>
             </ul>
         </div>
         
