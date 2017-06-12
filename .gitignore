@@ -9,6 +9,7 @@ buildNumber.properties
 .mvn\timing.properties
 src\main\webapp\initfirebase.js
 
+#Ignores the classes that make the databaseconnection do seperate the Developer-database from the Release-database
 src\main\java\Database\FBConnector.java
 src\main\webapp\initfirebase.js
 
