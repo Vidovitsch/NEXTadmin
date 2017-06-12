@@ -42,21 +42,18 @@ var Circle = (function () {
         ctx.restore();
     }
     // Check if the click is close enough
-    Circle.prototype.checkCloseEnough = function(mouseX, mouseY) {
+    Circle.prototype.checkCloseEnough = function(mouseX, mouseY, doSelect) {
         // Check if the border is selected
         var distanceX = mouseX - this.x;
         var distanceY = mouseY - this.y;
 
         var root = Math.sqrt(Math.pow(distanceX, 2) + Math.pow(distanceY, 2));
-        //console.log("Show root: " + root);
-        //console.log("Radius: " + this.radius + " " + (this.radius - 5) + "& " + (root < this.radius));
-        //console.log("X: " + this.x + ", Y: " + this.y);
-        //console.log("MouseX: " + mouseX + ", MouseY: " + mouseY);
 
         if (root >= this.radius - 5 && root <= this.radius) {
-                this.borderSelected = true;
+            if (doSelect) this.borderSelected = true;
+            return true;
         }
-        //console.log("border selected: " + this.borderSelected);
+        return false;
     }
     // Move the circle
     Circle.prototype.moveTo = function(mouseX, mouseY) {
@@ -69,8 +66,6 @@ var Circle = (function () {
     // Check if a point is inside the rectangle
     Circle.prototype.isPointInside = function (mouseX, mouseY) {
         var bool = Math.pow(mouseX - this.x, 2) + Math.pow(mouseY - this.y, 2) < Math.pow(this.radius, 2);
-        //console.log(Math.pow(mouseX - this.x, 2) + Math.pow(mouseY - this.y, 2));
-        //console.log(Math.pow(this.radius, 2));
         return bool;
     }
     // Resize the rectangle
