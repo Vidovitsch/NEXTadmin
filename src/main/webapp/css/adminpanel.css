@@ -7,62 +7,143 @@ and open the template in the editor.
     Created on : 27-mrt-2017, 11:46:21
     Author     : Arno Dekkers Los
 */
-
-.body{
-    height: 90%;
+body {
+    overflow-y: hidden;
 }
 
-.wrapper{
-    position: relative;
+.information-list {
+    width: 40%;
+    height: 100%;
+    float: left;
+}
+
+.create-modify-event {
+    width: 60%;
+    display: inline-block;
+}
+
+.itemList div {
+    color: white;
+    padding-top: 3%;
+    padding-bottom: 3%;
+    font-size: 1.2em;
+    border-radius: 5px 0px 0px 5px;
+}
+
+.itemList div span {
+    padding-left: 5%;
+}
+
+.itemList {
+    padding-top: 3%;
+    padding-bottom: 3%;
+    padding-left: 10%;
+    height: 100%;
+    background-color: black;
+    overflow: auto;
+}
+
+.itemList div:hover {
+    background-color: gray;
+    cursor: pointer;
+}
+
+.information-list-cb {
+    color: #ffffff;
+    font-size: 1.2em;
+    background-color: #000000;
+    padding: 2.5%;
+}
+
+.create-mod-list-cb {
+    color: #000000;
+    font-size: 1.2em;
+    background-color: #ffffff;
+    padding: 2.5%;
+}
+
+.cbSearchType {
+    float: right;
+    color: #000;
+    padding: .1em;
+    padding-right: 2.2em;
+    font-size: 1em;
+    border: 0;
+    margin: 0;
+    border-radius: 3px;
+}
+
+#dbType {
+    border: 2px solid #333333;
+}
+
+.fieldSpan {
+    font-weight: bold;
+}
+
+#list-spacer {
     width: 100%;
-    height: calc(100% - 81px);
+    height: 2px;
 }
 
-.information-list{
+.btn-style {
+    color: white;
+    background-color: #333333;
+    border-radius: 5px;
+    font-size: 1.0em;
+    border: none;
+    padding: 10px;
+}
+
+.btn-style:hover {
+    cursor: pointer;
+    background-color: #555555;
+}
+
+#newEvent-button {
+    float: right;
+}
+
+#input-form {
+    padding: 3%;
+}
+
+.fieldDiv {
+    padding: 1.7%;
+}
+
+.fieldLabel {
     display: inline-block;
-    position: absolute;
-    width: 50%;
-    height: 90%;
-    left: 0;
+    float: left;
+    clear: left;
+    width: 175px;
+    text-align: left;
+    font-size: 1.2em;
 }
 
-.create-modify-event{
+.fieldInput {
     display: inline-block;
-    position: absolute;
-    width: 45%;
-    right: 0;
-    padding-top: 10px;
+    float: left;
+    border: 1px solid #333333;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    font-size: 1.1em;
+    border-radius: 10px;
 }
 
-.fieldDiv{
-    padding-top: 15px;
-    width: 20%;
+#description {
+    width: 100%;
+    height: 100px;
+    resize: none;
 }
 
-.descriptionSpan{
-    padding-top: 15px;
-    padding-bottom: 10px;
+.buttons-console {
+    position: fixed;
+    float:left;
 }
 
-.itemList{
-    overflow-y: auto;
-    width: 90%;
-    height: 90%;
-    padding-left: 5%;
+textarea:focus, input:focus{
+    outline: none;
 }
-
-.scheduledItemDiv{
-    padding-top: 2%;
-    padding-bottom: 2%;
-    height: auto;
-    padding-left: 5%;
-    padding-right: 5%;
-    width: 90%;
-    background: white;
-    border: black;
-}
-
-.scheduledItemDiv:hover{
-    background: grey;
-}
-

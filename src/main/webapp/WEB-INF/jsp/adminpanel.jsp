@@ -21,50 +21,53 @@
     <body>
         <div class="wrapper">
             <div class="information-list">
-                <span class="fieldSpan" style="padding-left: 5%;">Apply Filter:</span>
-                <select name="cbSearchType" id="cbSearchType">
-                    <option></option>
-                    <option value="all">all</option>
-                    <c:forEach items="${types}" var="id">
-                        <option value="${id}">${id}</option>
-                    </c:forEach>
-                </select>
-                <div class="itemList" >
+                <div class="information-list-cb">
+                    <span class="fieldSpan">Apply Filter:</span>
+                    <select name="cbSearchType" class="cbSearchType">
+                        <option value="All" selected="selected" >All</option>
+                        <c:forEach items="${types}" var="id">
+                            <option value="${id}">${id}</option>
+                        </c:forEach>
+                    </select>
+                </div>
+                <div id="list-spacer"></div>
+                <div class="itemList">
                     <c:forEach var="ScheduledItem" items="${scheduledItems}">
-                        <div onclick="post('editItem', {id: ${ScheduledItem.AddSpecialChars(ScheduledItem.getId())}, string: ${ScheduledItem.AddSpecialChars(ScheduledItem.getString())}});" class="scheduledItemDiv">${ScheduledItem.getString()}</div>
+                        <div onclick="post('editItem', {id: ${ScheduledItem.AddSpecialChars(ScheduledItem.getId())}, string: ${ScheduledItem.AddSpecialChars(ScheduledItem.getString())}});" class="scheduledItemDiv"><span>${ScheduledItem.getString()}</span></div>
                     </c:forEach>
                 </div>
             </div>    
             <div class="create-modify-event">
-                <div class="createType">
+                <div class="create-mod-list-cb" id="cb-left">
                     <span class="fieldSpan" id="newfieldSpan">Select the type of event that you want to create:</span>
                     <span class="fieldSpan" id="oldfieldSpan" style="display: none;">Go back to create a new event:</span>
-                    <select class="dbType" id="dbType" onchange="dbTypeChanged()">
+                    <select class="cbSearchType" id="dbType" onchange="dbTypeChanged()">
                         <option></option>
                         <c:forEach items="${types}" var="id">
                             <option value="${id}">${id}</option>
                         </c:forEach>
                     </select>
-                    <input id="newEvent-button" onclick="window.location.href='/adminpanel'" class="form-control" type="button" value="Navigate to New event" style="display: none;"/>
+                    <input id="newEvent-button" onclick="window.location.href='/adminpanel'" class="btn-style" type="button" value="Navigate to New event" style="display: none;"/>
                 </div>
-                <c:forEach var="row" items="${fields}">
-                    <div class="${row}div fieldDiv" style="display: none;" id="${row}div">
-                        <span class="fieldSpan">${row}:</span>
-                        <input class="form-control fieldInput" type="text" id="${row}" name="${row}" required></br>
+                <div id="input-form">
+                    <c:forEach var="row" items="${fields}">
+                        <div class="fieldDiv" class="${row}div fieldDiv" style="display: none;" id="${row}div">
+                            <label class="fieldLabel">${row}:</label><input class="fieldInput" type="text" id="${row}" name="${row}" required></br>
+                        </div>
+                    </c:forEach>
+                    <div class="fieldDiv" id="descriptiondiv" style="display: none;">
+                        <label class="fieldLabel">Description:</label>
+                        <textarea class="fieldInput" id="description" name="description"></textarea></br>
                     </div>
-                </c:forEach>    
-                <div class="descriptiondiv fieldDiv" id="descriptiondiv" style="display: none;">
-                    <span class="descriptionSpan">Description:</span><br>
-                    <textarea class="form-control" id="description" name="description"></textarea></br>
                 </div>
-                <input id="create-button" onclick="SentToDB(true)" class="form-control" type="submit" value="create Event" style="display: none;"/>      
-                <input id="discard-button" onclick="window.location.href='/adminpanel'" class="form-control" type="button" value="discard changes" style="display: none;"/>
-                <input id="save-button" onclick="SentToDB(false)" class="form-control" type="submit" value="save changes" style="display: none;"/>
-                <input id="delete-button" class="form-control" type="submit" value="Delete selected event" style="display: none;"/>
+            </div>
+            <div class="buttons-console">
+                    <input id="create-button" onclick="SentToDB(true)" class="btn-style" type="submit" value="create Event" style="display: none;"/>      
+                    <input id="discard-button" onclick="window.location.href='/adminpanel'" class="btn-style" type="button" value="discard changes" style="display: none;"/>
+                    <input id="save-button" onclick="SentToDB(false)" class="btn-style" type="submit" value="save changes" style="display: none;"/>
+                    <input id="delete-button" class="btn-style" type="submit" value="Delete selected event" style="display: none;"/>
             </div>
         </div>
-
-
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" ></script>
         <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>‌​

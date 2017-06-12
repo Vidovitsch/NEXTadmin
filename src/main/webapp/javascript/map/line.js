@@ -1,9 +1,9 @@
 /**************
- * Line class *
+ * Wall Class *
  **************/
-var line = (function() {
+var Wall = (function() {
     // constructor
-    function line(id, x, y, x2, y2) {
+    function Wall(id, x, y, x2, y2) {
         this.id = id;
         this.x = x;
         this.y = y;
@@ -22,14 +22,14 @@ var line = (function() {
         return (this);
     }
     // Redraw the line - makes use of Draw
-    line.prototype.redraw = function(x, y) {
+    Wall.prototype.redraw = function(x, y) {
         this.x = x || this.x;
         this.y = y || this.y;
         this.draw();
         return (this);
     }
     // Draw the line
-    line.prototype.draw = function() {
+    Wall.prototype.draw = function() {
         ctx.save();
         ctx.beginPath();
         ctx.moveTo(this.x, this.y);
@@ -40,24 +40,21 @@ var line = (function() {
         ctx.restore();
     }
     // Check if the click is close enough
-    line.prototype.checkCloseEnough = function(mouseX, mouseY) {       
+    Wall.prototype.checkCloseEnough = function(mouseX, mouseY, doSelect) {       
         if (mouseX <= this.x + 5 && mouseX >= this.x -5 && 
             mouseY <= this.y + 5 && mouseY >= this.y -5) {
-            this.startLine = true;
-            console.log("Startline selected");
+            if (doSelect) this.startLine = true;
             return true;
         } 
         else if (mouseX >= this.x2 - 5 && mouseX <= this.x2 +5 &&
             mouseY >= this.y2 - 5 && mouseY <= this.y2 +5) {
-            this.endLine = true;
-            console.log("Endline selected");
+            if (doSelect) this.endLine = true;
             return true;
         }
-        console.log("Not close enough");
         return false;
     }
     // Move the line
-    line.prototype.moveTo = function(mouseX, mouseY) {
+    Wall.prototype.moveTo = function(mouseX, mouseY) {
         var difX = this.x2 - this.x;
         var difY = this.y2 - this.y;
 
@@ -70,7 +67,7 @@ var line = (function() {
         return (this);
     }
     // Check if a point is inside the line
-    line.prototype.isPointInside = function (x, y) {
+    Wall.prototype.isPointInside = function (x, y) {
         //console.log("mousex"+ x);
         //console.log("mousey"+y);
         var width = this.x2 - this.x;
@@ -104,7 +101,7 @@ var line = (function() {
         else return false;
     }
     // Resize the rectangle
-    line.prototype.resizeTo = function(mouseX, mouseY) {
+    Wall.prototype.resizeTo = function(mouseX, mouseY) {
         if (this.startLine) {
             this.x = mouseX;
             this.y = mouseY;
@@ -117,18 +114,18 @@ var line = (function() {
         return (this);
     }
     // Set the resizing values on false again
-    line.prototype.stopResize = function() {
+    Wall.prototype.stopResize = function() {
         this.startLine = false;
         this.endLine = false;
     }
     // Check if the start coordinate or end coordinate is selected
-    line.prototype.isResizing = function() {
+    Wall.prototype.isResizing = function() {
         if (this.startLine || this.endLine) return true;
         else return false;
     }	
     // toString() value for writing to the firebase
-    line.prototype.toString = function() {
+    Wall.prototype.toString = function() {
         return String(this.type + ";" + this.x + ";" + this.y + ";" + this.x2 + ";" + this.y2);
     }
-    return line;
+    return Wall;
 })();

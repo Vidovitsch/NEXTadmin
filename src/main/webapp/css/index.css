@@ -17,38 +17,77 @@ span:hover {
     border-bottom: 1px dotted black;
 }
 
+.clearable{
+  background: #fff url(data:image/gif;base64,R0lGODlhBwAHAIAAAP///5KSkiH5BAAAAAAALAAAAAAHAAcAAAIMTICmsGrIXnLxuDMLADs=) no-repeat right -10px center;
+  border: 1px solid #999;
+  padding: 3px 18px 3px 4px; /* Use the same right padding (18) in jQ! */
+  border-radius: 3px;
+  transition: background 0.4s;
+}
+.clearable.x  { background-position: right 5px center; }
+.clearable.onX{ cursor: pointer; }
+.clearable::-ms-clear {display: none; width:0; height:0;}
+
+
 .wrapper{
     margin-top: 120px;
 }
 
+.grouplist {
+    max-height: 400px;
+}
+
 .leftpart{
-    float: left;
-    width: 33%;
-    max-height: 50%;
+    position: absolute;
+    width: 32%;
+    margin-left: 15px;
+}
+
+.studentsearch{
+    max-height: 600px;
 }
 
 .selectedstudentlabel{
     margin:10px;
 }
 
-.studentsearchbar{
+.searchText{
     width: 90%;
     padding: 10px;
     margin: 20px 20px 5px 20px;
 }
 
+.groupsearchbar{
+    width: 90%;
+    padding: 10px;
+    margin: 20px 20px 5px 20px;
+}
+
+#editaccountpart{
+    border: antiquewhite;
+    border-style: solid;
+    padding: 10px;
+}
+
+#editannouncementpart{
+    border: antiquewhite;
+    border-style: solid;
+    padding: 10px;
+}
+
 .borderedlist{
     border-style: solid;
-    margin-left: 15px;
     text-align: center;
     align-content: center;
     overflow-y: auto;
     padding-top: 10px;
     padding-bottom: 10px;
+    max-height: 300px;
 }
 
 .rightpart{
-    float: right;
+    position: absolute;
+    right: 0;
     width: 33%;
     text-align: center;
 }
@@ -66,6 +105,17 @@ span:hover {
     background-color: #000000;
 }
 
+.b01_simple_rollover:disabled + hover {
+    color: white;
+    background-color: red;
+}
+
+.b01_simple_rollover:disabled {
+    color: white;
+    background-color: red;
+    cursor: default;
+}
+
 .adminlog{
     position: absolute;
     bottom: 0;
@@ -80,10 +130,11 @@ ol li:hover{
     cursor: pointer;
 }
 .middlepart{
-    float: left;
-    width: 33%;
+    position: absolute;
+    width: 32%;
+    left: 33%;
     text-align: center;
-    margin-left: 10px;
+    margin-left: 15px;
 }
 
 #scroll{
@@ -187,7 +238,7 @@ h1,h2,h3,p,div,a, .headline{
 .button_base {
     margin: 4;
     border: 0;
-    font-size: 18px;
+    font-size: 15px;
     width: 250px;
     height: 50px;
     text-align: center;
@@ -294,7 +345,6 @@ h1,h2,h3,p,div,a, .headline{
     border: antiquewhite;
     border-style: solid;
     padding: 10px;
-    margin: 5px;
 }
 
 .buttonbrowseexcel{
@@ -304,3 +354,4 @@ h1,h2,h3,p,div,a, .headline{
 .middleparthalfbutton{
     width: 38%;
 }
+

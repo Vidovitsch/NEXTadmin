@@ -1,9 +1,9 @@
 /***************
  * Table Class *
  ***************/
-var table = (function () {
+var Table = (function () {
     // constructor
-    function table(id, x, y, width, height, number) {
+    function Table(id, x, y, width, height, number) {
         this.id = id;
         this.x = x;
         this.y = y;
@@ -25,14 +25,14 @@ var table = (function () {
         return (this);
     }
     // Redraw the table - makes use of Draw
-    table.prototype.redraw = function (x, y) {
+    Table.prototype.redraw = function (x, y) {
         this.x = x || this.x;
         this.y = y || this.y;
         this.draw();
         return (this);
     }
     // Draw the table
-    table.prototype.draw = function () {
+    Table.prototype.draw = function () {
         ctx.save();
         ctx.beginPath();
         ctx.rect(this.x, this.y, this.width, this.height);
@@ -44,31 +44,32 @@ var table = (function () {
         ctx.restore();
     }
     // Check if the click is close enough
-    table.prototype.checkCloseEnough = function(mouseX, mouseY) {
+    Table.prototype.checkCloseEnough = function(mouseX, mouseY, doSelect) {
         console.log("Check close enough Rect");
         // Top left corner check
-        if (Math.abs(mouseX - this.x) < 2 && Math.abs(mouseY - this.y) < 2) {
-            this.topLeft = true;
-            console.log("Rect: topLeft true");
+        if (Math.abs(mouseX - this.x) < 5 && Math.abs(mouseY - this.y) < 5) {
+            if (doSelect) this.topLeft = true;
+            return true;
         }
         // Top right corner check
-        else if (Math.abs(mouseX - (this.x + this.width)) < 2 && Math.abs(mouseY - this.y) < 2) {
-            this.topRight = true;
-            console.log("Rect: topRight true");
+        else if (Math.abs(mouseX - (this.x + this.width)) < 5 && Math.abs(mouseY - this.y) < 5) {
+            if (doSelect) this.topRight = true;
+            return true;
         }
         // Bottom left corner check
-        else if (Math.abs(mouseX - this.x) < 2 && Math.abs(mouseY - (this.y + this.height)) < 2) {
-            this.botLeft = true;
-            console.log("Rect: botLeft true");
+        else if (Math.abs(mouseX - this.x) < 5 && Math.abs(mouseY - (this.y + this.height)) < 5) {
+            if (doSelect) this.botLeft = true;
+            return true;
         }
         // Bottom right corner check
-        else if (Math.abs(mouseX - (this.x + this.width)) < 2 && Math.abs(mouseY - (this.y + this.height)) < 2) {
-            this.botRight = true;
-            console.log("Rect: botRight true");
+        else if (Math.abs(mouseX - (this.x + this.width)) < 5 && Math.abs(mouseY - (this.y + this.height)) < 5) {
+            if (doSelect) this.botRight = true;
+            return true;
         }
+        return false;
     }
     // Move the table
-    table.prototype.moveTo = function(mouseX, mouseY) {
+    Table.prototype.moveTo = function(mouseX, mouseY) {
         this.x = mouseX; 
         this.y = mouseY; 
 
@@ -76,11 +77,11 @@ var table = (function () {
         return (this);
     }
     // Check if a point is inside the table
-    table.prototype.isPointInside = function (x, y) {
+    Table.prototype.isPointInside = function (x, y) {
         return (x >= this.x && x <= this.x + this.width && y >= this.y && y <= this.y + this.height);
     }
     // Resize the table
-    table.prototype.resizeTo = function (mouseX, mouseY) {
+    Table.prototype.resizeTo = function (mouseX, mouseY) {
         if (this.topLeft) {
             this.width += this.x - mouseX;
             this.height += this.y - mouseY;
@@ -113,20 +114,20 @@ var table = (function () {
         return (this);
     }
     // Set the resizing values on false again
-    table.prototype.stopResize = function() {
+    Table.prototype.stopResize = function() {
         this.topLeft = false;
         this.topRight = false;
         this.botLeft = false;
         this.botRight = false;
     }
     // 
-    table.prototype.isResizing = function() {
+    Table.prototype.isResizing = function() {
         if (this.topLeft || this.topRight || this.botLeft || this.botRight) return true;
         else return false;
     }
     // toString() value for writing to the firebase
-    table.prototype.toString = function() {
+    Table.prototype.toString = function() {
         return String(this.type + ";" + this.x + ";" + this.y + ";" + this.width + ";" + this.height + ";" + this.number);
     }
-    return table;
+    return Table;
 })();
