@@ -9,10 +9,10 @@ package Database;
 import Models.Group;
 import Models.Message;
 import Models.User;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,7 +25,7 @@ import java.util.logging.Logger;
  */
 public class DBGroupModifier implements IModGroup {
     
-    private Firebase firebase;
+    private DatabaseReference firebase;
     private Object lock;
     private boolean done = false;
     private Group group = null;
@@ -39,7 +39,7 @@ public class DBGroupModifier implements IModGroup {
     public DBGroupModifier() {
         FBConnector connector = FBConnector.getInstance();
         connector.connect();
-        firebase = (Firebase) connector.getConnectionObject();
+        firebase = (DatabaseReference) connector.getConnectionObject();
     }
 
     /**
@@ -57,7 +57,7 @@ public class DBGroupModifier implements IModGroup {
             throw new IllegalArgumentException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
                     " the users instance's UID was null");
         }
-        Firebase ref = firebase.child("Group").child(String.valueOf(group.getGroupNumber()))
+        DatabaseReference ref = firebase.child("Group").child(String.valueOf(group.getGroupNumber()))
                 .child("Members").child(user.getUid());
         ref.setValue("NS");
     }
@@ -72,9 +72,9 @@ public class DBGroupModifier implements IModGroup {
     @Override
     public ArrayList<Group> getGroups() {
         final ArrayList<Group> groups = new ArrayList();
-        Firebase ref = firebase.child("Group");
+        DatabaseReference ref = firebase.child("Group");
+        
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 Group g = null;
@@ -115,10 +115,11 @@ public class DBGroupModifier implements IModGroup {
                 }
                 unlockFXThread();
             }
-            
+
             @Override
-            public void onCancelled(FirebaseError fe) {
-                System.out.println(fe.toException().toString());
+            public void onCancelled(DatabaseError de) {
+                throw new UnsupportedOperationException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
+                        " " + de.getMessage()); 
             }
         });
         

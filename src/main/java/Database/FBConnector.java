@@ -1,7 +1,17 @@
 package Database;
 
 import com.firebase.client.Firebase;
-
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
+import com.google.firebase.auth.FirebaseCredentials;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.json.JSONException;
 
 /**
  * This method is used to make a connection with the firebase database
@@ -13,7 +23,7 @@ public class FBConnector implements IDatabase {
 
     private static FBConnector instance = null;
     private String firebase_url = null;
-    private Firebase firebase;
+    private DatabaseReference databaseReference;
     
     /**
      * This method is used to get the instance this class in case that the instance
@@ -21,6 +31,7 @@ public class FBConnector implements IDatabase {
      * @return instance
      */
     public static FBConnector getInstance() {
+        System.out.println("in FBConnector getinstance");
         if (instance == null) {
             instance = new FBConnector();
         }
@@ -30,8 +41,8 @@ public class FBConnector implements IDatabase {
     /**
      * private constructor for this singleton can only be called from getInstance
      */
-    private FBConnector() {
-        this.firebase = null;
+    public FBConnector() {
+        this.databaseReference = null;
     }
     
     /**
@@ -40,9 +51,38 @@ public class FBConnector implements IDatabase {
      */
     @Override
     public void connect() {
-        if (firebase_url == null) {
-            firebase_url = "https://nextweek-b9a58.firebaseio.com/";
-            firebase = new Firebase(firebase_url);
+        System.out.println("trying to connnect in FBConnector");
+        if (databaseReference == null) {
+            FileInputStream serviceAccount = null;
+            try {
+                serviceAccount = new FileInputStream("src/main/java/Database/NextWeekDev-f084f8ebd419.json");
+                System.out.println("setting FirebaseOptions");
+                FirebaseOptions options = new FirebaseOptions.Builder()
+                        .setCredential(FirebaseCredentials.fromCertificate(serviceAccount))
+                        .setDatabaseUrl("https://nextweekdev.firebaseio.com/")
+                        .build();
+                System.out.println("initializing FirebaseApp");
+                FirebaseApp.initializeApp(options);
+                System.out.println("Getting FirebaseDatabaseInstance");
+                FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+                System.out.println("Getting FirebaseDatabaseReference");
+                databaseReference = firebaseDatabase.getReference();
+            } catch (FileNotFoundException ex) {
+                System.out.println(ex.getMessage());
+                Logger.getLogger(FBConnector.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                System.out.println(ex.getMessage());
+                Logger.getLogger(FBConnector.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                try {
+                    serviceAccount.close();
+                } catch (IOException ex) {
+                    System.out.println(ex.getMessage());
+                    Logger.getLogger(FBConnector.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        } else {
+            System.out.println("DatabaseReference Exists");
         }
     }
 
@@ -53,8 +93,9 @@ public class FBConnector implements IDatabase {
      */
     @Override
     public Object getConnectionObject() throws NullPointerException {
-        if (firebase != null) {
-            return firebase;
+        if (databaseReference != null) {
+            return databaseReference;
+            //return firebase;
         } else {
             throw new NullPointerException("There is no connection with the database");
         }
@@ -67,6 +108,6 @@ public class FBConnector implements IDatabase {
     @Override
     public boolean checkConnection() {
         //Is changeable
-        return firebase != null;
+        return databaseReference != null;
     }
 }

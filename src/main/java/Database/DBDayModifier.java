@@ -3,14 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package Database;
 
 import Models.EventDay;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +22,8 @@ import java.util.logging.Logger;
  * @author Arno Dekkers Los
  */
 public class DBDayModifier implements IModDay {
-    private static Firebase firebase;
+
+    private static DatabaseReference firebase;
     private boolean done = false;
     private Object lock;
 
@@ -34,7 +34,7 @@ public class DBDayModifier implements IModDay {
     public DBDayModifier() {
         FBConnector connector = FBConnector.getInstance();
         connector.connect();
-        firebase = (Firebase) connector.getConnectionObject();
+        firebase = (DatabaseReference) connector.getConnectionObject();
     }
 
     /**
@@ -51,7 +51,7 @@ public class DBDayModifier implements IModDay {
         }
         Map<String, String> data = new HashMap();
         putDayValues(data, day);
-        Firebase ref = firebase.child("Days").push();
+        DatabaseReference ref = firebase.child("Days").push();
         ref.setValue(data);
     }
     
@@ -68,7 +68,7 @@ public class DBDayModifier implements IModDay {
         }
         Map<String, String> data = new HashMap();
         putDayValues(data, day);
-        Firebase ref = firebase.child("Days").child(day.getId());
+        DatabaseReference ref = firebase.child("Days").child(day.getId());
         ref.setValue(data);
     }
 
@@ -110,7 +110,7 @@ public class DBDayModifier implements IModDay {
             throw new IllegalArgumentException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
                     " the day instance did not contain an ID");
         }
-        Firebase ref = firebase.child("Days").child(day.getId());
+        DatabaseReference ref = firebase.child("Days").child(day.getId());
         ref.removeValue();
     }
 
@@ -122,25 +122,43 @@ public class DBDayModifier implements IModDay {
      */
     @Override
     public ArrayList<EventDay> getDays() {
+        System.out.println("in getdays()");
         final ArrayList<EventDay> days = new ArrayList();
-        Firebase ref = firebase.child("Days");
+        System.out.println("creating daysRef");
+        DatabaseReference ref = firebase.child("Days");
+        System.out.println(ref.getRoot().toString());
+        System.out.println("adding Listernerforsinglevalueevnt");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot ds) {
+                System.out.println("in ondatachange");
+            }
+
+            @Override
+            public void onCancelled(DatabaseError de) {
+                throw new UnsupportedOperationException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
+                        " " + de.getMessage()); 
+            }
+        });
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            
             @Override
             public void onDataChange(DataSnapshot snapshot) {
+                System.out.println("in onDataChange");
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     days.add(dsToEventDay(ds));
                 }
                 unlockFXThread();
             }
-            
+
             @Override
-            public void onCancelled(FirebaseError fe) {
-                System.out.println(fe.toException().toString());
+            public void onCancelled(DatabaseError fe) {
+                throw new UnsupportedOperationException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
+                        " " + fe.getMessage()); 
             }
         });
-        
+        System.out.println("locking fxthread");
         lockFXThread();
+        System.out.println("returning days");
         return days;
     }
     
@@ -151,15 +169,15 @@ public class DBDayModifier implements IModDay {
      * @param id not null, ""
      * @return days(0)
      */
+
     public EventDay getDay(final String id) {
         if(id == null || "".equals(id)){
             throw new IllegalArgumentException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
                     " the ID of the object that has to be retrieved is null");
         }
         final ArrayList<EventDay> days = new ArrayList();
-        Firebase ref = firebase.child("Days/" + id);
+        DatabaseReference ref = firebase.child("Days/" + id);
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 EventDay day = dsToEventDay(snapshot);
@@ -167,13 +185,13 @@ public class DBDayModifier implements IModDay {
                 days.add(day);
                 unlockFXThread();
             }
-            
+
             @Override
-            public void onCancelled(FirebaseError fe) {
-                System.out.println(fe.toException().toString());
+            public void onCancelled(DatabaseError fe) {
+                throw new UnsupportedOperationException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
+                        " " + fe.getMessage()); 
             }
         });
-        
         lockFXThread();
         return days.get(0);
     }
@@ -205,10 +223,10 @@ public class DBDayModifier implements IModDay {
         day.setId(id);
         return day;
     }
-    
+
     /**
-     * Tells a random object to wait while in a loop.
-     * The loop stops, and won't cause any unnecessary cpu use.
+     * Tells a random object to wait while in a loop. The loop stops, and won't
+     * cause any unnecessary cpu use.
      */
     private void lockFXThread() {
         lock = new Object();
@@ -218,14 +236,15 @@ public class DBDayModifier implements IModDay {
                     lock.wait();
                 } catch (InterruptedException ex) {
                     Logger.getLogger(DBEventModifier.class.getName()).log(Level.SEVERE, null, ex);
-                } 
+                }
             }
         }
         done = false;
     }
-    
+
     /**
-     * Wakes the lock. The while loop in the method 'lockFXThread' will proceed and break free.
+     * Wakes the lock. The while loop in the method 'lockFXThread' will proceed
+     * and break free.
      */
     private void unlockFXThread() {
         synchronized (lock) {

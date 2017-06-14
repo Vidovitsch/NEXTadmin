@@ -12,10 +12,10 @@ import Models.Lecture;
 import Models.Performance;
 import Models.User;
 import Models.Workshop;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +30,7 @@ import java.util.logging.Logger;
  */
 public class DBEventModifier implements IModEvent {
     
-    private static Firebase firebase;
+    private static DatabaseReference firebase;
     private Object lock;
     private boolean done = false;
 
@@ -41,7 +41,7 @@ public class DBEventModifier implements IModEvent {
     public DBEventModifier() {
         FBConnector connector = FBConnector.getInstance();
         connector.connect();
-        firebase = (Firebase) connector.getConnectionObject();
+        firebase = (DatabaseReference) connector.getConnectionObject();
     }
 
     /**
@@ -59,7 +59,9 @@ public class DBEventModifier implements IModEvent {
             throw new IllegalArgumentException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
                     " the users instance's UID was null");
         }
-        Firebase ref = firebase.child("Event").child(event.getId()).child("Attending").child(user.getUid());
+
+        DatabaseReference ref = firebase.child("Event").child(event.getId()).child("Attending").child(user.getUid());
+
         ref.setValue("Attending");
     }
     
@@ -72,6 +74,7 @@ public class DBEventModifier implements IModEvent {
      */
     @Override
     public void removeAttendingUser(Workshop event, User user) {
+
         if(event == null || "".equals(event.getId())){
             throw new IllegalArgumentException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
                     " the event instance's id was null");
@@ -79,7 +82,7 @@ public class DBEventModifier implements IModEvent {
             throw new IllegalArgumentException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
                     " the user instance's UID was null");
         }
-        Firebase ref = firebase.child("Event").child(event.getId()).child("Attending").child(user.getUid());
+        DatabaseReference ref = firebase.child("Event").child(event.getId()).child("Attending").child(user.getUid());
         ref.removeValue();
     }
     
@@ -97,7 +100,7 @@ public class DBEventModifier implements IModEvent {
         }
         Map<String, String> data = new HashMap();
         putEventValues(event, data);
-        Firebase ref = firebase.child("Event").push();
+        DatabaseReference ref = firebase.child("Event").push();
         ref.setValue(data);
     }
     
@@ -114,7 +117,7 @@ public class DBEventModifier implements IModEvent {
         }
         Map<String, String> data = new HashMap();
         putEventValues(event, data);
-        Firebase ref = firebase.child("Event/" + event.getId());
+        DatabaseReference ref = firebase.child("Event/" + event.getId());
         ref.setValue(data);
     }
     
@@ -129,7 +132,8 @@ public class DBEventModifier implements IModEvent {
             throw new IllegalArgumentException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
                     " the event instance's ID was null");
         }
-        Firebase ref = firebase.child("Event").child(event.getId());
+
+        DatabaseReference ref = firebase.child("Event").child(event.getId());
         ref.removeValue();
     }
 
@@ -143,9 +147,8 @@ public class DBEventModifier implements IModEvent {
     @Override
     public ArrayList<Event> getEvents() {
         final ArrayList<Event> events = new ArrayList();
-        Firebase ref = firebase.child("Event");
+        DatabaseReference ref = firebase.child("Event");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 for (DataSnapshot ds : snapshot.getChildren()) {
@@ -153,10 +156,11 @@ public class DBEventModifier implements IModEvent {
                 }
                 unlockFXThread();
             }
-            
+
             @Override
-            public void onCancelled(FirebaseError fe) {
-                System.out.println(fe.toException().toString());
+            public void onCancelled(DatabaseError de) {
+                throw new UnsupportedOperationException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
+                        " " + de.getMessage()); 
             }
         });
         
@@ -177,18 +181,18 @@ public class DBEventModifier implements IModEvent {
                     " the ID of the object that has to be retrieved is null");
         }
         final ArrayList<Event> events = new ArrayList();
-        Firebase ref = firebase.child("Event/" + id);
+        DatabaseReference ref = firebase.child("Event/" + id);
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 events.add(dsToEvent(snapshot));
                 unlockFXThread();
             }
-            
+
             @Override
-            public void onCancelled(FirebaseError fe) {
-                System.out.println(fe.toException().toString());
+            public void onCancelled(DatabaseError de) {
+                throw new UnsupportedOperationException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
+                        " " + de.getMessage()); 
             }
         });
         
