@@ -26,7 +26,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- *
+ * This is the controller that is for the adminpanel screen. The screen where 
+ * planned activities are listed, edited, deleted and created
  * @author Arno Dekkers Los
  */
 @Controller
@@ -35,12 +36,24 @@ public class adminController
     private DBEventModifier eventModifier;
     private DBDayModifier dayModifier;
 
+    /**
+     * This is the page loader for the standard adminpanel.
+     * it returns the createModelAndView methods return value when given the parameter null
+     * @return createModelAndView(null)
+     */
     @RequestMapping(value = "/adminpanel", method = RequestMethod.GET)
     public ModelAndView initAdminEventScreen()
     {
         return createModelAndView(null);
     }
     
+    /**
+     * this method is called upon loading the panel and wanting to display only one type of scheduled events
+     * upon pageload the method createModelAndView is called which is given the parameter of the selected type event
+     * @param scheduleableItemModel
+     * @param model
+     * @return createModelAndView(type)
+     */
     @RequestMapping(value = "/filterList", method = RequestMethod.POST)
     public ModelAndView getFilteredList(@ModelAttribute("SpringWeb") ScheduleableItemModel scheduleableItemModel,
             ModelMap model)
@@ -48,6 +61,15 @@ public class adminController
         return createModelAndView(scheduleableItemModel.getType());
     }
     
+    /**
+     * this method is called when the user tries to delete an event it get's the parameter
+     * scheduledItemModel which is the item that has to be deleted. if the id in this model 
+     * is null an exception get's thrown. after deleting the event from the firebase it loads 
+     * the standard overview of the adminpanel by calling createMoelAndView with parameter null
+     * @param scheduledItemModel
+     * @param model
+     * @return createModelAndView(null)
+     */
     @RequestMapping(value = "/deleteEvent", method = RequestMethod.POST)
     public ModelAndView deleteItem(@ModelAttribute("SpringWeb") ScheduledItemModel scheduledItemModel,
             ModelMap model)
@@ -69,6 +91,14 @@ public class adminController
         return createModelAndView(null);
     }
     
+    /**
+     * This method is called when an admin is done changing the values of an existing event
+     * the parameter schedulableITemModel contains the new values and old ID which
+     * is then sent to the database methods when done it loads the standard GUI view
+     * @param scheduleableItemModel
+     * @param model
+     * @return createModelAndView(null);
+     */
     @RequestMapping(value = "/editEvent", method = RequestMethod.POST)
     public ModelAndView editEvent(@ModelAttribute("SpringWeb") ScheduleableItemModel scheduleableItemModel,
             ModelMap model)
@@ -99,6 +129,14 @@ public class adminController
         return createModelAndView(null);
     }
 
+    /**
+     * This method is called when the admin tries to create an item of the type workshop
+     * the parameter scheduleableItemModel contains the values for the new workshop
+     * when done the standard view of the adminpanel gets loaded with createModelAndView(null);
+     * @param scheduleableItemModel
+     * @param model
+     * @return createModelAndView(null);
+     */
     @RequestMapping(value = "/createWorkshop", method = RequestMethod.POST)
     public ModelAndView createWorkshop(@ModelAttribute("SpringWeb") ScheduleableItemModel scheduleableItemModel,
             ModelMap model)
@@ -111,6 +149,14 @@ public class adminController
         return createModelAndView(null);
     }
 
+    /**
+     * This method is called when the admin tries to create an item of the type lecture
+     * the parameter scheduleableItemModel contains the values for the new lecture
+     * when done the standard view of the adminpanel gets loaded with createModelAndView(null);
+     * @param scheduleableItemModel
+     * @param model
+     * @return createModelAndView(null);
+     */
     @RequestMapping(value = "/createLecture", method = RequestMethod.POST)
     public ModelAndView createLecture(@ModelAttribute("SpringWeb") ScheduleableItemModel scheduleableItemModel,
             ModelMap model)
@@ -122,6 +168,14 @@ public class adminController
         return createModelAndView(null);
     }
 
+    /**
+     * This method is called when the admin tries to create an item of the type performance
+     * the parameter scheduleableItemModel contains the values for the new performance
+     * when done the standard view of the adminpanel gets loaded with createModelAndView(null);
+     * @param scheduleableItemModel
+     * @param model
+     * @return createModelAndView(null);
+     */
     @RequestMapping(value = "/createPerformance", method = RequestMethod.POST)
     public ModelAndView createPerformance(@ModelAttribute("SpringWeb") ScheduleableItemModel scheduleableItemModel,
             ModelMap model)
@@ -132,6 +186,14 @@ public class adminController
         return createModelAndView(null);
     }
 
+    /**
+     * This method is called when the admin tries to create an item of the type schoolday
+     * the parameter scheduleableItemModel contains the values for the new schoolday
+     * when done the standard view of the adminpanel gets loaded with createModelAndView(null);
+     * @param scheduleableItemModel
+     * @param model
+     * @return createModelAndView(null);
+     */
     @RequestMapping(value = "/createSchoolday", method = RequestMethod.POST)
     public ModelAndView createSchoolday(@ModelAttribute("SpringWeb") ScheduleableItemModel scheduleableItemModel,
             ModelMap model)
@@ -142,6 +204,14 @@ public class adminController
         return createModelAndView(null);
     }
     
+    /**
+     * this method is called when an admin selects an item in the list in the GUI
+     * the item is sent to the method as the parameter itemToEdit
+     * this item is then used to retrieve the whole item and load it into the GUI
+     * @param itemToEdit
+     * @param model
+     * @return thisview
+     */
     @RequestMapping(value = "/editItem", method = RequestMethod.POST)
     public ModelAndView editItem(@ModelAttribute("SpringWeb") ScheduledItemModel itemToEdit,
             ModelMap model)
@@ -163,6 +233,11 @@ public class adminController
         return thisView;
     }
 
+    /**
+     * This method is used to sent parameters to the GUI, these parameters are the
+     * different types of events that can be made in our application
+     * @return retV
+     */
     private List<String> getEventTypes()
     {
         List<String> retV = new ArrayList<String>();
@@ -173,7 +248,17 @@ public class adminController
         return retV;
     }
 
-    private ModelAndView createModelAndView(String day)
+    /**
+     * this is used to create the ModelAndView standard. which is used upon nearly every page
+     * reload. it can be given a parameter in the case that only events of a specific type
+     * should be loaded. in case that the given parameter is loaded it is not filtered out
+     * it uses the method getEventTypes to pass a list of the different schedulable events to the gui
+     * it uses getPossibleFiels to pass a list of the possible fields to the GUI so they can be generated
+     * and it uses getScheduledItems to get a list of all items
+     * @param eventType
+     * @return modelView
+     */
+    private ModelAndView createModelAndView(String eventType)
     {
         System.out.println("called adminpanel");
         eventModifier = new DBEventModifier();
@@ -182,7 +267,7 @@ public class adminController
         ModelAndView modelView = new ModelAndView("adminpanel", "command", new ScheduleableItemModel());
         modelView.addObject("types", getEventTypes());
         modelView.addObject("fields", getPossibleFields());
-        List<ScheduledItemModel> scheduledItems = getScheduledItems(day);
+        List<ScheduledItemModel> scheduledItems = getScheduledItems(eventType);
         ScheduleableItemModel dummySelectedItem = new ScheduleableItemModel();
         dummySelectedItem.setId("-1");
         modelView.addObject("selectedItem", dummySelectedItem);
@@ -191,6 +276,11 @@ public class adminController
         return modelView;
     }
 
+    /**
+     * the different fields associated with events. this method is called by createModelAndView 
+     * the differnt fields are added to a List<String>
+     * @return retV
+     */
     private List<String> getPossibleFields()
     {
         List<String> retV = new ArrayList<String>();
@@ -206,6 +296,14 @@ public class adminController
         return retV;
     }
 
+    /**
+     * this method is used to add the values from an instance scheduleableItemModel to 
+     * an instance of the type Event, the method calls addEVentDateValues
+     * this is called by the methods to load the create/edit an Event
+     * @param item
+     * @param targetEvent
+     * @return 
+     */
     private Event addEventFieldValues(ScheduleableItemModel item, Event targetEvent)
     {
         targetEvent = (Event) addEventDateValues(item, (EventDate) targetEvent);
@@ -213,6 +311,13 @@ public class adminController
         return targetEvent;
     }
 
+    /**
+     * this method is used to add all EventDate fields to an instance Eventdate from an
+     * instance ScheduleableItemModel this method is called by addEventFieldValues
+     * @param item
+     * @param targetEventDate
+     * @return 
+     */
     private EventDate addEventDateValues(ScheduleableItemModel item, EventDate targetEventDate)
     {
         targetEventDate.setDate(item.getDate());
@@ -223,6 +328,13 @@ public class adminController
         return targetEventDate;
     }
 
+    /**
+     * This method is used to retrieve the existing scheduled items from the firebase
+     * in case that the parameter type is null all types are loaded. in case that type is
+     * not null only the items from the given type will be loaded in the return List<ScheduledItemModel>
+     * @param type
+     * @return scheduledItems
+     */
     private List<ScheduledItemModel> getScheduledItems(String type)
     {
         System.out.println("in getscheduled items");
@@ -246,6 +358,11 @@ public class adminController
         return scheduledItems;
     }
 
+    /**
+     * this method is used place the data of an instance EvenDate in an ScheduleableItemModel instance
+     * @param selectedItem
+     * @param selectedDay 
+     */
     private void eventDateToScheduleableItemModel(ScheduleableItemModel selectedItem, EventDate selectedDay) {
         selectedItem.setEventName(selectedDay.getEventName());
         selectedItem.setDate(selectedDay.getDate());
@@ -255,6 +372,11 @@ public class adminController
         selectedItem.setDescription(selectedDay.getDescription());
     }
 
+    /**
+     * this method is used to place the item from an instance Event into an instance ScheduleableItemModel
+     * @param selectedItem
+     * @param selectedEvent 
+     */
     private void eventToScheduleableItemModel(ScheduleableItemModel selectedItem, Event selectedEvent) {
         eventDateToScheduleableItemModel(selectedItem, (EventDate)selectedEvent);
         selectedItem.setImageURL(selectedEvent.getImageURL());

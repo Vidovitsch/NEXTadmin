@@ -18,7 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 
 /**
- *
+ * This class is used for the page loads of the QRManager screen
  * @author David
  */
 @Controller
@@ -26,6 +26,11 @@ public class qrController {
 
     private QRManager qrManager = new QRManager();
     
+    /**
+     * This method is called upon loading the QRMAnager screen it retreives all 
+     * QR codes from the firebase and adds these to the ModelAndview mav
+     * @return mav
+     */
     @RequestMapping(value = "/qrcodes", method = RequestMethod.GET)
     public ModelAndView initAdminEventScreen() {       
         ModelAndView mav = new ModelAndView("qrcodes");
@@ -42,6 +47,14 @@ public class qrController {
         return mav;
     }
     
+    /**
+     * This method is called upon a post request in the QRCodemanager
+     * it calls the generate method of the QRManagerfield after that it returns 
+     * a ModelAndView containing the qrCodes retrieved by the getQRCodes from QRManager
+     * @param vModel
+     * @param model
+     * @return 
+     */
     @RequestMapping(value = "/qrcodes", method = RequestMethod.POST)
     public ModelAndView generateQRCodes(@ModelAttribute("SpringWeb") QRViewModel vModel,
             ModelMap model) {

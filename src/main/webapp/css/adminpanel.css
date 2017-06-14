@@ -140,8 +140,10 @@ body {
 }
 
 .buttons-console {
-    position: fixed;
-    float:left;
+    margin-top: 20px;
+    margin-left: 50px;
+    position: relative;
+    float: left;
 }
 
 textarea:focus, input:focus{
