@@ -50,9 +50,9 @@ public class DBGroupModifier implements IModGroup {
      */
     @Override
     public void addUser(Group group, User user) {
-        if(group == null || "".equals(group.getGroupName())){
+        if(group == null || "".equals(group.getGroupNumber())){
             throw new IllegalArgumentException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
-                    " the group instance's name was null");
+                    " the group instance's number was null");
         }else if(user == null || "".equals(user.getUid())){
             throw new IllegalArgumentException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
                     " the users instance's UID was null");

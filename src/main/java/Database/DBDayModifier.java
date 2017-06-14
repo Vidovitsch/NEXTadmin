@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 
 /**
  * This Class is used to comunicate between the application and the firebase,
- * specificly the child "Days" from the firebase implements IModDay
+ * specifically the child "Days" from the firebase implements IModDay
  * @author Arno Dekkers Los
  */
 public class DBDayModifier implements IModDay {
