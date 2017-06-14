@@ -17,7 +17,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * This Class is used to comunicate between the application and the firebase,
+ * specifically the child "Days" from the firebase implements IModDay
  * @author Arno Dekkers Los
  */
 public class DBDayModifier implements IModDay {
@@ -26,29 +27,67 @@ public class DBDayModifier implements IModDay {
     private boolean done = false;
     private Object lock;
 
+    /**
+     * The constructor of the DBDayModifier class, The method takes no arguments.
+     * It initiates the field firebase by creating a connection using the FBConnector class
+     */
     public DBDayModifier() {
         FBConnector connector = FBConnector.getInstance();
         connector.connect();
         firebase = (DatabaseReference) connector.getConnectionObject();
     }
 
+    /**
+     * This method is used to to add a new day to the Firebase database.
+     * As parameters it takes the EventDay object that it has to add, it uses the putDayValues method
+     * to add the values of the EventDay to a Map<String, String> which it can push to the Firebase database
+     * @param day not null
+     */
     @Override
     public void insertDay(EventDay day) {
+        if(day == null){
+            throw new IllegalArgumentException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
+                    " tried to add EventDay null to firebase");
+        }
         Map<String, String> data = new HashMap();
         putDayValues(data, day);
         DatabaseReference ref = firebase.child("Days").push();
         ref.setValue(data);
     }
-
-    public void updateDay(EventDay day) {
+    
+    /**
+     * This method is used to update an existing EventDay in the database, as argument it takes an EventDay instance 
+     * which contains the updated values. it uses the putDayValues method to put the EventDay values to a Map<String, String>
+     * After that it pushes the new data to the firebase at the branch days where the ID matches the id of the object
+     * @param day not null
+     */
+    public void updateDay(EventDay day){
+        if(day == null || "".equals(day.getId())){
+            throw new IllegalArgumentException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
+                    " tried to call updateDay method with an null instance as day");
+        }
         Map<String, String> data = new HashMap();
         putDayValues(data, day);
-        //data.put("id", day.getId());
         DatabaseReference ref = firebase.child("Days").child(day.getId());
         ref.setValue(data);
     }
 
-    public void putDayValues(Map<String, String> data, EventDay day) {
+    /**
+     * This method is used to put the differnt values from a EventDay instance to a Map<String, String>
+     * this is important because with the new format we can push the data to the firebase
+     * The method is used by insertDay and updateDay. as arguments it takes a Map<String, String> which is
+     * the object the data has to be added too. and a EventDay which contains the values that have to be added
+     * @param data not null
+     * @param day not null
+     */
+    private void putDayValues(Map<String, String> data, EventDay day){
+        if(data == null){
+            throw new IllegalArgumentException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
+                    " the data instance was null");
+        }else if(day == null){
+            throw new IllegalArgumentException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
+                    " the day instance was null");
+        }
         data.put("EventName", day.getEventName());
         data.put("StartTime", day.getStartTime());
         data.put("EndTime", day.getEndTime());
@@ -56,13 +95,31 @@ public class DBDayModifier implements IModDay {
         data.put("LocationName", day.getLocationName());
         data.put("Description", day.getDescription());
     }
-
+    
+    /**
+     * this method is used to remove an existing day from the firebase. As argument it takes an EventDay
+     * which speciefies what event has to be deleted. An IllegalArgumentException will be thrown if the ID equals null
+     * @param day not null
+     */
     @Override
     public void removeDay(EventDay day) {
+        if(day == null){
+            throw new IllegalArgumentException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
+                    " the day instance was null");
+        }else if(day.getId() == null){
+            throw new IllegalArgumentException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
+                    " the day instance did not contain an ID");
+        }
         DatabaseReference ref = firebase.child("Days").child(day.getId());
         ref.removeValue();
     }
 
+    /**
+     * This method is used to fetch all the existing childs from the day branch from the firebase.
+     * the data is loaded in an ArrayList<EventDay> days and returned. to stop the FXThread until the 
+     * method is finished loading loading the method uses the lockFXThread and unlockFXThread methods
+     * @return days
+     */
     @Override
     public ArrayList<EventDay> getDays() {
         System.out.println("in getdays()");
@@ -79,7 +136,8 @@ public class DBDayModifier implements IModDay {
 
             @Override
             public void onCancelled(DatabaseError de) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                throw new UnsupportedOperationException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
+                        " " + de.getMessage()); 
             }
         });
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -94,8 +152,8 @@ public class DBDayModifier implements IModDay {
 
             @Override
             public void onCancelled(DatabaseError fe) {
-                System.out.println("in oncancelled");
-                System.out.println(fe.toException().toString());
+                throw new UnsupportedOperationException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
+                        " " + fe.getMessage()); 
             }
         });
         System.out.println("locking fxthread");
@@ -103,15 +161,25 @@ public class DBDayModifier implements IModDay {
         System.out.println("returning days");
         return days;
     }
+    
+    /**
+     * This method is used to fetch a specific day from the firebase, as argument it takes an ID
+     * this id is the child of days that has to be fetched from the firebase
+     * to convert the data from the database to a EventDay instance it uses the method dsToEventDay
+     * @param id not null, ""
+     * @return days(0)
+     */
 
     public EventDay getDay(final String id) {
-        System.out.println("in db method");
+        if(id == null || "".equals(id)){
+            throw new IllegalArgumentException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
+                    " the ID of the object that has to be retrieved is null");
+        }
         final ArrayList<EventDay> days = new ArrayList();
         DatabaseReference ref = firebase.child("Days/" + id);
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                System.out.println("found my match");
                 EventDay day = dsToEventDay(snapshot);
                 day.setId(id);
                 days.add(day);
@@ -120,14 +188,24 @@ public class DBDayModifier implements IModDay {
 
             @Override
             public void onCancelled(DatabaseError fe) {
-                System.out.println(fe.toException().toString());
+                throw new UnsupportedOperationException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
+                        " " + fe.getMessage()); 
             }
         });
         lockFXThread();
         return days.get(0);
     }
-
-    private EventDay dsToEventDay(DataSnapshot ds) {
+    
+    /**
+     * this method is used to convert a DataSnapshot to a EventDay instance
+     * @param ds not null
+     * @return day
+     */
+    private EventDay dsToEventDay(DataSnapshot ds){
+        if(ds == null){
+            throw new IllegalArgumentException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
+                    " the ds that had to be converted equaled null");
+        }
         String date = (String) ds.child("Date").getValue();
         String startTime = (String) ds.child("StartTime").getValue();
         String endTime = (String) ds.child("EndTime").getValue();

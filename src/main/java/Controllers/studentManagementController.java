@@ -22,12 +22,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 /**
- *
+ * This class is used to load the GUI from the StudentManager gui
  * @author Michiel van Eijkeren
  */
 @Controller
 public class studentManagementController {
     
+    /**
+     * this method creates a new ModelAndView and returns this upon a get request
+     * @return mav
+     */
     @RequestMapping(value = "/studentmanagement", method = RequestMethod.GET)
     public ModelAndView studentmanagementrequest() {
         ModelAndView mav = new ModelAndView("studentmanagement");
@@ -35,6 +39,10 @@ public class studentManagementController {
         return mav;
     }
     
+    /**
+     * this method creates a new ModelAndView and returns this upon a post request
+     * @return mav
+     */
     @RequestMapping(value = "/studentmanagement", method = RequestMethod.POST)
     public ModelAndView handleAttend(@ModelAttribute("SpringWeb") StudentManagerViewModel vModel,
             ModelMap model) {

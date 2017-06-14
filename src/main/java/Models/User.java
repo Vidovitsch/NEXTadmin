@@ -12,7 +12,7 @@ import Enums.UserStatus;
 
 
 /**
- *
+ * this class is used to load the data of a registerd user in the application
  * @author David
  */
 public class User {
@@ -26,6 +26,10 @@ public class User {
     private int semester;
     private int groupID;
 
+    /**
+     * This is the constructor of User takes a parameter uID which get's assigned tot the corresponding field
+     * @param uid 
+     */
     public User(String uid) {
         this.uid = uid;
     }
@@ -156,10 +160,18 @@ public class User {
         this.semester = semester;
     }
     
+    /**
+     * Get the value of groupID
+     * @return the value of groupID
+     */
     public int getGroupID() {
         return groupID;
     }
 
+    /**
+     * Set the value of groupID
+     * @param groupID new value of groupID
+     */
     public void setGroupID(int groupID) {
         this.groupID = groupID;
     }

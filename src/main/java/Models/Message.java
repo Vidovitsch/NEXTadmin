@@ -10,7 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- *
+ * This class is used to keep load the data of a message in a accessible way
  * @author Bert
  */
 public class Message {
@@ -21,6 +21,15 @@ public class Message {
     private String date;
     private String userName;
     
+    /**
+     * This on of the constructors for this class it assigns the values of the 
+     * parameters to the fields with the corresponding names
+     * @param uid
+     * @param userName
+     * @param groupNumber
+     * @param content
+     * @param date 
+     */
     public Message(String uid, String userName, int groupNumber, String content, String date)
     {
         this.groupNumber = groupNumber;
@@ -30,6 +39,14 @@ public class Message {
         this.userName = userName;
     }
     
+    /**
+     * This on of the constructors for this class it assigns the values of the 
+     * parameters to the fields with the corresponding names
+     * @param uid
+     * @param groupNumber
+     * @param content
+     * @param date 
+     */
     public Message(String uid, int groupNumber, String content, String date)
     {
         this.groupNumber = groupNumber;
@@ -105,7 +122,8 @@ public class Message {
     }
     
     /**
-     * Set the value of date
+     * Set the value of date the method throws an exception if the given date
+     * is not of the dd-MM-yyyy format
      * 
      * @param date 
      */
@@ -114,7 +132,8 @@ public class Message {
             Date dateEvent = new SimpleDateFormat("dd-MM-yyyy").parse(date);
             this.date = date;
         } catch (ParseException ex){
-            throw new IllegalArgumentException("the date string had an invallid format. format should be dd-MM-yyyy");
+            throw new IllegalArgumentException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
+                    " The date string had an invallid format. format should be dd-MM-yyyy");
         }
     }
     
