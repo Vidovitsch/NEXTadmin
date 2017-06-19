@@ -128,6 +128,42 @@ public class DBGroupModifier implements IModGroup {
     }
     
     /**
+     * Removes all groups from the firebase and resets the group field
+     * for all the users
+     */
+    @Override
+    public void resetGroups(){
+        DatabaseReference ref = firebase.child("Group");
+        ref.removeValue();
+        ref = firebase.child("newGroupID");
+        ref.setValue("0");
+        ref = firebase.child("User");
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                System.out.println("In onDataChange");
+                DatabaseReference ref2;
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    String email = (String)ds.child("Mail").getValue();
+                    System.out.println("My email: " + email);
+                    if(email.toLowerCase().contains("@student.fontys.nl")){
+                        if(ds.hasChild("GroupID")){
+                            System.out.println("Had child: " + (String)ds.getKey());
+                            ref2 = firebase.child("User/" + (String)ds.getKey() + "/GroupID");
+                            ref2.removeValue();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError de) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+        });
+    }
+    
+    /**
      * Tells a random object to wait while in a loop.
      * The loop stops, and won't cause any unnecessary cpu use.
      */

@@ -31,4 +31,10 @@ public interface IModGroup {
      * @return All groups
      */
     ArrayList<Group> getGroups();
+    
+    /**
+     * Removes all groups from the firebase and resets the group field
+     * for all the users
+     */
+    void resetGroups();
 }

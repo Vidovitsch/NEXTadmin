@@ -31,6 +31,11 @@
                     </label>
                     <input class="button_base b01_simple_rollover buttonupdatedatabase middlepartitem" disabled type="button" id="buttonupdatedatabase" name="buttonparse" value="Update database" onclick="parsejson();"/><br />
                 </div>
+                <div id='updateallgroups' class='middlepartcontainer'>
+                    <h3>Update the user groups</h3>
+                    <input class="button_base b01_simple_rollover middlepartitem" type="button" id="buttonAllocatieStudents" value="Allocate all users" onclick="allocateAllStudents()"/>
+                    <input class="button_base b01_simple_rollover middlepartitem" type="button" id="buttonResetGroups" value="Reset all groups" onclick="resetAllGroups()"/>
+                </div>
             </div>
             <div class="rightpart">
                 <div id='createaccountpart' class='middlepartcontainer'>
@@ -177,6 +182,38 @@
                         setassignmentlist();
                     }
 
+                    function allocateAllStudents()
+                    {
+                        alert('clicked allocate');
+                    }
+                    
+                    function resetAllGroups()
+                    {
+                        window.location.href = 'resetGroups';
+                        //alert('clicked reset groups');
+                        //ost("resetGroups", {type : 'reset'});
+                    }
+                    
+                    function post(path, params, method) {
+                        method = method || "post"; // Set method to post by default if not specified.
+                        // The rest of this code assumes you are not using a library.
+                        // It can be made less wordy if you use one.
+                        var form = document.createElement("form");
+                        form.setAttribute("method", method);
+                        form.setAttribute("action", path);
+                        for (var key in params) {
+                            if (params.hasOwnProperty(key)) {
+                                var hiddenField = document.createElement("input");
+                                hiddenField.setAttribute("type", "hidden");
+                                hiddenField.setAttribute("name", key);
+                                hiddenField.setAttribute("value", params[key]);
+                                form.appendChild(hiddenField);
+                            }
+                        }
+                        document.body.appendChild(form);
+                        form.submit();
+                    };
+                    
                     var jsondata;
                     var X = XLSX;
                     var XW = {
