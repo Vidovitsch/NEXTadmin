@@ -95,7 +95,7 @@
                             firebase.database().ref('/Group').once("value", function (snapshot) {
                                 var highestID = 0;
                                 snapshot.forEach(function (childSnapshot) {
-                                    if (childSnapshot.key > highestID)
+                                    if (parseInt(childSnapshot.key) > highestID)
                                     {
                                         highestID = childSnapshot.key;
                                     }
