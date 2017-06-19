@@ -101,7 +101,7 @@
                                     }
                                 });
                                 highestID++;
-                                firebase.database().ref('/Group/' + highestID).set('');
+                                firebase.database().ref('/Group/' + highestID + '/Name/').set('Group' + highestID);
                                 document.getElementById('grouplist').innerHTML = '';
                                 setgrouplist();
                             });
