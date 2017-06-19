@@ -104,9 +104,15 @@
                                 firebase.database().ref('/Group/' + highestID + '/Name/').set('Group' + highestID);
                                 document.getElementById('grouplist').innerHTML = '';
                                 setgrouplist();
+                                firebase.database().ref('/Group/' + highestID).once("value", function (snapshot) {
+                                    selectedgroup = {
+                                        ID: highestID,
+                                        Name: snapshot.val().Name + "(" + highestID + ")"};
+                                    updategroup();
+                                });
                             });
-
                         }
+
                         function showgroup()
                         {
                             if (!selectedstudent) {
