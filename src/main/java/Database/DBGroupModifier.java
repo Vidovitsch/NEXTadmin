@@ -141,14 +141,11 @@ public class DBGroupModifier implements IModGroup {
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                System.out.println("In onDataChange");
                 DatabaseReference ref2;
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     String email = (String)ds.child("Mail").getValue();
-                    System.out.println("My email: " + email);
                     if(email.toLowerCase().contains("@student.fontys.nl")){
                         if(ds.hasChild("GroupID")){
-                            System.out.println("Had child: " + (String)ds.getKey());
                             ref2 = firebase.child("User/" + (String)ds.getKey() + "/GroupID");
                             ref2.removeValue();
                         }
