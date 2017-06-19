@@ -10,16 +10,11 @@ import Enums.Course;
 import Models.Group;
 import Models.Message;
 import Models.User;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,7 +25,7 @@ import java.util.logging.Logger;
  */
 public class DBGroupModifier implements IModGroup {
     
-    private Firebase firebase;
+    private DatabaseReference firebase;
     private Object lock;
     private boolean done = false;
     private Group group = null;
@@ -40,12 +35,12 @@ public class DBGroupModifier implements IModGroup {
     public DBGroupModifier() {
         FBConnector connector = FBConnector.getInstance();
         connector.connect();
-        firebase = (Firebase) connector.getConnectionObject();
+        firebase = (DatabaseReference) connector.getConnectionObject();
     }
 
     @Override
     public void addUser(Group group, User user) {
-        Firebase ref = firebase.child("Group").child(String.valueOf(group.getGroupNumber()))
+        DatabaseReference ref = firebase.child("Group").child(String.valueOf(group.getGroupNumber()))
                 .child("Members").child(user.getUid());
         ref.setValue("NS");
     }
@@ -53,9 +48,9 @@ public class DBGroupModifier implements IModGroup {
     @Override
     public ArrayList<Group> getGroups() {
         final ArrayList<Group> groups = new ArrayList();
-        Firebase ref = firebase.child("Group");
+        DatabaseReference ref = firebase.child("Group");
+        
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 Group g = null;
@@ -96,10 +91,10 @@ public class DBGroupModifier implements IModGroup {
                 }
                 unlockFXThread();
             }
-            
+
             @Override
-            public void onCancelled(FirebaseError fe) {
-                System.out.println(fe.toException().toString());
+            public void onCancelled(DatabaseError de) {
+                System.out.println(de.toException().toString());
             }
         });
         
