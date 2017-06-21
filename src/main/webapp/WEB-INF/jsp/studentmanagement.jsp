@@ -38,8 +38,8 @@
                     </ol>
                 </div>
                 <div id="creategrouppart">
-                    <h3 id="creategroup">Create group</h3>
-                    <button onclick='creategroup()' class="button_base b01_simple_rollover" id="buttoncreategroup">Create group</button>
+                    <button onclick='creategroup()' class="button_base b01_simple_rollover" id="buttoncreategroup">Create group</button> 
+                    <button onclick='removegroup()' class="button_base b01_simple_rollover" id="buttonremovegroup">Remove group</button>
                 </div>
             </div>
             <div class="rightpart">
@@ -88,6 +88,19 @@
                             document.execCommand("copy");
                             document.body.removeChild(aux);
                             updatelog("Ready to paste emails in your email-client");
+                        }
+
+                        function removegroup()
+                        {
+                            if (!selectedgroup) {
+                                return;
+                            }
+                            var ref = firebase.database().ref('/Group/' + selectedgroup.ID);
+                            ref.remove();
+                            selectedgroup = null;
+                            document.getElementById('grouplist').innerHTML = '';
+                            setgrouplist();
+                            updategroup();
                         }
 
                         function creategroup()
@@ -194,6 +207,12 @@
 
                         function updategroup() {
                             var uids = [];
+                            if (!selectedgroup)
+                            {
+                                document.getElementById('studentsingroup').innerHTML = "";
+                                document.getElementById('selectedgroup').innerHTML = "Edit group";
+                                return;
+                            }
                             firebase.database().ref('/Group/' + selectedgroup.ID + '/Members').once("value", function (snapshot) {
                                 snapshot.forEach(function (childSnapshot) {
                                     uids.push(childSnapshot.key);
