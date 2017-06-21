@@ -2,7 +2,16 @@
  * Table Class *
  ***************/
 var Table = (function () {
-    // constructor
+    /**
+     * This is the constructor of the Table class.
+     * @param {type} id
+     * @param {type} x
+     * @param {type} y
+     * @param {type} width
+     * @param {type} height
+     * @param {type} number
+     * @returns {table_L4.Table}
+     */
     function Table(id, x, y, width, height, number) {
         this.id = id;
         this.x = x;
@@ -24,14 +33,23 @@ var Table = (function () {
         this.redraw(this.x, this.y);
         return (this);
     }
-    // Redraw the table - makes use of Draw
+    /**
+     * This method redraws the Table on the canvas.
+     * Makes use of the draw method of this class.
+     * @param {type} x
+     * @param {type} y
+     * @returns {table_L4.Table.prototype}
+     */
     Table.prototype.redraw = function (x, y) {
         this.x = x || this.x;
         this.y = y || this.y;
         this.draw();
         return (this);
     }
-    // Draw the table
+    /**
+     * This method draws the Table on the canvas.
+     * @returns {undefined}
+     */
     Table.prototype.draw = function () {
         ctx.save();
         ctx.beginPath();
@@ -43,7 +61,15 @@ var Table = (function () {
         ctx.stroke();
         ctx.restore();
     }
-    // Check if the click is close enough
+    /**
+     * This method is used for checking if the mouseX and mouseY coordinate of your input are close enough to a resizable corner.
+     * If doSelect is true, resizing will be enabled. 
+     * If doSelect is false, this method will just act as a check.
+     * @param {type} mouseX
+     * @param {type} mouseY
+     * @param {type} doSelect
+     * @returns {Boolean}
+     */
     Table.prototype.checkCloseEnough = function(mouseX, mouseY, doSelect) {
         console.log("Check close enough Rect");
         // Top left corner check
@@ -68,7 +94,12 @@ var Table = (function () {
         }
         return false;
     }
-    // Move the table
+    /**
+     * This method moves the X and Y coördinate to the newly given mouseX and mouseY coördinate of your input.
+     * @param {type} mouseX
+     * @param {type} mouseY
+     * @returns {table_L4.Table.prototype}
+     */
     Table.prototype.moveTo = function(mouseX, mouseY) {
         this.x = mouseX; 
         this.y = mouseY; 
@@ -76,11 +107,23 @@ var Table = (function () {
         this.draw();
         return (this);
     }
-    // Check if a point is inside the table
-    Table.prototype.isPointInside = function (x, y) {
-        return (x >= this.x && x <= this.x + this.width && y >= this.y && y <= this.y + this.height);
+    /**
+     * This method checks if the the mouseX and mouseY coördinate of your input are within the boundaries of the Table element.
+     * @param {type} mouseX
+     * @param {type} mouseY
+     * @returns {Boolean}
+     */
+    Table.prototype.isPointInside = function (mouseX, mouseY) {
+        return (mouseX >= this.x && mouseX <= this.x + this.width && mouseY >= this.y && mouseY <= this.y + this.height);
     }
-    // Resize the table
+    /**
+     * This method checks resizes the Table depending on the selected corner.
+     * In order to resize, checkCloseEnough should be used with the doSelect parameter as true. 
+     * This will enable the selected corner, if close enough, to be resizable.
+     * @param {type} mouseX
+     * @param {type} mouseY
+     * @returns {table_L4.Table.prototype}
+     */
     Table.prototype.resizeTo = function (mouseX, mouseY) {
         if (this.topLeft) {
             this.width += this.x - mouseX;
@@ -113,19 +156,29 @@ var Table = (function () {
         this.draw();
         return (this);
     }
-    // Set the resizing values on false again
+    /**
+     * This method disables resizing by putting every corner back to the default false value.
+     * @returns {undefined}
+     */
     Table.prototype.stopResize = function() {
         this.topLeft = false;
         this.topRight = false;
         this.botLeft = false;
         this.botRight = false;
     }
-    // 
+    /**
+     * This method checks whether one of the corners is enabled for resizing.
+     * @returns {Boolean}
+     */
     Table.prototype.isResizing = function() {
         if (this.topLeft || this.topRight || this.botLeft || this.botRight) return true;
         else return false;
     }
-    // toString() value for writing to the firebase
+    /**
+     * This method returns a toString value for better readability.
+     * This can be very useful for debugging or quickly showing values of the raw table objects.
+     * @returns {unresolved}
+     */
     Table.prototype.toString = function() {
         return String(this.type + ";" + this.x + ";" + this.y + ";" + this.width + ";" + this.height + ";" + this.number);
     }

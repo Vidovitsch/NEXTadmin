@@ -64,6 +64,14 @@ function mapCreationOptions() {
     }
 }
 
+/**
+ * This method generates the combobox style selection menu. 
+ * Whether the element is selected or simply being created is determined by the isElementSelected boolean.
+ * When selecting an existing element, the selection menu should be disabled. The element type may not change.
+ * When creating a new element, the selection menu should be enabled. The element type may be chosen, and the attributes will change based on what type is selected.
+ * @param {type} isElementSelected
+ * @returns {String}
+ */
 function createComboboxStyleSelection(isElementSelected) {
     var layout = '<label class="label-visual" for="option-style">Style: ' +
     '<select id="option-style" onchange="createSpecifiedElementForm()" ' + (isElementSelected ? ' disabled' : '')  + '>' +
@@ -78,6 +86,10 @@ function createComboboxStyleSelection(isElementSelected) {
     '</label>';
     return layout;
 }
+/**
+ * This method generates the combobox for newly creating an element.
+ * @returns {String}
+ */
 function createNewModifications() {
     var layout = '<div id="modify-div" class="radio-wrapper-m">' + 
     // Combox Style selection - element is not selected so parameter = false
@@ -88,8 +100,8 @@ function createNewModifications() {
 }
 
 /**
- * This method creates the edit form for each specified element.
- * @param {Object} element modifications from the possible elements (rectangle, circle, room, table, line)
+ * This method creates the edit form for the Circle element.
+ * @param {Object} element of type Circle
  * @returns {String}
  */
 function createCircleModifications(element) {
@@ -119,6 +131,11 @@ function createCircleModifications(element) {
     '</div>';
     return layout;
 }
+/**
+ * This method creates the edit form for the Rectangle element.
+ * @param {type} element of type Rectangle
+ * @returns {String}
+ */
 function createRectangleModifications(element) {
     // Open div container
     var layout = '<div class="radio-wrapper-m">' +
@@ -150,6 +167,11 @@ function createRectangleModifications(element) {
     '</div>';
     return layout;
 }
+/**
+ * This method creates the edit form for the Table element.
+ * @param {type} element of type Table
+ * @returns {String}
+ */
 function createTableModifications(element) {
     // Open div container
     var layout = '<div class="radio-wrapper-m">' +
@@ -185,6 +207,11 @@ function createTableModifications(element) {
     '</div>';
     return layout;
 }
+/**
+ * This method creates the edit form for the Room element.
+ * @param {type} element of type Room
+ * @returns {String}
+ */
 function createRoomModifications(element) {
     // Open div container
     var layout = '<div class="radio-wrapper-m">' +
@@ -224,6 +251,11 @@ function createRoomModifications(element) {
     '</div>';
     return layout;
 }
+/**
+ * This method creates the edit form for the Wall element.
+ * @param {type} element of type Wall
+ * @returns {String}
+ */
 function createLineModifications(element) {
 	// Open div container
 	var layout = '<div class="radio-wrapper-m">' +
@@ -631,7 +663,7 @@ function createNewElement() {
 }
 
 /**
- * Below 2 methods create the forms for adding a new location or adding a new floor.
+ * This method creates the form for adding a new Location.
  * @returns {undefined}
  */
 function createLocationForm() {
@@ -673,6 +705,10 @@ function createLocationForm() {
     }	
     document.getElementById("location-form").innerHTML = layout;
 }
+/**
+ * This method creates the form for adding a new Floor.
+ * @returns {undefined}
+ */
 function createFloorForm() {
     if (selectedLoc == null) {
         alert("Please select or create a location first.");
@@ -717,7 +753,8 @@ function createFloorForm() {
 }
 
 /**
- * Below 2 methods create the forms for editting an existing location or editting an existing floor.
+ * This method creates the form for editting an existing Location.
+ * @returns {undefined}
  */
 function editLocationForm() {
     var layout = '';
@@ -767,6 +804,10 @@ function editLocationForm() {
     }
     document.getElementById("location-form").innerHTML = layout;
 }
+/**
+ * This method creates the form for editting an existing Floor.
+ * @returns {undefined}
+ */
 function editFloorForm() {
     var layout = '';
     if (!selectedLoc || !selectedLoc.selectedFloor) {
@@ -814,4 +855,8 @@ function editFloorForm() {
     document.getElementById("floor-form").innerHTML = layout;
 }
 
+/**
+ * When the JavaScript loads the mapCreationOptions() method will be executed. 
+ * This will run once on startup and afterwards on create menu selection.
+ */
 mapCreationOptions();

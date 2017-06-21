@@ -10,6 +10,13 @@ var v;
 var f;
 
 /* Saving */
+/**
+ * This method saves a new element to firebase. The element will be assigned to the right location and floor combination.
+ * @param {type} location 
+ * @param {type} floor  
+ * @param {type}  element
+ * @returns {undefined} void
+ */
 function saveElement(location, floor, element) {
     if (!element.id) {
         element.id = generateRandomId();
@@ -62,6 +69,11 @@ function saveElement(location, floor, element) {
         });
     }
 }
+/**
+ * This method saves a new location to firebase.
+ * @param {type} location
+ * @returns {undefined} void
+ */
 function saveLocation(location) {
     if (!location.id) {
         location.id = generateRandomId();
@@ -73,6 +85,12 @@ function saveLocation(location) {
         Postal: location.postal
     });
 }
+/**
+ * This method saves a new floor to firebase. The floor will be assigned to an existing location.
+ * @param {type} location
+ * @param {type} floor
+ * @returns {undefined} void
+ */
 function saveFloor(location, floor) {
     if (!floor.id) {
         floor.id = generateRandomId();
@@ -85,6 +103,15 @@ function saveFloor(location, floor) {
 }
 
 /* Loading */
+/**
+ * This method loads the map from firebase.
+ * All locations will be loaded. The locations will be shown in a selection menu.
+ * Within a location all assigned floors will be loaded. The floors will be shown in a selection menu (dynamically loaded by location selection)
+ * Within a floor all assigned elements will be loaded. The elements will be shown on the map.
+ * If several locations have been loaded from firebase, the very first location will be selected along with the first floor.
+ * The elements for the selected location and floor combination will be shown on the map.
+ * @returns {undefined} void
+ */
 function loadMap() {
     //Search foor locations
     console.log("Loading map!");
@@ -130,6 +157,11 @@ function loadMap() {
         }
     });
 }
+/**
+ * This method acts as a help function for receiving the right type of element based on it's type.
+ * @param {type} elem
+ * @returns {Rectangle|Room|Wall|Table|Circle}
+ */
 function loadElement(elem) {
     var id = elem.key.toString();
     var type = elem.val().Type;
@@ -169,6 +201,13 @@ function loadElement(elem) {
 }
 
 /* Editting */
+/**
+ * This method updates an element's information in firebase on the given location and floor combination.
+ * @param {type} location
+ * @param {type} floor
+ * @param {type} element
+ * @returns {undefined} void
+ */
 function editElement(location, floor, element) { 
     var elemRef = database.ref('Map/' + location.id + '/Floors/' + floor.id + '/Elements/' + element.id);
     elemRef.once('value', function(snapshot) {
@@ -225,6 +264,12 @@ function editElement(location, floor, element) {
         }
     });
 }
+/**
+ * This method updates a floor's information in firebase on the given location.
+ * @param {type} location
+ * @param {type} floor
+ * @returns {undefined} void
+ */
 function editFloor(location, floor) {
     var floorRef = database.ref('Map/' + location.id + '/Floors/' + floor.id);
     floorRef.once('value', function(snapshot) { 
@@ -238,6 +283,11 @@ function editFloor(location, floor) {
         }
     });
 }
+/**
+ * This method updates a location's information in firebase.
+ * @param {type} location
+ * @returns {undefined} void
+ */
 function editLocation(location) {
     var locRef = database.ref('Map/' + location.id);
     locRef.once('value', function(snapshot) {
@@ -254,6 +304,13 @@ function editLocation(location) {
 }
 
 /* Removing */
+/**
+ * This method removes an element from firebase from the given location and floor combination.
+ * @param {type} location
+ * @param {type} floor
+ * @param {type} element
+ * @returns {undefined} void
+ */
 function removeElement(location, floor, element) {
     var elemRef = database.ref('Map/' + location.id + '/Floors/' + floor.id + '/Elements/' + element.id);
     elemRef.once('value', function(snapshot) {
@@ -265,6 +322,11 @@ function removeElement(location, floor, element) {
         }
     });
 }
+/**
+ * This method removes a location from firebase.
+ * @param {type} location
+ * @returns {undefined} void
+ */
 function removeLocation(location) {
     var locRef = database.ref('Map/' + location.id);
     locRef.once('value', function(snapshot) {
@@ -275,6 +337,12 @@ function removeLocation(location) {
        }
     });
 }
+/**
+ * This method removes a floor from firebase from the given location.
+ * @param {type} location
+ * @param {type} floor
+ * @returns {undefined}
+ */
 function removeFloor(location, floor) {
     var floorRef = database.ref('Map/' + location.id + '/Floors/' + floor.id);
     floorRef.once('value', function(snapshot) {
@@ -287,6 +355,10 @@ function removeFloor(location, floor) {
 }
 
 /* Other */
+/**
+ * This method generates a random 10-character long ID which.
+ * @returns {String}
+ */
 function generateRandomId() {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -297,4 +369,8 @@ function generateRandomId() {
     return text;
 }
 
+/**
+ * When the page loads the loadMap() method will be executed. This will only run once on startup.
+ * @param {type} param
+ */
 $(document).ready(loadMap());

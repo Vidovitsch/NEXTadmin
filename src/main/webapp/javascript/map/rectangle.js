@@ -2,7 +2,15 @@
  * Rectangle Class *
  *******************/
 var Rectangle = (function () {
-    // constructor
+    /**
+     * This is the constructor of the Rectangle class.
+     * @param {type} id
+     * @param {type} x
+     * @param {type} y
+     * @param {type} width
+     * @param {type} height
+     * @returns {rectangle_L4.Rectangle}
+     */
     function Rectangle(id, x, y, width, height) {
         this.id = id;
         this.x = x;
@@ -23,14 +31,23 @@ var Rectangle = (function () {
         this.redraw(this.x, this.y);
         return (this);
     }
-    // Redraw the rectangle - makes use of Draw
+    /**
+     * This method redraws the Rectangle on the canvas.
+     * Makes use of the draw method of this class.
+     * @param {type} x
+     * @param {type} y
+     * @returns {rectangle_L4.Rectangle.prototype}
+     */
     Rectangle.prototype.redraw = function (x, y) {
         this.x = x || this.x;
         this.y = y || this.y;
         this.draw();
         return (this);
     }
-    // Draw the rectangle
+    /**
+     * This method draws the room on the canvas.
+     * @returns {undefined}
+     */
     Rectangle.prototype.draw = function () {
         ctx.save();
         ctx.beginPath();
@@ -40,7 +57,15 @@ var Rectangle = (function () {
         ctx.stroke();
         ctx.restore();
     }
-    // Check if the click is close enough
+    /**
+     * This method is used for checking if the mouseX and mouseY coördinate of your input are close enough to a resizable corner.
+     * If doSelect is true, resizing will be enabled.
+     * If doSelect is false, this method will just act as a check.
+     * @param {type} mouseX
+     * @param {type} mouseY
+     * @param {type} doSelect
+     * @returns {Boolean}
+     */
     Rectangle.prototype.checkCloseEnough = function(mouseX, mouseY, doSelect) {
         // Top left corner check
         if (Math.abs(mouseX - this.x) < 5 && Math.abs(mouseY - this.y) < 5) {
@@ -64,7 +89,12 @@ var Rectangle = (function () {
         }
         return false;
     }
-    // Move the rectangle
+    /**
+     * This method moves the X and Y coördinate to the newly given mouseX and mouseY coördinate of your input.
+     * @param {type} mouseX
+     * @param {type} mouseY
+     * @returns {table_L4.Table.prototype}
+     */    
     Rectangle.prototype.moveTo = function(mouseX, mouseY) {
         this.x = mouseX; 
         this.y = mouseY; 
@@ -72,11 +102,23 @@ var Rectangle = (function () {
         this.draw();
         return (this);
     }
-    // Check if a point is inside the rectangle
+    /**
+     * This method checks if the the mouseX and mouseY coördinate of your input are within the boundaries of the Rectangle element.
+     * @param {type} mouseX
+     * @param {type} mouseY
+     * @returns {Boolean}
+     */    
     Rectangle.prototype.isPointInside = function (x, y) {
         return (x >= this.x && x <= this.x + this.width && y >= this.y && y <= this.y + this.height);
     }
-    // Resize the rectangle
+    /**
+     * This method checks resizes the Rectangle depending on the selected corner.
+     * In order to resize, checkCloseEnough should be used with the doSelect parameter as true. 
+     * This will enable the selected corner, if close enough, to be resizable.
+     * @param {type} mouseX
+     * @param {type} mouseY
+     * @returns {table_L4.Table.prototype}
+     */    
     Rectangle.prototype.resizeTo = function (mouseX, mouseY) {
         if (this.topLeft) {
             this.width += this.x - mouseX;
@@ -109,19 +151,29 @@ var Rectangle = (function () {
         this.draw();
         return (this);
     }
-    // Set the resizing values on false again
+    /**
+     * This method disables resizing by putting every corner back to the default false value.
+     * @returns {undefined}
+     */    
     Rectangle.prototype.stopResize = function() {
         this.topLeft = false;
         this.topRight = false;
         this.botLeft = false;
         this.botRight = false;
     }
-    // 
+    /**
+     * This method checks whether one of the corners is enabled for resizing.
+     * @returns {Boolean}
+     */    
     Rectangle.prototype.isResizing = function() {
         if (this.topLeft || this.topRight || this.botLeft || this.botRight) return true;
         else return false;
     }
-    // toString() value for writing to the firebase
+    /**
+     * This method returns a toString value for better readability.
+     * This can be very useful for debugging or quickly showing values of the raw Rectangle objects.
+     * @returns {unresolved}
+     */    
     Rectangle.prototype.toString = function() {
         return String(this.type + ";" + this.x + ";" + this.y + ";" + this.width + ";" + this.height);
     }

@@ -2,7 +2,15 @@
  * Wall Class *
  **************/
 var Wall = (function() {
-    // constructor
+    /**
+     * This is the constructor of the Wall class.
+     * @param {type} id
+     * @param {type} x
+     * @param {type} y
+     * @param {type} x2
+     * @param {type} y2
+     * @returns {line_L4.Wall}
+     */
     function Wall(id, x, y, x2, y2) {
         this.id = id;
         this.x = x;
@@ -21,14 +29,23 @@ var Wall = (function() {
 		
         return (this);
     }
-    // Redraw the line - makes use of Draw
+    /**
+     * This method redraws the Wall on the canvas.
+     * Makes use of the draw method of this class.
+     * @param {type} x
+     * @param {type} y
+     * @returns {line_L4.Wall.prototype}
+     */
     Wall.prototype.redraw = function(x, y) {
         this.x = x || this.x;
         this.y = y || this.y;
         this.draw();
         return (this);
     }
-    // Draw the line
+    /**
+     * This method draws the Wall on the canvas.
+     * @returns {undefined}
+     */
     Wall.prototype.draw = function() {
         ctx.save();
         ctx.beginPath();
@@ -39,7 +56,15 @@ var Wall = (function() {
         ctx.stroke();
         ctx.restore();
     }
-    // Check if the click is close enough
+    /**
+     * This method is used for checking if the mouseX and mouseY coördinate of your input are close enough to a resizable start or endpoint.
+     * If doSelect is true, resizing will be enabled.
+     * If doSelect is false, this method will just act as a check.
+     * * @param {type} mouseX
+     * @param {type} mouseY
+     * @param {type} doSelect
+     * @returns {Boolean}
+     */
     Wall.prototype.checkCloseEnough = function(mouseX, mouseY, doSelect) {       
         if (mouseX <= this.x + 5 && mouseX >= this.x -5 && 
             mouseY <= this.y + 5 && mouseY >= this.y -5) {
@@ -53,7 +78,12 @@ var Wall = (function() {
         }
         return false;
     }
-    // Move the line
+    /**
+     * This method moves the X and Y coördinate to the newly given mouseX and mouseY coördinate of your input.
+     * @param {type} mouseX
+     * @param {type} mouseY
+     * @returns {line_L4.Wall.prototype}
+     */
     Wall.prototype.moveTo = function(mouseX, mouseY) {
         var difX = this.x2 - this.x;
         var difY = this.y2 - this.y;
@@ -66,7 +96,12 @@ var Wall = (function() {
         this.draw();
         return (this);
     }
-    // Check if a point is inside the line
+    /**
+     * This method checks if the mouseX and mouseY coördinate of your input are within the boundaries of the Wall element.
+     * @param {type} x
+     * @param {type} y
+     * @returns {Boolean}
+     */
     Wall.prototype.isPointInside = function (x, y) {
         //console.log("mousex"+ x);
         //console.log("mousey"+y);
@@ -100,7 +135,14 @@ var Wall = (function() {
         }
         else return false;
     }
-    // Resize the rectangle
+    /**
+     * This method resizes the Wall depending on the selected point (end or startpoint).
+     * In order to resize, checkCloseEnough should be used with the doSelect parameter as true.
+     * This will enable the selected point, if close enough, to be resizable.
+     * @param {type} mouseX
+     * @param {type} mouseY
+     * @returns {line_L4.Wall.prototype}
+     */
     Wall.prototype.resizeTo = function(mouseX, mouseY) {
         if (this.startLine) {
             this.x = mouseX;
@@ -113,17 +155,27 @@ var Wall = (function() {
         this.draw();
         return (this);
     }
-    // Set the resizing values on false again
+    /**
+     * This method disables resizing by putting every point back to the default false value.
+     * @returns {undefined}
+     */
     Wall.prototype.stopResize = function() {
         this.startLine = false;
         this.endLine = false;
     }
-    // Check if the start coordinate or end coordinate is selected
+    /**
+     * This method checks whether one of the points is enabled for resizing.
+     * @returns {Boolean}
+     */
     Wall.prototype.isResizing = function() {
         if (this.startLine || this.endLine) return true;
         else return false;
     }	
-    // toString() value for writing to the firebase
+    /**
+     * This method returns a toString value for better readability.
+     * This can be very useful for debugging or quickly showing values of the raw Wall objects.
+     * @returns {unresolved}
+     */
     Wall.prototype.toString = function() {
         return String(this.type + ";" + this.x + ";" + this.y + ";" + this.x2 + ";" + this.y2);
     }

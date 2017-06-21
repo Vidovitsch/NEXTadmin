@@ -2,7 +2,14 @@
  * Circle class *
  ****************/
 var Circle = (function () {
-    // constructor
+    /**
+     * This is the constructor of the Circle class.
+     * @param {type} id
+     * @param {type} x
+     * @param {type} y
+     * @param {type} radius
+     * @returns {circle_L4.Circle}
+     */
     function Circle(id, x, y, radius) {
         this.id = id;
         this.x = x;
@@ -17,21 +24,23 @@ var Circle = (function () {
         this.redraw(this.x, this.y);
         return (this);
     }
-    // Redraw the rectangle - makes use of Draw
+    /**
+     * This method redraws the Circle on the canvas.
+     * Makes use of the draw method of this class.
+     * @param {type} x
+     * @param {type} y
+     * @returns {circle_L4.Circle.prototype}
+     */
     Circle.prototype.redraw = function (x, y) {
         this.x = x || this.x;
         this.y = y || this.y;
         this.draw();
         return (this);
     }
-    // 
-    Circle.prototype.highlight = function (x, y) {
-        this.x = x || this.x;
-        this.y = y || this.y;
-        this.draw();
-        return (this);
-    }
-    // Draw the rectangle
+    /**
+     * This method draws the Circle on the canvas.
+     * @returns {undefined}
+     */
     Circle.prototype.draw = function () {
         ctx.save();
         ctx.beginPath();
@@ -41,7 +50,13 @@ var Circle = (function () {
         ctx.stroke();
         ctx.restore();
     }
-    // Check if the click is close enough
+    /**
+     * This method is used for checking if the mouseX and mouseY coördinate of your input are close enough to the border.
+     * @param {type} mouseX
+     * @param {type} mouseY
+     * @param {type} doSelect
+     * @returns {Boolean}
+     */
     Circle.prototype.checkCloseEnough = function(mouseX, mouseY, doSelect) {
         // Check if the border is selected
         var distanceX = mouseX - this.x;
@@ -55,7 +70,12 @@ var Circle = (function () {
         }
         return false;
     }
-    // Move the circle
+    /**
+     * This method moves the X and Y coördinate to the newly given mouseX and mouseY coördinate of your input.
+     * @param {type} mouseX
+     * @param {type} mouseY
+     * @returns {circle_L4.Circle.prototype}
+     */
     Circle.prototype.moveTo = function(mouseX, mouseY) {
         this.x = mouseX; 
         this.y = mouseY; 
@@ -63,12 +83,24 @@ var Circle = (function () {
         this.draw();
         return (this);
     }	
-    // Check if a point is inside the rectangle
+    /**
+     * This method checks if the mouseX and mouseY coördinate of your input are within the boundaries of the Circle's border.
+     * @param {type} mouseX
+     * @param {type} mouseY
+     * @returns {Boolean}
+     */
     Circle.prototype.isPointInside = function (mouseX, mouseY) {
         var bool = Math.pow(mouseX - this.x, 2) + Math.pow(mouseY - this.y, 2) < Math.pow(this.radius, 2);
         return bool;
     }
-    // Resize the rectangle
+    /**
+     * This method resizes the Circle depending if the border is selected.
+     * In order to resize, checkCloseEnough should be used with the doSelect parameter as true.
+     * This will enable the radius, if close enough, to be resizable.
+     * @param {type} mouseX
+     * @param {type} mouseY
+     * @returns {circle_L4.Circle.prototype}
+     */
     Circle.prototype.resizeTo = function(mouseX, mouseY) {
         // Calculate the difference for the new radius
         var distanceX = mouseX - this.x;
@@ -78,16 +110,26 @@ var Circle = (function () {
         this.draw();
         return (this);
     }
-    // Set the resizing values on false again
+    /**
+     * This method disables resizing by putting the border selection value back to false.
+     * @returns {undefined}
+     */
     Circle.prototype.stopResize = function() {
         this.borderSelected = false;
     }
-    // Check if currently resizing the circle
+    /**
+     * This method checks whether the border is enabled for resizing.
+     * @returns {Boolean}
+     */
     Circle.prototype.isResizing = function() {
         if (this.borderSelected) return true;
         else return false;
     }
-    // toString() value for writing to the firebase
+    /**
+     * This method returns a toString value for better readability.
+     * This can be very useful for debugging or quickly showing values of the raw Circle objects.
+     * @returns {unresolved}
+     */
     Circle.prototype.toString = function() {
         return String(this.type + ";" + this.x + ";" + this.y + ";" + this.radius);
     }
