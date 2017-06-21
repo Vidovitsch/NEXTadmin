@@ -202,9 +202,10 @@
                         var dataref = '/Assignment/' + assignmentname + '/Submissions';
                         firebase.database().ref(dataref).once("value", function (snapshot) {
                             snapshot.forEach(function (childSnapshot) {
+                                var groupNumber = childSnapshot.key;
                                 var submissionLink = childSnapshot.val().Link;
                                 var submissionName = childSnapshot.val().Name;
-                                assigmenthtml = "<li><a href='#'>" + submissionName + " : " + submissionLink + "</li>";
+                                assigmenthtml = "<li>" + "Group " + groupNumber + ": " + "<a href=" + submissionLink + ">" + "Go to link" + "</li>";
                                 document.getElementById('submissionlist').innerHTML += assigmenthtml;
                             })
 
