@@ -9,20 +9,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
 /**
- * This class is used to load the GUI for the index Screen
- * @author Michiel van Eijkeren
+ *
+ * @author Bert
  */
 @Controller
-public class indexController
-{
-    /**
-     * upon the page load of the index page this method is called to return the ModelView
-     * @return new ModelAndView("index")
-     */
-    @RequestMapping(value = "/index", method = RequestMethod.GET)
-    public ModelAndView LoginRequest()
+public class announcementsController {
+    @RequestMapping(value = "/announcements", method = RequestMethod.GET)
+    public ModelAndView initAnnouncements()
     {
-        return new ModelAndView("index");
+        return new ModelAndView("announcements");
     }
 }

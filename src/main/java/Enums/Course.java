@@ -1,7 +1,7 @@
 package Enums;
 
 /**
- *
+ * this enum contains all the main courses that IT students can attend at Fontys
  * @author David
  */
 public enum Course {
@@ -12,8 +12,8 @@ public enum Course {
     Techniek;
     
     /**
+     * returns the prefix associated with the given enum course
      * @param course
-     * 
      * @return
      */
     public String getPrefix(Course course) {

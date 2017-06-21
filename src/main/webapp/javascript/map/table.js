@@ -44,28 +44,29 @@ var Table = (function () {
         ctx.restore();
     }
     // Check if the click is close enough
-    Table.prototype.checkCloseEnough = function(mouseX, mouseY) {
+    Table.prototype.checkCloseEnough = function(mouseX, mouseY, doSelect) {
         console.log("Check close enough Rect");
         // Top left corner check
-        if (Math.abs(mouseX - this.x) < 2 && Math.abs(mouseY - this.y) < 2) {
-            this.topLeft = true;
-            console.log("Rect: topLeft true");
+        if (Math.abs(mouseX - this.x) < 5 && Math.abs(mouseY - this.y) < 5) {
+            if (doSelect) this.topLeft = true;
+            return true;
         }
         // Top right corner check
-        else if (Math.abs(mouseX - (this.x + this.width)) < 2 && Math.abs(mouseY - this.y) < 2) {
-            this.topRight = true;
-            console.log("Rect: topRight true");
+        else if (Math.abs(mouseX - (this.x + this.width)) < 5 && Math.abs(mouseY - this.y) < 5) {
+            if (doSelect) this.topRight = true;
+            return true;
         }
         // Bottom left corner check
-        else if (Math.abs(mouseX - this.x) < 2 && Math.abs(mouseY - (this.y + this.height)) < 2) {
-            this.botLeft = true;
-            console.log("Rect: botLeft true");
+        else if (Math.abs(mouseX - this.x) < 5 && Math.abs(mouseY - (this.y + this.height)) < 5) {
+            if (doSelect) this.botLeft = true;
+            return true;
         }
         // Bottom right corner check
-        else if (Math.abs(mouseX - (this.x + this.width)) < 2 && Math.abs(mouseY - (this.y + this.height)) < 2) {
-            this.botRight = true;
-            console.log("Rect: botRight true");
+        else if (Math.abs(mouseX - (this.x + this.width)) < 5 && Math.abs(mouseY - (this.y + this.height)) < 5) {
+            if (doSelect) this.botRight = true;
+            return true;
         }
+        return false;
     }
     // Move the table
     Table.prototype.moveTo = function(mouseX, mouseY) {

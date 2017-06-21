@@ -19,6 +19,8 @@
                     <ol id="studentlist" class="borderedlist" type="1">
                     </ol>
                 </div>
+                <button class="button_base b01_simple_rollover middlepartitem middleparthalfbutton" id="buttonApplyNoGroupFilter" onclick="setstudentlistNoGroup()">No Group</button>
+                <button class="button_base b01_simple_rollover middlepartitem middleparthalfbutton" id="buttonAllStudents" onclick="setstudentlist()">All Students</button></br>
                 <div id='editaccountpart'>
                     <h3 id="selectedstudent">Edit account</h3>
                     <div id='buttons'>

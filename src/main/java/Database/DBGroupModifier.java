@@ -6,56 +6,75 @@
 
 package Database;
 
-import Enums.Course;
 import Models.Group;
 import Models.Message;
 import Models.User;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
 /**
- *
+ * This method is used as a connection between the application and the firebase
+ * specifically the Group branch
  * @author David
  */
 public class DBGroupModifier implements IModGroup {
     
-    private Firebase firebase;
+    private DatabaseReference firebase;
     private Object lock;
     private boolean done = false;
     private Group group = null;
     private String uid = "";
     private String groupNumber = "";
     
+    /**
+     * The constructor of the DBGroupModifier class, The method takes no arguments.
+     * It initiates the field firebase by creating a connection using the FBConnector class
+     */
     public DBGroupModifier() {
         FBConnector connector = FBConnector.getInstance();
         connector.connect();
-        firebase = (Firebase) connector.getConnectionObject();
+        firebase = (DatabaseReference) connector.getConnectionObject();
     }
 
+    /**
+     * This method is used to update the database to add a existing user to an existing group
+     * The method takes the parameters group and user, if either of the id's fields is emtpy an exception is thrown
+     * @param group not null
+     * @param user not null
+     */
     @Override
     public void addUser(Group group, User user) {
-        Firebase ref = firebase.child("Group").child(String.valueOf(group.getGroupNumber()))
+        if(group == null || "".equals(group.getGroupNumber())){
+            throw new IllegalArgumentException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
+                    " the group instance's number was null");
+        }else if(user == null || "".equals(user.getUid())){
+            throw new IllegalArgumentException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
+                    " the users instance's UID was null");
+        }
+        DatabaseReference ref = firebase.child("Group").child(String.valueOf(group.getGroupNumber()))
                 .child("Members").child(user.getUid());
         ref.setValue("NS");
     }
     
+    /**
+     * This method is used to fetch all the existing childs from the group branch from the firebase.
+     * the data is loaded in an ArrayList<Group> events. 
+     * to stop the FXThread until the method is finished loading loading the method uses 
+     * the lockFXThread and unlockFXThread methods
+     * @return groups
+     */
     @Override
     public ArrayList<Group> getGroups() {
         final ArrayList<Group> groups = new ArrayList();
-        Firebase ref = firebase.child("Group");
+        DatabaseReference ref = firebase.child("Group");
+        
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 Group g = null;
@@ -96,10 +115,11 @@ public class DBGroupModifier implements IModGroup {
                 }
                 unlockFXThread();
             }
-            
+
             @Override
-            public void onCancelled(FirebaseError fe) {
-                System.out.println(fe.toException().toString());
+            public void onCancelled(DatabaseError de) {
+                throw new UnsupportedOperationException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
+                        " " + de.getMessage()); 
             }
         });
         

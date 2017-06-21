@@ -8,12 +8,16 @@ package Models;
 import Enums.EventType;
 
 /**
- *
+ * This class is used by scheduled school days. so the regular schedule that every student attentds
  * @author Arno Dekkers Los
  */
 public class EventDay extends EventDate {
     private String id;
     
+    /**
+     * this is the constructor of EventDay it passes the given parameter to the parent
+     * @param eventName 
+     */
     public EventDay(String eventName){super(eventName);}
     
     /**

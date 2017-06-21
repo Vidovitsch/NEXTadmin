@@ -6,8 +6,13 @@ pom.xml.next
 release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
-.mvn/timing.properties
+.mvn\timing.properties
+
+#Ignores the classes that make the databaseconnection do seperate the Developer-database from the Release-database
+src\main\java\Database\FBConnector.java
+src\main\webapp\initfirebase.js
 
 # Avoid ignoring Maven wrapper jar file (.jar files are usually ignored)
 !/.mvn/wrapper/maven-wrapper.jar
 target/maven-archiver/pom.properties
+/nbproject/
