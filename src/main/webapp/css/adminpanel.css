@@ -139,11 +139,6 @@ body {
     resize: none;
 }
 
-.buttons-console {
-    position: fixed;
-    float:left;
-}
-
 textarea:focus, input:focus{
     outline: none;
 }

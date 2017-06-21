@@ -58,14 +58,14 @@
                     <div class="fieldDiv" id="descriptiondiv" style="display: none;">
                         <label class="fieldLabel">Description:</label>
                         <textarea class="fieldInput" id="description" name="description"></textarea></br>
+                        <div class="buttons-console">
+                            <input id="create-button" onclick="SentToDB(true)" class="btn-style" type="submit" value="create Event" style="display: none;"/>      
+                            <input id="discard-button" onclick="window.location.href='/adminpanel'" class="btn-style" type="button" value="discard changes" style="display: none;"/>
+                            <input id="save-button" onclick="SentToDB(false)" class="btn-style" type="submit" value="save changes" style="display: none;"/>
+                            <input id="delete-button" class="btn-style" type="submit" value="Delete selected event" style="display: none;"/>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="buttons-console">
-                    <input id="create-button" onclick="SentToDB(true)" class="btn-style" type="submit" value="create Event" style="display: none;"/>      
-                    <input id="discard-button" onclick="window.location.href='/adminpanel'" class="btn-style" type="button" value="discard changes" style="display: none;"/>
-                    <input id="save-button" onclick="SentToDB(false)" class="btn-style" type="submit" value="save changes" style="display: none;"/>
-                    <input id="delete-button" class="btn-style" type="submit" value="Delete selected event" style="display: none;"/>
             </div>
         </div>
 
@@ -104,6 +104,7 @@
                 }
             }
         };
+        
         pageLoad();
         $('#cbSearchType').on('change', function () {
             var selection = $(this).val();
@@ -269,7 +270,7 @@
             } else if (new Date("November 13, 2013 " + startTime) > new Date("November 13, 2013 " + endTime)) {
                 alert("The startTime should be before the EndTime");
             } else if (!moment(date, 'DD-MM-YYYY', true).isValid()) {
-                alert("The date should have a valid format: dd/mm/yyyy")
+                alert("The date should have a valid format: dd/mm/yyyy");
             } else {
                 return true;
             }
