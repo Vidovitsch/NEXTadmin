@@ -175,8 +175,10 @@ public class adminController
 
     private ModelAndView createModelAndView(String day)
     {
+        System.out.println("called adminpanel");
         eventModifier = new DBEventModifier();
         dayModifier = new DBDayModifier();
+        System.out.println("done with daymodifierconstructor");
         ModelAndView modelView = new ModelAndView("adminpanel", "command", new ScheduleableItemModel());
         modelView.addObject("types", getEventTypes());
         modelView.addObject("fields", getPossibleFields());
@@ -185,6 +187,7 @@ public class adminController
         dummySelectedItem.setId("-1");
         modelView.addObject("selectedItem", dummySelectedItem);
         modelView.addObject("scheduledItems", scheduledItems);
+        System.out.println("returning modelview");
         return modelView;
     }
 
@@ -222,6 +225,7 @@ public class adminController
 
     private List<ScheduledItemModel> getScheduledItems(String type)
     {
+        System.out.println("in getscheduled items");
         List<ScheduledItemModel> scheduledItems = new ArrayList<ScheduledItemModel>();
         for (EventDay eD : dayModifier.getDays())
         {
@@ -230,6 +234,7 @@ public class adminController
                 scheduledItems.add(new ScheduledItemModel(eD.getId(), text));
             }
         }
+        System.out.println("done with getdays");
         for (Event e : eventModifier.getEvents())
         {
             if(type == null || e.getEventType().toString().equals(type)){
@@ -237,6 +242,7 @@ public class adminController
                 scheduledItems.add(new ScheduledItemModel(e.getId(), text));
             }
         }
+                System.out.println("done with getscheduled items");
         return scheduledItems;
     }
 
