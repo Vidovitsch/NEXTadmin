@@ -6,7 +6,12 @@
 package Controllers;
 
 import Database.DBGroupModifier;
+import Database.DBUserModifier;
 import Models.ScheduleableItemModel;
+import Models.User;
+import Models.UserAllocation;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -21,7 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class indexController
 {
     DBGroupModifier groupModifier;
-    
+    DBUserModifier userModifier;
     /**
      * upon the page load of the index page this method is called to return the ModelView
      * @return new ModelAndView("index")
@@ -35,14 +40,32 @@ public class indexController
     
     /**
      * This method is used to reset/remove all the user groups
-     * @return 
+     * @return "index"
      */
     @RequestMapping(value = "/resetGroups", method = RequestMethod.GET)
     public String resetGroups()
     {
-        System.out.println("reset groups");
         groupModifier = new DBGroupModifier();
         groupModifier.resetGroups();
+        return "index";
+    }
+    
+    /**
+     * This method is used to create all the user groups at the beginning
+     * of the evenement
+     * It retrieves the Users from the firbase with "@student.fontys.nl" and
+     * that are not alocated in a group yet. It then creates the new groups and
+     * puts them over these
+     * @return "index"
+     */
+    @RequestMapping(value = "/createGroups", method = RequestMethod.GET)
+    public String createGroups()
+    {
+        groupModifier = new DBGroupModifier();
+        userModifier = new DBUserModifier();
+        ArrayList<User> eligibleUsers = userModifier.getUnassignedUsers();
+        System.out.println(eligibleUsers.size());
+        new UserAllocation(eligibleUsers);
         return "index";
     }
 }

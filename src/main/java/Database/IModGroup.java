@@ -37,4 +37,15 @@ public interface IModGroup {
      * for all the users
      */
     void resetGroups();
+    
+    /**
+     * This method returns the next ID that has to be used when creating a new group
+     */
+    int getHighestID();
+    
+    /**
+     * This method is used to add new user groups with their users to the DB
+     * @param newGroups 
+     */
+    void addNewGroupsWithUsers(ArrayList<Group> newGroups);
 }

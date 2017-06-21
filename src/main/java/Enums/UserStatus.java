@@ -11,5 +11,5 @@ package Enums;
  */
 public enum UserStatus {
     Attending,
-    Canceled
+    Inactive
 };

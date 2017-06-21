@@ -30,6 +30,7 @@
         <property name="mappings">
             <props>
                 <prop key="/index">indexController</prop>
+                <prop key="/createGroups">indexController</prop>
                 <prop key="/resetGroups">indexController</prop>
                 <prop key="/adminpanel">adminController</prop>
                 <prop key="/filterList">adminController</prop>

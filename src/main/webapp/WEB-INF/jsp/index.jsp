@@ -184,14 +184,12 @@
 
                     function allocateAllStudents()
                     {
-                        alert('clicked allocate');
+                        window.location.href = 'createGroups';
                     }
                     
                     function resetAllGroups()
                     {
                         window.location.href = 'resetGroups';
-                        //alert('clicked reset groups');
-                        //ost("resetGroups", {type : 'reset'});
                     }
                     
                     function post(path, params, method) {

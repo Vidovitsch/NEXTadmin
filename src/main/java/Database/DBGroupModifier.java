@@ -14,6 +14,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -158,6 +159,58 @@ public class DBGroupModifier implements IModGroup {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
         });
+    }
+    
+    /**
+     * This method looks at the group branch in the firebase and selects the highest ID that occurs
+     * @return highest ID in firebase + 1
+     */
+    @Override
+    public int getHighestID() {
+        final List<Integer> retV = new ArrayList<Integer>();
+        retV.add(0, -1);
+        DatabaseReference ref = firebase.child("Group");
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    int key = Integer.parseInt(ds.getKey());
+                    if(key > retV.get(0)){
+                        retV.add(0, key);
+                    }
+                }
+                unlockFXThread();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError de) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+        });
+        lockFXThread();
+        return retV.get(0) + 1;
+    }
+    
+    /**
+     * This method is used to add new groups with their users to the Firebase.
+     * This method is used by the UserAllocation algoritm, the reason why this is uses
+     * then lose methods to add the group and to add the user is for efficiency
+     * the DatabaseRefferences only get created once and are then used to push all the new
+     * data rather then creating a new DatabaseRefference for each user/group
+     * @param newGroups 
+     */
+    @Override
+    public void addNewGroupsWithUsers(ArrayList<Group> newGroups){
+        firebase.keepSynced(true);
+        DatabaseReference refGroup;
+        DatabaseReference refUser;
+        for(Group g : newGroups){
+            firebase.child("Group").child(g.getGroupNumber()).child("Name").setValue(g.getGroupName());
+            for(User u : g.getUsers()){
+                firebase.child("Group").child(g.getGroupNumber()).child("Members").child(u.getUid()).setValue("NS");
+                firebase.child("User").child(u.getUid()).child("GroupID").setValue(g.getGroupNumber());
+            }
+        }
     }
     
     /**
