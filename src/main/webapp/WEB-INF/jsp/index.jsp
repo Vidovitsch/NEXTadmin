@@ -192,10 +192,10 @@
                             var studentsPerGroup = document.getElementById('studentsPerGroup').value;
                             if(studentsPerGroup > 0){
                                 if (document.getElementById('rbMixGroups').checked) {
-                                    post('createGroups', {studentsPerGroup: 10, mixGroups : true});
+                                    post('createGroups', {studentsPerGroup: studentsPerGroup, mixGroups : true});
                                 }
                                 if (document.getElementById('rbDoNotMixGroups').checked) {
-                                    post('createGroups', {studentsPerGroup: 10, mixGroups : false});
+                                    post('createGroups', {studentsPerGroup: studentsPerGroup, mixGroups : false});
                                 }
                             }else{
                                 alert('Please fill in a number greater then 0 for students per group.');
