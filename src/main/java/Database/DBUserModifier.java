@@ -50,14 +50,15 @@ public class DBUserModifier implements IModUsers{
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 User user;
-                String email;
+                String email = null;
                 for (DataSnapshot ds : snapshot.getChildren()) {
-                    email = (String)ds.child("Mail").getValue();
+                    if(ds.hasChild("Mail")){
+                        email = (String)ds.child("Mail").getValue();
+                    }
                     String groupID = "-1";
                     if(ds.hasChild("GroupID")){
                         groupID = (String)ds.child("GroupID").getValue();
                     }
-                    System.out.println(email);
                     if(email.contains("@student.fontys.nl") && "-1".equals(groupID)){
                         UserRole userRole = UserRole.valueOf((String) ds.child("Role").getValue());
                         String name = (String) ds.child("Name").getValue();
@@ -72,7 +73,6 @@ public class DBUserModifier implements IModUsers{
                         user.setUserStatus(userStatus);
                         user.setCourse(course);
                         user.setSemester(semester);
-                        System.out.println(user.toString());
                         retV.add(user);
                     }
                 }

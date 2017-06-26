@@ -55,11 +55,11 @@ public class FBConnector implements IDatabase {
         if (databaseReference == null) {
             FileInputStream serviceAccount = null;
             try {
-                serviceAccount = new FileInputStream("src/main/java/Database/NextWeek-a7bd31431fa0.json");
+                serviceAccount = new FileInputStream("src/main/java/Database/NextWeekDev-f084f8ebd419.json");
                 System.out.println("setting FirebaseOptions");
                 FirebaseOptions options = new FirebaseOptions.Builder()
                         .setCredential(FirebaseCredentials.fromCertificate(serviceAccount))
-                        .setDatabaseUrl("https://nextweek-b9a58.firebaseio.com/")
+                        .setDatabaseUrl("https://nextweekdev.firebaseio.com/")
                         .build();
                 System.out.println("initializing FirebaseApp");
                 FirebaseApp.initializeApp(options);
