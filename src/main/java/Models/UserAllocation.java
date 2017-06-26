@@ -102,7 +102,7 @@ public class UserAllocation {
      * @param toAllocate 
      */
     private void putUsersInGroup(ArrayList<User> toAllocate){
-        ArrayList<Group> newGroups = createNewGroups((int) Math.ceil(toAllocate.size() / 10.0));
+        ArrayList<Group> newGroups = createNewGroups((int) Math.ceil(toAllocate.size() / maxUsers));
         divideUsersOverGroups(newGroups, toAllocate);
     }
     
