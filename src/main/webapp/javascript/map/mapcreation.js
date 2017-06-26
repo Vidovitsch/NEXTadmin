@@ -335,9 +335,11 @@ function handleMouseDown(e) {
         return;
     }
     
-    mouseX = parseInt(e.clientX - offsetX);
-    mouseY = parseInt(e.clientY - offsetY);
-
+    //mouseX = parseInt(e.clientX - offsetX);
+    //mouseY = parseInt(e.clientY - offsetY);
+    mouseX = parseInt(e.pageX - offsetX);
+    mouseY = parseInt(e.pageY - offsetY);
+    
     mouseDown = true;
     
     var selected = selectedLoc.selectedFloor.selected;
@@ -347,22 +349,28 @@ function handleMouseDown(e) {
         clickDifX = mouseX - selected.x;
         clickDifY = mouseY - selected.y;
         if (selected.type == "line") {
-            selected.checkCloseEnough(mouseX, mouseY);
+            selected.checkCloseEnough(mouseX, mouseY, true);
         } else {
-            selected.checkCloseEnough(mouseX, mouseY);
+            selected.checkCloseEnough(mouseX, mouseY, true);
         }
     }
 }
 
 function handleMouseMove(e) {    
-    mouseX = parseInt(e.clientX - offsetX);
-    mouseY = parseInt(e.clientY - offsetY);
+    //mouseX = parseInt(e.clientX - offsetX);
+    //mouseY = parseInt(e.clientY - offsetY);
+    mouseX = parseInt(e.pageX - offsetX);
+    mouseY = parseInt(e.pageY - offsetY);
 
     document.getElementById("coordinates").innerHTML = "<b>X:</b> " + mouseX + ", <b>Y:</b> " + mouseY;
 
     if (!selectedLoc || !selectedLoc.selectedFloor) {
         mouseDown = false;
         return;
+    }
+    
+    if (modify.checked) {
+        showDrawableIcon(mouseX, mouseY);
     }
     
     if (mouseDown && modify.checked) {
@@ -392,20 +400,21 @@ function handleMouseUp(e) {
         return;
     }
     
-    mouseX = parseInt(e.clientX - offsetX);
-    mouseY = parseInt(e.clientY - offsetY);
+    //mouseX = parseInt(e.clientX - offsetX);
+    //mouseY = parseInt(e.clientY - offsetY);
+    mouseX = parseInt(e.pageX - offsetX);
+    mouseY = parseInt(e.pageY - offsetY);
 
     mouseDown = false;
-    var selected = selectedLoc.selectedFloor.selected;
-    if (selected != null) {
-        clickDifX = mouseX - selected.width;
-        clickDifY = mouseY - selected.height;
+    var curElement = selectedLoc.selectedFloor.selected;
+    if (curElement != null) {
+        clickDifX = mouseX - curElement.width;
+        clickDifY = mouseY - curElement.height;
         
-        if (selected.isResizing()) {
-            selected.stopResize();
-        } 
-        selected.strokeStyle = "#000000";
-        saveElement(selectedLoc, selectedLoc.selectedFloor, selected);
+        curElement.stopResize();
+        console.log("Should have stopped resizing");
+        curElement.strokeStyle = "#000000";
+        saveElement(selectedLoc, selectedLoc.selectedFloor, curElement);
     }
 }
 
@@ -415,8 +424,10 @@ function handleMouseClick(e) {
         return;
     }
     
-    mouseX = parseInt(e.clientX - offsetX);
-    mouseY = parseInt(e.clientY - offsetY);
+    //mouseX = parseInt(e.clientX - offsetX);
+    //mouseY = parseInt(e.clientY - offsetY);
+    mouseX = parseInt(e.pageX - offsetX);
+    mouseY = parseInt(e.pageY - offsetY);
 
     if (draw.checked) {
         selectedLoc.selectedFloor.selectElement(null);
@@ -500,4 +511,40 @@ function onItemListSelectionChange(e) {
     } else {
         selectElementById(id);
     }
+}
+
+function showDrawableIcon(x, y) {
+    //canvas.style.cursor = "default";
+    //canvas.style.cursor = "move"; // for moving an object
+    //canvas.style.cursor = "crosshair"; // for resizing
+    canvas.style.cursor = "default";
+    
+    if (!selectedLoc || !selectedLoc.selectedFloor) {
+        alert("No location/floor selected.");
+        return;
+    }    
+    
+    var curElement = selectedLoc.selectedFloor.selected;
+    if (curElement == null) return;
+    else {
+        if (curElement.isPointInside(x, y)) {
+            if (curElement.checkCloseEnough(x, y, false)) {
+                canvas.style.cursor = "crosshair";
+            } else {
+                canvas.style.cursor = "move";
+            }
+        }
+    }
+    
+    /*for (var i = 0; i < elements.length; i++) {
+        curElement = elements[i];
+        if (curElement.isPointInside(x, y)) {
+            if (curElement.checkCloseEnough(x, y)) {
+                canvas.style.cursor = "crosshair";
+            } else {
+                canvas.style.cursor = "move";
+            }
+            break;
+        }
+    }*/
 }

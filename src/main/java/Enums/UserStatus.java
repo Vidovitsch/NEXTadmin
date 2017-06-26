@@ -6,7 +6,7 @@
 package Enums;
 
 /**
- *
+ * this enum specifies whether or not a user is attending the planned activity
  * @author David
  */
 public enum UserStatus {

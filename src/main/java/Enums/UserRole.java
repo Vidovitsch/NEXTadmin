@@ -6,7 +6,7 @@
 package Enums;
 
 /**
- *
+ * this enum specifies the user type
  * @author David
  */
 public enum UserRole {

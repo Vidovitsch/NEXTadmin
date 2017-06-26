@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 
 /**
- *
+ * This class is used to load the data of scheduled workshops in a managable format into the application
  * @author David
  */
 public class Workshop extends Event {
@@ -25,6 +25,11 @@ public class Workshop extends Event {
     //For visual aspects
     private String hexColor = "#577F92";
     
+    /**
+     * the constructor of Workshop, this takes a parameter eventName which is
+     * passed on to the parent class
+     * @param eventName 
+     */
     public Workshop(String eventName) {
         super(eventName);
     }
@@ -94,20 +99,40 @@ public class Workshop extends Event {
         attendingUsers = users.size();
     }
 
+    /**
+     * get the value of hexColor
+     * 
+     * @return hexColor
+     */
     @Override
     public String getHexColor() {
         return hexColor;
     }
 
+    /**
+     * set the value of hexColor
+     * 
+     * @hexColor hexColor
+     */
     @Override
     public void setHexColor(String hexColor) {
         this.hexColor = hexColor;
     }
     
+    /**
+     * get the value of attendingUsers
+     * 
+     * @return attendingUsers
+     */
     public int getAttendingUsers() {
         return attendingUsers;
     }
 
+    /**
+     * set the value of attendingUsers
+     * 
+     * @param attendingUsers
+     */
     public void setAttendingUsers(int attendingUsers) {
         this.attendingUsers = attendingUsers;
     }

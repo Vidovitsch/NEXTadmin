@@ -6,7 +6,7 @@
 package Enums;
 
 /**
- *
+ * this enum contains the differnt eventtypes that can be created in our application
  * @author David
  */
 public enum EventType {

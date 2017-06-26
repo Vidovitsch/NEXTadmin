@@ -14,12 +14,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- *
+ * This class is used upon requests for loading the map creation page
  * @author David
  */
 @Controller
 public class mapcreationController {
-
+    /**
+     * This method is calling upon loading the map creation page
+     * @return new ModelAndView("mapcreation")
+     */
     @RequestMapping("/mapcreation")
     public ModelAndView initMapScreen() {
         return new ModelAndView("mapcreation");

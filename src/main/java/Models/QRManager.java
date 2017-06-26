@@ -2,10 +2,10 @@ package Models;
 
 import Database.DBEventModifier;
 import Database.FBConnector;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
@@ -28,7 +28,8 @@ import javax.servlet.http.HttpServlet;
 import org.apache.commons.codec.binary.Base64;
 
 /**
- *
+ * This class is used to generate new QR code, retrieve existing QR codes and 
+ * to control whether or not generation of codes was successfull
  * @author David
  */
 public class QRManager extends HttpServlet {
@@ -39,22 +40,30 @@ public class QRManager extends HttpServlet {
     private boolean done = false;
     private boolean generated;
     
-    private static Firebase firebase;
+    private static DatabaseReference firebase;
     
+    /**
+     * this is the constructor of QRManager, it initiates a firebase connection
+     * and saves this in the field firebase
+     */
     public QRManager() {
+        System.out.println("in qrmanager constructor");
         FBConnector connector = FBConnector.getInstance();
         connector.connect();
-        firebase = (Firebase) connector.getConnectionObject();
+                System.out.println("retrieving connection object");
+        firebase = (DatabaseReference) connector.getConnectionObject();
     }
     
     /**
      * Generates a random QR-code for eacht group location on the event
      */
     public void generate() {
-        Firebase ref = firebase.child("GroupLocation");
+        System.out.println("generating qrcodes");
+        DatabaseReference ref = firebase.child("GroupLocation");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot ds) {
+                System.out.println("listening to qrcode ondatachange method");
                 for (int i = 0; i < ds.getChildrenCount(); i++) {
                     try {
                         generateQRCode();
@@ -66,17 +75,25 @@ public class QRManager extends HttpServlet {
             }
 
             @Override
-            public void onCancelled(FirebaseError fe) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            public void onCancelled(DatabaseError fe) {
+                throw new UnsupportedOperationException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
+                        " " + fe.getMessage()); //To change body of generated methods, choose Tools | Templates.
             }
         });
         lockFXThread();
     }
     
     
+    /**
+     * retrieves all the QR codes that currently exist in the firebase,
+     * puts these codes in an ArrayList<String> and returns this. 
+     * It uses the methods lockFXThread and unlockFXThread to stop the UI thread
+     * until the method has finished loading data
+     * @return qrCodes
+     */
     public ArrayList<String> getQRCodes() {
         final ArrayList<String> qrCodes = new ArrayList();
-        Firebase ref = firebase.child("QRCode");
+        DatabaseReference ref = firebase.child("QRCode");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot ds) {
@@ -88,8 +105,10 @@ public class QRManager extends HttpServlet {
             }
 
             @Override
-            public void onCancelled(FirebaseError fe) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            public void onCancelled(DatabaseError fe) {
+                throw new UnsupportedOperationException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
+                        " "+ fe.getMessage()); //To change body of generated methods, choose Tools | Templates.
+
             }
         });
         lockFXThread();
@@ -97,8 +116,14 @@ public class QRManager extends HttpServlet {
         return qrCodes;
     }
     
+    /**
+     * this method checks whether or not there are any existing QRcodes in the database
+     * It uses the methods lockFXThread and unlockFXThread to stop the UI thread
+     * it returns a boolean which is true if any childs were found in the firebase branch QRCode
+     * @return generated
+     */
     public boolean checkGenerated() {
-        Firebase ref = firebase.child("QRCode");
+        DatabaseReference ref = firebase.child("QRCode");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot ds) {
@@ -107,8 +132,10 @@ public class QRManager extends HttpServlet {
             }
 
             @Override
-            public void onCancelled(FirebaseError fe) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            public void onCancelled(DatabaseError fe) {
+                throw new UnsupportedOperationException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
+                        " " + fe.getMessage()); //To change body of generated methods, choose Tools | Templates.
+
             }
         });
         lockFXThread();
@@ -118,7 +145,7 @@ public class QRManager extends HttpServlet {
     
     /**
      * Generates the QR-code image with a random generated key as content
-     * @throws WriterException 
+     * @throws WriterException
      */
     private void generateQRCode() throws WriterException {
         //Generating a random text
@@ -159,7 +186,7 @@ public class QRManager extends HttpServlet {
      */
     private void saveQRCode(String text, BufferedImage bImage) {
         try {
-            Firebase ref = firebase.child("QRCode").child(text);
+            DatabaseReference ref = firebase.child("QRCode").child(text);
             ref.setValue(toBase64(bImage));
         } catch (IOException ex) {
             Logger.getLogger(QRManager.class.getName()).log(Level.SEVERE, null, ex);
