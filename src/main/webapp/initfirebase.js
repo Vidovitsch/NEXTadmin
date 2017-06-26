@@ -1,9 +1,11 @@
 // Initialize Firebase
-var config = {apiKey: "AIzaSyDPNaZUNvx5lKxCqVMTDAfFOQgT5Rr2tho",
-    authDomain: "nextweekdev.firebaseapp.com",
-    databaseURL: "https://nextweekdev.firebaseio.com",
-    projectId: "nextweekdev",
-    storageBucket: "nextweekdev.appspot.com",
-    messagingSenderId: "403624726896"};
+var config = {
+    apiKey: "AIzaSyCRi0Ma5ekQxhwg-BfQCa6684hMzvR3Z1o",
+    authDomain: "nextweek-b9a58.firebaseapp.com",
+    databaseURL: "https://nextweek-b9a58.firebaseio.com",
+    projectId: "nextweek-b9a58",
+    storageBucket: "nextweek-b9a58.appspot.com",
+    messagingSenderId: "488624254338"
+  };
 firebase.initializeApp(config); 
 console.log("Firebase initialized");

@@ -14,9 +14,10 @@ import java.util.logging.Logger;
 import org.json.JSONException;
 
 /**
- * This method is used to make a connection with the firebase database
- * it is used by all the different DB***Modifier classes
- * it implements the IDatabase interface
+ * This method is used to make a connection with the firebase database it is
+ * used by all the different DB***Modifier classes it implements the IDatabase
+ * interface
+ *
  * @author David
  */
 public class FBConnector implements IDatabase {
@@ -24,10 +25,11 @@ public class FBConnector implements IDatabase {
     private static FBConnector instance = null;
     private String firebase_url = null;
     private DatabaseReference databaseReference;
-    
+
     /**
-     * This method is used to get the instance this class in case that the instance
-     * is still null a new instance of FBConnector get's created
+     * This method is used to get the instance this class in case that the
+     * instance is still null a new instance of FBConnector get's created
+     *
      * @return instance
      */
     public static FBConnector getInstance() {
@@ -39,15 +41,16 @@ public class FBConnector implements IDatabase {
     }
 
     /**
-     * private constructor for this singleton can only be called from getInstance
+     * private constructor for this singleton can only be called from
+     * getInstance
      */
     public FBConnector() {
         this.databaseReference = null;
     }
-    
+
     /**
-     * This methods connects the firebase field to the firebase
-     * It has a check whether or not the connection has been made yet
+     * This methods connects the firebase field to the firebase It has a check
+     * whether or not the connection has been made yet
      */
     @Override
     public void connect() {
@@ -55,11 +58,11 @@ public class FBConnector implements IDatabase {
         if (databaseReference == null) {
             FileInputStream serviceAccount = null;
             try {
-                serviceAccount = new FileInputStream("src/main/java/Database/NextWeekDev-f084f8ebd419.json");
+                serviceAccount = new FileInputStream("src/main/java/Database/NextWeek-a7bd31431fa0.json");
                 System.out.println("setting FirebaseOptions");
                 FirebaseOptions options = new FirebaseOptions.Builder()
                         .setCredential(FirebaseCredentials.fromCertificate(serviceAccount))
-                        .setDatabaseUrl("https://nextweekdev.firebaseio.com/")
+                        .setDatabaseUrl("https://nextweek-b9a58.firebaseio.com/")
                         .build();
                 System.out.println("initializing FirebaseApp");
                 FirebaseApp.initializeApp(options);
@@ -87,9 +90,11 @@ public class FBConnector implements IDatabase {
     }
 
     /**
-     * this method is used to check wheather or not the firebase field has been initiated yet
+     * this method is used to check wheather or not the firebase field has been
+     * initiated yet
+     *
      * @return firebase
-     * @throws NullPointerException if firebase equals null 
+     * @throws NullPointerException if firebase equals null
      */
     @Override
     public Object getConnectionObject() throws NullPointerException {
@@ -102,8 +107,10 @@ public class FBConnector implements IDatabase {
     }
 
     /**
-     * this method returns a boolean whether or not the firebase instance doesn't equal null
-     * @return 
+     * this method returns a boolean whether or not the firebase instance
+     * doesn't equal null
+     *
+     * @return
      */
     @Override
     public boolean checkConnection() {
