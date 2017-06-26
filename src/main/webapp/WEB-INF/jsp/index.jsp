@@ -36,7 +36,7 @@
                     Mix courses:<br>
                         <input type="radio" id="rbMixGroups" name="mixGroups" value="Yes"> Yes<br>
                         <input type="radio" id="rbDoNotMixGroups" name="mixGroups" checked="checked" value="No"> No<br>
-                    Amount of stuents per group: <input type='number' id='studentsPerGroup' class='studentsPerGroup middlepartitem' name='studentsPerGroup' value=10>
+                    Amount of students per group: <input type='number' id='studentsPerGroup' class='studentsPerGroup middlepartitem' name='studentsPerGroup' value=10>
                     <input class="button_base b01_simple_rollover middlepartitem" type="button" id="buttonAllocatieStudents" value="Allocate all users" onclick="allocateAllStudents()"/>
                     <input class="button_base b01_simple_rollover middlepartitem" type="button" id="buttonResetGroups" value="Reset all groups" onclick="resetAllGroups()"/>
                 </div>
