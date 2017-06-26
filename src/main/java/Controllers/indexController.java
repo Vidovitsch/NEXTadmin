@@ -66,7 +66,6 @@ public class indexController
         groupModifier = new DBGroupModifier();
         userModifier = new DBUserModifier();
         ArrayList<User> eligibleUsers = userModifier.getUnassignedUsers();
-        System.out.println("in my method");
         new UserAllocation(eligibleUsers, indexModel.getStudentsPerGroup(), indexModel.getMMixGroups());
         return "index";
     }

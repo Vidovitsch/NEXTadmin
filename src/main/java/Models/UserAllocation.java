@@ -6,16 +6,10 @@
 package Models;
 
 import Database.DBGroupModifier;
-import Database.IModGroup;
 import Enums.Course;
-import java.awt.List;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * This class is used to allocate all users that have signed up for the event
@@ -45,7 +39,6 @@ public class UserAllocation {
         groupModifier = new DBGroupModifier();
         this.toHashMap(usersToAssign);
         this.nextID = groupModifier.getHighestID();
-        System.out.println("My next ID equals " + nextID);
         allocateUsers();
     }
     
