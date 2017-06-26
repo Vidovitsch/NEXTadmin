@@ -40,15 +40,6 @@ public class Workshop extends Event {
     }
 
     /**
-     * Set the value of eventType
-     *
-     * @param eventType new value of eventType
-     */
-    public void setEventType(EventType eventType) {
-        this.eventType = eventType;
-    }
-
-    /**
      * Get the value of presenter
      *
      * @return the value of presenter

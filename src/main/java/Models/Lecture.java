@@ -34,15 +34,6 @@ public class Lecture extends Event {
     public EventType getEventType() {
         return eventType;
     }
-
-    /**
-     * Set the value of eventType
-     *
-     * @param eventType new value of eventType
-     */
-    public void setEventType(EventType eventType) {
-        this.eventType = eventType;
-    }
     
     /**
      * Get the value of presenter
