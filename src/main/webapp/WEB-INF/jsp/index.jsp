@@ -31,6 +31,15 @@
                     </label>
                     <input class="button_base b01_simple_rollover buttonupdatedatabase middlepartitem" disabled type="button" id="buttonupdatedatabase" name="buttonparse" value="Update database" onclick="parsejson();"/><br />
                 </div>
+                <div id='updateallgroups' class='middlepartcontainer'>
+                    <h3>Update the user groups</h3>
+                    Mix courses:<br>
+                        <input type="radio" id="rbMixGroups" name="mixGroups" value="Yes"> Yes<br>
+                        <input type="radio" id="rbDoNotMixGroups" name="mixGroups" checked="checked" value="No"> No<br>
+                    Amount of students per group: <input type='number' id='studentsPerGroup' class='studentsPerGroup middlepartitem' name='studentsPerGroup' value=10>
+                    <input class="button_base b01_simple_rollover middlepartitem" type="button" id="buttonAllocatieStudents" value="Allocate all users" onclick="allocateAllStudents()"/>
+                    <input class="button_base b01_simple_rollover middlepartitem" type="button" id="buttonResetGroups" value="Reset all groups" onclick="resetAllGroups()"/>
+                </div>
             </div>
             <div class="rightpart">
                 <div id='createaccountpart' class='middlepartcontainer'>
@@ -177,6 +186,50 @@
                         setassignmentlist();
                     }
 
+                    function allocateAllStudents()
+                    {
+                        if(confirm('Are you sure you want to create groups for all unnasigned students?')){
+                            var studentsPerGroup = document.getElementById('studentsPerGroup').value;
+                            if(studentsPerGroup > 0){
+                                if (document.getElementById('rbMixGroups').checked) {
+                                    post('createGroups', {studentsPerGroup: studentsPerGroup, mixGroups : true});
+                                }
+                                if (document.getElementById('rbDoNotMixGroups').checked) {
+                                    post('createGroups', {studentsPerGroup: studentsPerGroup, mixGroups : false});
+                                }
+                            }else{
+                                alert('Please fill in a number greater then 0 for students per group.');
+                            }
+                        }
+                    }
+                    
+                    function resetAllGroups()
+                    {
+                        if (confirm('Are you sure that you want to reset ALL user groups?')) {
+                            window.location.href = 'resetGroups';
+                        }
+                    }
+                    
+                    function post(path, params, method) {
+                        method = method || "post"; // Set method to post by default if not specified.
+                        // The rest of this code assumes you are not using a library.
+                        // It can be made less wordy if you use one.
+                        var form = document.createElement("form");
+                        form.setAttribute("method", method);
+                        form.setAttribute("action", path);
+                        for (var key in params) {
+                            if (params.hasOwnProperty(key)) {
+                                var hiddenField = document.createElement("input");
+                                hiddenField.setAttribute("type", "hidden");
+                                hiddenField.setAttribute("name", key);
+                                hiddenField.setAttribute("value", params[key]);
+                                form.appendChild(hiddenField);
+                            }
+                        }
+                        document.body.appendChild(form);
+                        form.submit();
+                    };
+                    
                     var jsondata;
                     var X = XLSX;
                     var XW = {

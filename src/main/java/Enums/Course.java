@@ -28,4 +28,22 @@ public enum Course {
                 return "T";
         }
     }
+    
+    /**
+     * This method returns the full name of the course
+     * @param prefix
+     * @return the full name of the course
+     */
+    public static Course getCourse(char prefix) {
+        switch (prefix) {
+            case 'M':
+                return Media_Design;
+            case 'S':
+                return Software_Engineering;
+            case 'B':
+                return Business;
+            default:
+                return Techniek;
+        }
+    }
 };
