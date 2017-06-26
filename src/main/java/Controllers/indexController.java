@@ -7,7 +7,9 @@ package Controllers;
 
 import Database.DBGroupModifier;
 import Database.DBUserModifier;
+import Models.IndexModel;
 import Models.ScheduleableItemModel;
+import Models.ScheduledItemModel;
 import Models.User;
 import Models.UserAllocation;
 import java.util.ArrayList;
@@ -34,8 +36,8 @@ public class indexController
     @RequestMapping(value = "/index", method = RequestMethod.GET)
     public ModelAndView initIndexScreen()
     {
-        System.out.println("in /index");
-        return new ModelAndView("index");
+        
+        return new ModelAndView("index", "command", new IndexModel());
     }
     
     /**
@@ -58,14 +60,14 @@ public class indexController
      * puts them over these
      * @return "index"
      */
-    @RequestMapping(value = "/createGroups", method = RequestMethod.GET)
-    public String createGroups()
+    @RequestMapping(value = "/createGroups", method = RequestMethod.POST)
+    public String createGroups(@ModelAttribute("SpringWeb") IndexModel indexModel)
     {
         groupModifier = new DBGroupModifier();
         userModifier = new DBUserModifier();
         ArrayList<User> eligibleUsers = userModifier.getUnassignedUsers();
-        System.out.println(eligibleUsers.size());
-        new UserAllocation(eligibleUsers);
+        System.out.println("in my method");
+        //new UserAllocation(eligibleUsers, indexModel.getStudentsPerGroup(), indexModel.getMMixGroups());
         return "index";
     }
 }

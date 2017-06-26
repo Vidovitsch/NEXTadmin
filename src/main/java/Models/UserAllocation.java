@@ -36,8 +36,12 @@ public class UserAllocation {
      * it takes a list of the user that it has to put into groups
      * and will call the methods required to accomplish this
      * @param usersToAssign 
+     * @param maxUsers 
+     * @param mixCourses 
      */
-    public UserAllocation(ArrayList<User> usersToAssign){
+    public UserAllocation(ArrayList<User> usersToAssign, int maxUsers, boolean mixCourses){
+        this.mixCourses = mixCourses;
+        this.maxUsers = maxUsers;
         groupModifier = new DBGroupModifier();
         this.toHashMap(usersToAssign);
         this.nextID = groupModifier.getHighestID();

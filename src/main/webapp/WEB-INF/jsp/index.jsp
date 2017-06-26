@@ -33,6 +33,10 @@
                 </div>
                 <div id='updateallgroups' class='middlepartcontainer'>
                     <h3>Update the user groups</h3>
+                    Mix courses:<br>
+                        <input type="radio" id="rbMixGroups" name="mixGroups" value="male"> Yes<br>
+                        <input type="radio" id="DoNotMixGroups" name="mixGroups" value="female"> No<br>
+                    Amount of stuents per group: <input type='number' id='studentsPerGroup' class='studentsPerGroup middlepartitem' name='studentsPerGroup' value=10>
                     <input class="button_base b01_simple_rollover middlepartitem" type="button" id="buttonAllocatieStudents" value="Allocate all users" onclick="allocateAllStudents()"/>
                     <input class="button_base b01_simple_rollover middlepartitem" type="button" id="buttonResetGroups" value="Reset all groups" onclick="resetAllGroups()"/>
                 </div>
@@ -184,7 +188,8 @@
 
                     function allocateAllStudents()
                     {
-                        window.location.href = 'createGroups';
+                        post('createGroups', {studentsPerGroup: 10, mixGroups : false});
+                        //window.location.href = 'createGroups';
                     }
                     
                     function resetAllGroups()
