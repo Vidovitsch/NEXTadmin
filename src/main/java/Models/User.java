@@ -15,7 +15,7 @@ import Enums.UserStatus;
  * this class is used to load the data of a registerd user in the application
  * @author David
  */
-public class User {
+public class User implements Comparable{
 
     private String uid;
     private String name;
@@ -174,5 +174,13 @@ public class User {
      */
     public void setGroupID(int groupID) {
         this.groupID = groupID;
+    }
+    
+    @Override
+    public int compareTo(Object o){
+        if(o instanceof User){
+            return ((Integer)this.getSemester()).compareTo(((User)o).getSemester());  
+        }
+        return 0;
     }
 }
