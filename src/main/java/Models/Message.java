@@ -132,8 +132,7 @@ public class Message {
             Date dateEvent = new SimpleDateFormat("dd-MM-yyyy").parse(date);
             this.date = date;
         } catch (ParseException ex){
-            throw new IllegalArgumentException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName() + 
-                    " The date string had an invallid format. format should be dd-MM-yyyy");
+            throw new IllegalArgumentException("the date string had an invallid format. format should be dd-MM-yyyy");
         }
     }
     

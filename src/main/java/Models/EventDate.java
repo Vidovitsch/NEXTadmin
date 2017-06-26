@@ -74,8 +74,7 @@ public abstract class EventDate {
             this.date = date;
             setDay(dateEvent);
         } catch (ParseException ex) {
-            throw new IllegalArgumentException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName()
-                    + " " + ex.getMessage());
+            throw new IllegalArgumentException("the date string had an invallid format. format should be dd-MM-yyyy");
         }
     }
 
@@ -97,8 +96,7 @@ public abstract class EventDate {
         if (testTimeFormat(endTime)) {
             this.endTime = endTime;
         } else {
-            throw new IllegalArgumentException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName()
-                    + " The given time was not of a valid format, format should be HH:mm");
+            throw new IllegalArgumentException("The given time was not of a valid format, format should be HH:mm");
         }
     }
 
@@ -120,8 +118,7 @@ public abstract class EventDate {
         if (testTimeFormat(startTime)) {
             this.startTime = startTime;
         } else {
-            throw new IllegalArgumentException(getClass().getName() + "." + Thread.currentThread().getStackTrace()[1].getMethodName()
-                    + " The given time was not of a valid format, format should be HH:mm");
+            throw new IllegalArgumentException("The given time was not of a valid format, format should be HH:mm");
         }
     }
 
