@@ -34,8 +34,8 @@
                 <div id='updateallgroups' class='middlepartcontainer'>
                     <h3>Update the user groups</h3>
                     Mix courses:<br>
-                        <input type="radio" id="rbMixGroups" name="mixGroups" value="male"> Yes<br>
-                        <input type="radio" id="DoNotMixGroups" name="mixGroups" value="female"> No<br>
+                        <input type="radio" id="rbMixGroups" name="mixGroups" value="Yes"> Yes<br>
+                        <input type="radio" id="rbDoNotMixGroups" name="mixGroups" checked="checked" value="No"> No<br>
                     Amount of stuents per group: <input type='number' id='studentsPerGroup' class='studentsPerGroup middlepartitem' name='studentsPerGroup' value=10>
                     <input class="button_base b01_simple_rollover middlepartitem" type="button" id="buttonAllocatieStudents" value="Allocate all users" onclick="allocateAllStudents()"/>
                     <input class="button_base b01_simple_rollover middlepartitem" type="button" id="buttonResetGroups" value="Reset all groups" onclick="resetAllGroups()"/>
@@ -188,13 +188,26 @@
 
                     function allocateAllStudents()
                     {
-                        post('createGroups', {studentsPerGroup: 10, mixGroups : false});
-                        //window.location.href = 'createGroups';
+                        if(confirm('Are you sure you want to create groups for all unnasigned students?')){
+                            var studentsPerGroup = document.getElementById('studentsPerGroup').value;
+                            if(studentsPerGroup > 0){
+                                if (document.getElementById('rbMixGroups').checked) {
+                                    post('createGroups', {studentsPerGroup: 10, mixGroups : true});
+                                }
+                                if (document.getElementById('rbDoNotMixGroups').checked) {
+                                    post('createGroups', {studentsPerGroup: 10, mixGroups : false});
+                                }
+                            }else{
+                                alert('Please fill in a number greater then 0 for students per group.');
+                            }
+                        }
                     }
                     
                     function resetAllGroups()
                     {
-                        window.location.href = 'resetGroups';
+                        if (confirm('Are you sure that you want to reset ALL user groups?')) {
+                            window.location.href = 'resetGroups';
+                        }
                     }
                     
                     function post(path, params, method) {
