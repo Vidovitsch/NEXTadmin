@@ -38,8 +38,8 @@
                 <div id='updateallgroups' class='middlepartcontainer'>
                     <h3>Update the user groups</h3>
                     Mix courses:<br>
-                        <input type="radio" id="rbMixGroups" name="mixGroups" value="Yes"> Yes<br>
-                        <input type="radio" id="rbDoNotMixGroups" name="mixGroups" checked="checked" value="No"> No<br>
+                    <input type="radio" id="rbMixGroups" name="mixGroups" value="Yes"> Yes<br>
+                    <input type="radio" id="rbDoNotMixGroups" name="mixGroups" checked="checked" value="No"> No<br>
                     Amount of students per group: <input type='number' id='studentsPerGroup' class='studentsPerGroup middlepartitem' name='studentsPerGroup' value=10>
                     <input class="button_base b01_simple_rollover middlepartitem" type="button" id="buttonAllocatieStudents" value="Allocate all users" onclick="allocateAllStudents()"/>
                     <input class="button_base b01_simple_rollover middlepartitem" type="button" id="buttonResetGroups" value="Reset all groups" onclick="resetAllGroups()"/>
@@ -242,28 +242,28 @@
 
                     function allocateAllStudents()
                     {
-                        if(confirm('Are you sure you want to create groups for all unnasigned students?')){
+                        if (confirm('Are you sure you want to create groups for all unnasigned students?')) {
                             var studentsPerGroup = document.getElementById('studentsPerGroup').value;
-                            if(studentsPerGroup > 0){
+                            if (studentsPerGroup > 0) {
                                 if (document.getElementById('rbMixGroups').checked) {
-                                    post('createGroups', {studentsPerGroup: studentsPerGroup, mixGroups : true});
+                                    post('createGroups', {studentsPerGroup: studentsPerGroup, mixGroups: true});
                                 }
                                 if (document.getElementById('rbDoNotMixGroups').checked) {
-                                    post('createGroups', {studentsPerGroup: studentsPerGroup, mixGroups : false});
+                                    post('createGroups', {studentsPerGroup: studentsPerGroup, mixGroups: false});
                                 }
-                            }else{
+                            } else {
                                 alert('Please fill in a number greater then 0 for students per group.');
                             }
                         }
                     }
-                    
+
                     function resetAllGroups()
                     {
                         if (confirm('Are you sure that you want to reset ALL user groups?')) {
                             window.location.href = 'resetGroups';
                         }
                     }
-                    
+
                     function post(path, params, method) {
                         method = method || "post"; // Set method to post by default if not specified.
                         // The rest of this code assumes you are not using a library.
@@ -282,8 +282,9 @@
                         }
                         document.body.appendChild(form);
                         form.submit();
-                    };
-                    
+                    }
+                    ;
+
                     var jsondata;
                     var X = XLSX;
                     var XW = {
@@ -301,11 +302,11 @@
                     function parsejson() {
                         setdatabasedata();
                     }
-
+                    var groupid = -1;
                     function setdatabasedata() {
                         var updatedrecords = 0;
                         var obj;
-                        var groupid = -1;
+
                         firebase.database().ref('/User').once("value", function (snapshot) {
                             snapshot.forEach(function (childSnapshot) {
                                 var mail = childSnapshot.val().Mail;
@@ -315,6 +316,7 @@
                                         try {
                                             if (childSnapshot.val().GroupID === null) {
                                             } else {
+                                                
                                                 groupid = childSnapshot.val().GroupID;
                                             }
                                         } catch (err) {
@@ -328,7 +330,8 @@
                                             GroupID: groupid,
                                             Role: "Student",
                                             Semester: obj.Lesgroep.charAt(2),
-                                            Status: "Inactive"
+                                            Status: "Inactive",
+                                            Submitted: 0
                                         });
                                         updatedrecords++;
                                     }
