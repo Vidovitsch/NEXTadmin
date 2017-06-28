@@ -206,6 +206,7 @@ public class DBGroupModifier implements IModGroup {
         DatabaseReference refUser;
         for(Group g : newGroups){
             firebase.child("Group").child(g.getGroupNumber()).child("Name").setValue(g.getGroupName());
+            firebase.child("Group").child(g.getGroupNumber()).child("Location").setValue(0);
             for(User u : g.getUsers()){
                 firebase.child("Group").child(g.getGroupNumber()).child("Members").child(u.getUid()).setValue("NS");
                 firebase.child("User").child(u.getUid()).child("GroupID").setValue(g.getGroupNumber());
