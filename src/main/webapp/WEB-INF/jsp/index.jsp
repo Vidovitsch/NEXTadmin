@@ -314,11 +314,7 @@
                                     obj = jsondata.Blad1[i];
                                     if (mail == obj.mail) {
                                         try {
-                                            if (childSnapshot.val().GroupID === null) {
-                                            } else {
-                                                
-                                                groupid = childSnapshot.val().GroupID;
-                                            }
+                                            groupid = childSnapshot.val().GroupID;
                                         } catch (err) {
                                         }
                                         uid = childSnapshot.key;
