@@ -148,9 +148,9 @@
                             }
                             if (selectedstudent.GroupID != -1)
                             {
-                                firebase.database().ref('/User/' + selectedstudent.UID + '/GroupID').set("-1");
+                                firebase.database().ref('/User/' + selectedstudent.UID + '/GroupID').set(-1);
                                 firebase.database().ref('/Group/' + selectedstudent.GroupID + '/Members/' + selectedstudent.UID).remove();
-                                selectedstudent.GroupID = "-1";
+                                selectedstudent.GroupID = -1;
                                 document.getElementById(selectedstudent.email).setAttribute('data', JSON.stringify(selectedstudent));
                             }
                             updateselectedstudent();
@@ -159,12 +159,12 @@
 
                         function addtogroup()
                         {
-                            if (!selectedstudent || selectedstudent.GroupID !== "-1" || !selectedgroup) {
+                            if (!selectedstudent || selectedstudent.GroupID !== -1 || !selectedgroup) {
                                 return;
                             }
-                            firebase.database().ref('/User/' + selectedstudent.UID + '/GroupID').set(selectedgroup.ID);
+                            firebase.database().ref('/User/' + selectedstudent.UID + '/GroupID').set(Number(selectedgroup.ID));
                             firebase.database().ref('/Group/' + selectedgroup.ID + '/Members/' + selectedstudent.UID).set("NS");
-                            selectedstudent.GroupID = selectedgroup.ID;
+                            selectedstudent.GroupID = Number(selectedgroup.ID);
                             document.getElementById(selectedstudent.email).setAttribute('data', JSON.stringify(selectedstudent));
                             updateselectedstudent();
                             updategroup();
@@ -250,7 +250,7 @@
                             var el = document.getElementById('buttons');
                             if (selectedstudent)
                             {
-                                if (selectedstudent.GroupID !== "-1")
+                                if (selectedstudent.GroupID !== -1)
                                 {
                                     var groupname = "";
                                     firebase.database().ref('/Group/' + selectedstudent.GroupID).once("value", function (snapshot) {
