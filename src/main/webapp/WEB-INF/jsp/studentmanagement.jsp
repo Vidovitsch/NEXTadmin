@@ -122,7 +122,8 @@
                                 firebase.database().ref('/Group/' + highestID).once("value", function (snapshot) {
                                     selectedgroup = {
                                         ID: highestID,
-                                        Name: snapshot.val().Name + "(" + highestID + ")"};
+                                        Name: snapshot.val().Name + "(" + highestID + ")",
+                                        Location: 0};
                                     updategroup();
                                 });
                             });
