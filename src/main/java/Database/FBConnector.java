@@ -1,6 +1,10 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package Database;
 
-import com.firebase.client.Firebase;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseCredentials;
@@ -14,9 +18,7 @@ import java.util.logging.Logger;
 import org.json.JSONException;
 
 /**
- * This method is used to make a connection with the firebase database
- * it is used by all the different DB***Modifier classes
- * it implements the IDatabase interface
+ *
  * @author David
  */
 public class FBConnector implements IDatabase {
@@ -24,7 +26,7 @@ public class FBConnector implements IDatabase {
     private static FBConnector instance = null;
     private String firebase_url = null;
     private DatabaseReference databaseReference;
-    
+
     /**
      * This method is used to get the instance this class in case that the instance
      * is still null a new instance of FBConnector get's created
@@ -44,7 +46,7 @@ public class FBConnector implements IDatabase {
     public FBConnector() {
         this.databaseReference = null;
     }
-    
+
     /**
      * This methods connects the firebase field to the firebase
      * It has a check whether or not the connection has been made yet
@@ -55,11 +57,11 @@ public class FBConnector implements IDatabase {
         if (databaseReference == null) {
             FileInputStream serviceAccount = null;
             try {
-                serviceAccount = new FileInputStream("src/main/java/Database/NextWeekDev-f084f8ebd419.json");
+                serviceAccount = new FileInputStream("src/main/java/Database/NextWeek-e50906a6dd28.json");
                 System.out.println("setting FirebaseOptions");
                 FirebaseOptions options = new FirebaseOptions.Builder()
                         .setCredential(FirebaseCredentials.fromCertificate(serviceAccount))
-                        .setDatabaseUrl("https://nextweekdev.firebaseio.com/")
+                        .setDatabaseUrl("https://nextweek-b9a58.firebaseio.com/")
                         .build();
                 System.out.println("initializing FirebaseApp");
                 FirebaseApp.initializeApp(options);
